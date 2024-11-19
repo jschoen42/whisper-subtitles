@@ -1,0 +1,87 @@
+{
+  "explorer.compactFolders": false,
+  "editor.fontSize": 12,
+  "editor.fontFamily": "Consolas, 'Courier New', monospace",
+  "editor.insertSpaces": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.autoClosingQuotes": "never",
+  "editor.autoSurround": "never",
+  "editor.tabSize": 3,
+
+  "[html]": {
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.formatOnType": true,
+  },
+  "[css]": {
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.formatOnType": true,
+  },
+  "[json]": {
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.fontFamily": "'Ubuntu Mono', Consolas",
+    "editor.fontWeight": 400,
+    "editor.lineHeight": 1.4,
+    "editor.fontSize": 14,
+    "editor.quickSuggestions": {
+      "strings": true
+    },
+    "editor.suggest.insertMode": "replace"
+  },
+  "[yaml]": {
+    "editor.tabSize": 4,
+    "editor._fontFamily": "'Roboto Mono', 'Ubuntu Mono', Consolas",
+    "editor._fontLigatures": true,
+    "editor._fontWeight": 400,
+    "editor._fontSize": 12,
+    "editor.lineHeight": 1.3,
+  },
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.formatOnType": true,
+    "editor.acceptSuggestionOnEnter": "on",
+    "editor.suggest.insertMode": "insert",
+    "editor.autoClosingBrackets": "never",
+    "editor.suggestOnTriggerCharacters": false,
+    "python.analysis.typeCheckingMode": "on",
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "on",
+      "other": "on"
+    }
+  },
+  "pylint.args": [
+    // Convention
+    // "--disable=C0103", // invalid-name
+    "--disable=C0114", // missing-module-docstring
+    "--disable=C0115", // missing-class-docstring
+    "--disable=C0116", // missing-function-docstring
+    // "--disable=C0200", // consider-using-enumerate
+    // "--disable=C0206", // consider-using-dict-items
+    "--disable=C0207", // use-maxsplit-arg
+    "--disable=C0301", // line-too-long
+    "--disable=C0302", // too-many-lines
+    "--disable=C0305", // trailing-newlines
+    // Refactor
+    "--disable=R0901", // too-many-ancestors
+    "--disable=R0902", // too-many-instance attributes
+    "--disable=R0903", // too-few-public-methods
+    "--disable=R0904", // too-many-public methods
+    "--disable=R0911", // too-many-return statements
+    "--disable=R0912", // too-many-branches
+    "--disable=R0913", // too-many-arguments
+    "--disable=R0914", // too-many-local variables
+    "--disable=R0915", // too-many-statements
+    "--disable=R1705", // no-else-return
+    // Warning
+    "--disable=W0105", // pointless-string-statement
+    "--disable=W0511", // fixme (TODO)
+    "--disable=W0603", // global-statement
+    // "--disable=W0611", // unused-import
+    "--disable=W0613", // unused-argument
+    "--disable=W0621", // redefined-outer-name
+    "--disable=W0622", // redefined-builtin
+  ],
+}

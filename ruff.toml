@@ -1,0 +1,7 @@
+[lint]
+select = ["E4", "E7", "E9", "F", "Q", "N"]
+ignore = ["N802", "Q000"]
+preview = true
+
+# [lint.flake8-quotes]
+# docstring-quotes = "double"

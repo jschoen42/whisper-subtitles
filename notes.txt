@@ -1,0 +1,52 @@
+###################################################
+
+https://python.land/virtual-environments/virtualenv
+
+python -m venv .venv-3.12
+.venv-3.12\Scripts\activate
+deactivate
+
+####################################################
+
+Powershell
+& 'C:\Program Files\_prog\Python311\python.exe' -m venv .venv-3.11
+.venv-3.11\Scripts\activate
+
+& 'C:\Program Files\_prog\Python312\python.exe' -m venv .venv-3.12
+.venv-3.12\Scripts\activate
+
+not final -> no compiled C
+& 'C:\Program Files\_prog\Python313\python.exe' -m venv .venv-3.13
+.venv-3.13\Scripts\activate
+
+####################################################
+
+python.exe -m pip install --upgrade pip
+pip install setuptools -U
+
+pip install -r requirements.txt
+
+pip list --outdated
+
+#########
+
+pip install pip-licenses
+pip-licenses > __licenses.txt
+
+#########
+
+py -3.10
+py -3.11
+py -3.12
+py -3.13
+
+tests for AI (model loading):
+python _test_load_spacy.py
+python _test_load_faster_whisper.py
+python _test_load_whisper.py
+python _test_load_whisper_timestamp.py
+
+#################
+
+vscode
+%APPDATA%\Code\User\settings.json

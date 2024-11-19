@@ -1,0 +1,39 @@
+{
+  "editor.fontSize": 12,
+  "editor.insertSpaces": true,
+  "files.trimTrailingWhitespace": true,
+  "[html]": {
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.formatOnType": true,
+  },
+  "[css]": {
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.formatOnType": true,
+  },
+  "[json]": {
+    "editor.tabSize": 2,
+    "editor.quickSuggestions": {
+      "strings": true
+    },
+    "editor.suggest.insertMode": "replace"
+  },
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.formatOnType": true,
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.suggest.insertMode": "insert",
+    "editor.autoClosingBrackets": "never",
+    "editor.suggestOnTriggerCharacters": false,
+    // "python.analysis.typeCheckingMode": "off",
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "on",
+      "other": "on"
+    }
+  },
+  "pylint.args": [
+    "--disable=C0114,C0115,C0116,C0207,C0301,W0105,W0511,W0603,R1705"  // C0103, C0200, C0206,C0301
+  ],
+}

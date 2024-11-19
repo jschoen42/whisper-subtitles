@@ -1,0 +1,118 @@
+import re
+
+from pathlib import Path
+
+from spylls.hunspell import Dictionary
+
+from src.utils.trace import Trace, timeit
+from src.helper.excel import import_hunspell_PreCheck_excel
+
+# ../data/_hunspell/de-DE.dic
+# ../data/_hunspell/PreCheck_de-DE.xlsx
+
+global_dictionary_data: None | dict = None
+
+global_special_dot_words:       None | list = None   # 'Abs.', 'bspw.', 'bzw.', 'Bzw.', ...
+global_precheck_single_words:   None | list = None   # 'AAG', 'AfA', 'AG' ... 'www.datev.de' ... 'und/oder' ...
+global_precheck_multiple_words: None | list = None   # ['Corporate', 'Design'], ['summa', 'summarum'], ['Stock', 'Appreciation', 'Rights'], ... (ws 'multiple')
+
+@timeit("Hunspell dictionary loaded")
+def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "de-DE") -> None:
+    global global_dictionary_data
+    global global_special_dot_words
+    global global_precheck_single_words
+    global global_precheck_multiple_words
+
+    if global_dictionary_data is None:
+        global_dictionary_data = Dictionary.from_files(str(Path(path, filename)))
+        Trace.result(f"'{Path(path, filename)}' loaded")
+
+    if global_precheck_single_words is None:
+        if language == "de-DE":
+            (   global_special_dot_words,
+                global_precheck_single_words,
+                global_precheck_multiple_words
+            ) = import_hunspell_PreCheck_excel(path, "PreCheck_" + language + ".xlsx")
+        else:
+            Trace.fatal(f"unsupported language '{language}'")
+
+def spellcheck(words: list, debug=False) -> dict:
+
+    def check_multiple_words(word: str, index: int) -> int:
+        found = False
+
+        word_info = []
+        for word_info in global_precheck_multiple_words:
+            if word == word_info[0]:
+                found = True
+                for i in range(1, len(word_info)):
+                    if index + i >= len(words):
+                        found = False
+                        break
+
+                    word = words[index + i].strip("'.:,;!?…")  # .split("-")[0]
+
+                    if word != word_info[i]:
+                        found = False
+                        break
+
+                if found:
+                    break
+
+            if found:
+                break
+
+        if found:
+            Trace.info(f"found {word_info}")
+            return len(word_info)
+        else:
+            return 0
+
+    pattern_paragraph = re.compile(r"\s?§+\d*[a-z]*.?")  # ' §34a', ' §12', ' §§95", ...
+    pattern_number = re.compile(r"[\d%,.–€$|&]*")        # '1.001,58', '2,1%', ... , '–', '€', '|', '&'
+
+    result = {}
+    i = 0
+
+    while i < len(words):
+        word = words[i]
+
+        if pattern_number.fullmatch(word) or pattern_paragraph.fullmatch(word):
+            i += 1
+        else:
+            word = word.strip("':,;!?…")  # without dot !
+
+            found = check_multiple_words(word, i)
+            if found > 0:
+                i += found
+            else:
+                if word in global_special_dot_words:
+                    i += 1
+                else:
+                    word = word.strip(".':,;!?…\"()<>")  # e.g. " 'Beim Speichern sofort festschreiben'."
+
+                    if word not in global_precheck_single_words:
+
+                        # .lookup() endless loop for "-health-the-vis--pict-in-the--act-the-act-a-the-the-the-------------------------------------------------------------------------"
+
+                        w = word.split("-")
+                        if len(w)>6:
+                            Trace.error(f"failed: '{word}' ({len(w)} x '-')")
+                            if word in result:
+                                result[word] += 1
+                            else:
+                                result[word] = 1
+
+                        elif not global_dictionary_data.lookup(word):
+                            Trace.error(f"failed: '{word}'")
+                            if word in result:
+                                result[word] += 1
+                            else:
+                                result[word] = 1
+
+                        elif debug:
+                            Trace.info(f"ok: '{word}'")
+
+                    i += 1
+
+    return result

@@ -1,0 +1,114 @@
+# -*- coding: utf-8; mode: yaml; indent-tabs-mode: nil; -*-
+%YAML 1.1
+---
+
+projects:
+ - 'Anlagebuchführung'                                                              # 77855: Cornelia Querbach
+
+ - 'Baulohnabrechnung/Baulohnabrechnung_Dachdecker_LuG'                             # 78954: Michael Schumann
+ - 'Baulohnabrechnung/Baulohnabrechnung_GaLaBau_LuG'                                # 78956: Michael Schumann
+ - 'Baulohnabrechnung/Baulohnabrechnung_Maler_LODAS'                                # 78957: Michael Schumann
+ - 'Baulohnabrechnung/Baulohnabrechnung_Maler_LuG'                                  # 78958: Michael Schumann
+ - 'Baulohnabrechnung/Baulohnabrechnung_Gerüstbauer_LODAS'                          # 78959: Brita Kuttritz
+ - 'Baulohnabrechnung/Baulohnabrechnung_Gerüstbauer_LuG'                            # 78960: Michael Schumann # UT - NEU: 24. April 2024
+
+ - 'Branchenpaket Bau und Handwerk'                                                 # 78989: Andrea Leiser
+ - 'Chancen Digitalisierung Rechnungswesen'                                         # 78802: Peter Hoffarth
+ - 'Daten-Analyse-System'                                                           # 77774: Jeremy Baufeld
+ - 'Datenimport-Datenprüfung'                                                       # 78911: Michel Birnbacher
+ - 'DMS-Einrichtung'                                                                # 78723: Laura Hoof
+ - 'Eigenorganisation/Eigenorganisation - Arbeitsplatz, Stammdaten'                 # 77837: Christian Wielgoß
+ - 'Eigenorganisation/Eigenorganisation - Rechnungsschreibung'                      # 77840: Christian Wielgoß
+ - 'Eigenorganisation/Eigenorganisation - Dokumentenablage und Vorlagenverwaltung'  # 77841: Christian Wielgoß
+ - 'Eigenorganisation/Eigenorganisation - Post, Fristen und Bescheide'              # 77842: Christian Wielgoß
+ - 'Einkommensteuer/Einkommensteuer Steuern digital erklärt Modul 1'                # 77818: Christian Wielgoß
+ - 'Einkommensteuer/Einkommensteuer Steuern digital erklärt Modul 2'                # 77819: Christian Wielgoß
+ - 'Electronic_Banking'                                                             # 77861: Christian Wielgoß
+ - 'Finanzbuchführung'                                                              # 77762: Marvin Flockenhaus
+ - 'Grundsteuerreform'                                                              # 78735: Cornelia Radtke
+ - 'Kanzlei-Rechnungswesen, Buchführung'                                            # 77703: Sandra Zeis
+ - 'Kanzlei-Rechnungswesen'                                                         # 77962: Thomas Boguth
+ - 'Körperschaftssteuer'                                                            # 77822: Christian Wielgoß
+ - 'Lohnabrechnung verstehen/Lohnabrechnung verstehen Modul 6'                      # 78842: Marion Petersen
+ - 'Rechnungswesen'                                                                 # 77778: Maximilian Scholz
+ - 'Unternehmen online'                                                             # 77919: Michael Sambale
+ - 'Microsoft 365'                                                                  # 78962: Stephan Kunze
+ - 'Steuerprogramme'                                                                # 78921: Christian Wielgoß
+ - 'Kostenmanagement'                                                               # 78967: Marvin Flockenhaus
+ - 'Angebotsassistent'                                                              # 78972: Ralf Meier
+ - 'Digitale-Arbeitsunfähigkeitsbescheinigung'                                      # 73437: Gunther Schwanke # UT
+
+  # zusätzlich Storyline
+
+ - 'Betriebliches Rechnungswesen/Intro'                                             # Christian Wielgoß
+ - 'Betriebliches Rechnungswesen/Betriebliches Rechnungswesen (Modul 1)'            # 77871: Christian Wielgoß
+ - 'Betriebliches Rechnungswesen/Betriebliches Rechnungswesen (Modul 2)'            # 77872: Christian Wielgoß
+ - 'Betriebliches Rechnungswesen/Betriebliches Rechnungswesen (Modul 3)'            # 78873: Christian Wielgoß
+ - 'Betriebliches Rechnungswesen/Betriebliches Rechnungswesen (Modul 4)'            # 78874: Christian Wielgoß
+
+ - 'Rechnungswesen - Tipps und Tricks'                                              # 78968: Christian Wielgoß
+
+  # LODAS, LuG
+
+ - 'classic_comfort/LODAS_classic_comfort'                            # Frank Schmidt
+ - 'classic_comfort/LuG_classic_comfort'                              # Frank Schmidt
+
+ - 'Lohn mit LODAS/Lohn mit LODAS Modul 1'                            # 77706: Michael Lillot  # UT
+ - 'Lohn mit LODAS/Lohn mit LODAS Modul 2'                            # 77707: Michael Lillot
+ - 'Lohn mit LODAS/Lohn mit LODAS Modul 3'                            # 77708: Michael Lillot
+ - 'Lohn mit LODAS/Lohn mit LODAS Modul 5'                            # 77710: Michael Lillot  # UT
+ - 'Lohn mit LODAS/Lohn mit LODAS Modul 6'                            # 77711: Michael Lillot
+ - 'Lohn mit LuG/Lohn mit LuG Modul 1'                                # 77712: Steffen Panzer
+ - 'Lohn mit LuG/Lohn mit LuG Modul 3'                                # 77714: Steffen Panzer
+ - 'Lohn mit LuG/Lohn mit LuG Modul 4'                                # 77715: Steffen Panzer  # UT
+
+   # Online Seminare
+
+ - '_Online-Seminar/Altersteilzeit/Altersteilzeit_LODAS'              # 78745: Michael Lillot
+ - '_Online-Seminar/Altersteilzeit/Altersteilzeit_LuG'                # 78746: Michael Lillot
+ - '_Online-Seminar/Betriebliche Altersvorsorge'                      # 78713, 78714: Simone Hutter + Brita Kuttritz + Dörte Kater
+ - '_Online-Seminar/BHG/BHG LODAS Modul 2'                            # 78949: Marion Petersen
+ - '_Online-Seminar/BHG/BHG LODAS Modul 3'                            # 78945: Marion Petersen # UT
+ - '_Online-Seminar/BHG/BHG LODAS Modul 4'                            # 78946: Marion Petersen
+ - '_Online-Seminar/BHG/BHG LODAS Modul 5'                            # 78947: Marion Petersen # UT - Update 20.3.2024
+ - '_Online-Seminar/BHG/BHG LuG Modul 1'                              # 78948: Marion Petersen
+ - '_Online-Seminar/BHG/BHG LuG Modul 3'                              # 78950: Marion Petersen # UT
+ - '_Online-Seminar/BHG/BHG LuG Modul 5'                              # 78952: Marion Petersen # UT - Update 20.3.2024
+
+ - '_Online-Seminar/OSR_2201_LuG_LODAS/OSR_2201_LODAS'                # 77760: Steffen Panzer
+ - '_Online-Seminar/OSR_2201_LuG_LODAS/OSR_2201_LuG'                  # 77761: Steffen Panzer
+ - '_Online-Seminar/OSR_2102_LuG_LODAS'                               # 77766, 77956: Steffen Panzer
+ - '_Online-Seminar/OSR_2205_LuG_LODAS'                               # 78712, 78711: Michael Lillot
+ - '_Online-Seminar/OSR_2208_LuG_LODAS'                               # 73198, 73437: Steffen Panzer
+ - '_Online-Seminar/OSR_2303_LuG_LODAS'                               # 78746, 78745: Michael Lillot
+ - '_Online-Seminar/OSR_2305_LuG_LODAS_NEU'                           # 78753, 78752: Sandra Würfel-Höfling
+ - '_Online-Seminar/OSR_2306_LuG_LODAS'                               # 78930, 78929: Kirsi Grigat + Andrea Förster-Schembach
+ - '_Online-Seminar/OSR_2307_LuG_LODAS'                               # 78759, 78758: Steffen Panzer
+ - '_Online-Seminar/OSR_2309_LuG_LODAS'                               # 73438, 73199: Gernot Engelhardt + Matthäus Boczek
+ - '_Online-Seminar/OSR_2311_LuG_LODAS'                               # 73440, 73201: Christian Beck
+ - '_Online-Seminar/OSR_2312_LuG_LODAS/OSR_2312_LODAS'                # 77757: Steffen Panzer
+ - '_Online-Seminar/OSR_2312_LuG_LODAS/OSR_2312_LuG'                  # 77759: Steffen Panzer
+ - '_Online-Seminar/OSR_2401_LuG_LODAS'                               # 77761, 77760: Steffen Panzer
+ - '_Online-Seminar/OSR_2406_LuG_LODAS'                               # 73196, 73435: Steffen Panzer, Klaus Herrmann
+
+   # Kurzbeiträge
+ - '_Kurzbeitrag/OSR_2105_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+ - '_Kurzbeitrag/OSR_2107_KB'                                          # Christian Beck, Markus Burgenmeister
+ - '_Kurzbeitrag/OSR_2111_KB'                                          # Christian Beck, Markus Burgenmeister
+ - '_Kurzbeitrag/OSR_2201_KB'                                          # Christian Beck, Markus Burgenmeister
+ - '_Kurzbeitrag/OSR_2203_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+ - '_Kurzbeitrag/OSR_2206_KB'                                          # Christian Beck, Klaus Herrmann
+ - '_Kurzbeitrag/OSR_2209_KB'                                          # Gunther Schwanke, Klaus Herrmann
+ - '_Kurzbeitrag/OSR_2211_KB'                                          # Gunther Schwanke, Klaus Herrmann
+ - '_Kurzbeitrag/OSR_2212_KB'                                          # Christian Beck, Markus Burgenmeister
+ - '_Kurzbeitrag/OSR_2302_KB'                                          # Christian Beck, Markus Burgenmeister
+ - '_Kurzbeitrag/OSR_2304_KB'                                          # Christian Beck, Klaus Herrmann
+ - '_Kurzbeitrag/OSR_2305_KB'                                          # Gunther Schwanke, Klaus Herrmann
+ - '_Kurzbeitrag/OSR_2308_KB'                                          # Christian Beck, Klaus Herrmann
+ - '_Kurzbeitrag/OSR_2310_KB'                                          # Christian Beck, Markus Burgenmeister
+ - '_Kurzbeitrag/OSR_2312_KB'                                          # Christian Beck, Klaus Herrmann
+ - '_Kurzbeitrag/OSR_2403_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+ - '_Kurzbeitrag/OSR_2404_KB'                                          # Christian Beck, Klaus Herrmann
+ - '_Kurzbeitrag/OSR_2405_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+ - '_Kurzbeitrag/OSR_2407_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+ - '_Kurzbeitrag/OSR_2409_KB'                                          # Gunther Schwanke, Markus Burgenmeister

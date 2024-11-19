@@ -1,0 +1,7 @@
+# -*- coding: utf-8; mode: yaml; indent-tabs-mode: nil; -*-
+%YAML 1.1
+---
+
+projects:
+  - ['classic_comfort/LODAS_classic_comfort', 'LODAS_Gesamt.mp4']
+  - ['classic_comfort/LuG_classic_comfort', 'LuG_Gesamt.mp4']

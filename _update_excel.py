@@ -1,0 +1,39 @@
+# .venv-3.12\Scripts\activate
+# python _update_excel.py
+
+import sys
+
+from src.utils.prefs import Prefs
+from src.utils.trace import Trace
+from src.utils.util  import import_json
+
+from src.helper.excel import update_dictionary_excel
+
+def main():
+    Prefs.init( "_prefs" )
+    Prefs.read("base.yaml")
+
+    path_dictionary = Prefs.get("dictionary.path")
+
+    # used_info = import_json( path_dictionary, "dictionaryUsedSorted-v2.json" )
+    # if used_info:
+    #    update_dictionary_excel( path_dictionary, "Dictionary-DATEV.xlsx", "Dictionary-Update-v2.xlsx", "used v2", used_info)
+
+    # used_info = import_json( path_dictionary, "dictionaryUsedSorted-v3.json" )
+    # if used_info:
+    #     update_dictionary_excel( path_dictionary, "Dictionary-DATEV.xlsx", "Dictionary-Update-v3.xlsx", "used v3", used_info)
+
+    # used_info = import_json( path_dictionary, "dictionaryUsedSorted-v3.json" )
+    # if used_info:
+    #    update_dictionary_excel( path_dictionary, "Dictionary-Update-v2.xlsx", "Dictionary-Update-v2v3.xlsx", "used v3", used_info)
+
+    used_info = import_json( path_dictionary, "dictionaryUsedSorted-sz.json" )
+    if used_info:
+        update_dictionary_excel( path_dictionary, "Dictionary-DATEV.xlsx", "Dictionary-Update-sz.xlsx", "used v3", used_info)
+
+
+if __name__ == "__main__":
+    Trace.set( debug_mode=True, show_timestamp=False )
+    Trace.action(f"Python version {sys.version}")
+
+    main()
