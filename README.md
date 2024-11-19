@@ -1,4 +1,4 @@
-# Whisper - video subtitles
+# video subtitles with Faster-Whisper ...
 
 used packages
 
@@ -20,7 +20,7 @@ used packages
   https://github.com/explosion/spaCy
 ```
 
-models for 'faster-whisper' (SpeechToText)
+supported models for 'faster-whisper' (SpeechToText)
 
 ```console
 
@@ -47,7 +47,7 @@ models for 'faster-whisper' (SpeechToText)
   Systran--faster-distil-whisper-large-v3
 ```
 
-models for 'whisper', 'whisper timestamped' (SpeechToText)
+supported models for 'whisper', 'whisper timestamped' (SpeechToText)
 
 ```console
 
