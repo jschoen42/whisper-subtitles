@@ -9,8 +9,8 @@ used packages
 
   NLP spaCy (3.8.2)
 
-  check spelling: spylls (hunspell)
-   - added >>2000 new german entries
+  check spelling: spylls (hunspell in pure python)
+   - with >>2000 new german entries
 ```
 
 ```console
@@ -20,17 +20,7 @@ used packages
   https://github.com/explosion/spaCy
 ```
 
-models for 'spaCy' (NLP)
-
-```console
- - de_dep_news_trf-3.7.2
- - de_core_news_lg-3.7.2
- - en_core_web_lg-3.7.2
-
- the new converted models 3.8.0 are worse than 3.7.2
-```
-
-mdels for 'faster-whisper' (SpeechToText)
+models for 'faster-whisper' (SpeechToText)
 
 ```console
 
@@ -71,17 +61,28 @@ models for 'whisper', 'whisper timestamped' (SpeechToText)
   openAI large-v3-turbo
 ```
 
+models for 'spaCy' (Sentence detection)
 
+```console
+  de_dep_news_trf-3.7.2
+  de_core_news_lg-3.7.2
+  en_core_web_lg-3.7.2
+
+  the new models 3.8.0 are worse than 3.7.2
+```
 
 ```console
   path to project settings
+    ./_prefs/base.yaml
     ./_prefs/projects.yaml
     ./_prefs/projects_all.yaml
 
-  path to models:
-    ../models/
+  path to models (not included in the repo):
+    ../models/faster-whisper/
+    ../models/whisper/
+    ../models/spacy/
 
-  path to data (excel, videos, audios, ...)
+  path to data (not included in the repo):
     ../data/
 
   e.g. 'Kurzbeitrag September 2024'
