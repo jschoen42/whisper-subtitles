@@ -1,4 +1,4 @@
-# Whisper for DATEV - video subtitles
+# Whisper - video subtitles
 
 project settings
 
@@ -34,7 +34,17 @@ used packages
    - added >>2000 new german entries
 ```
 
-## Models NLP 'spaCy'
+used AI engines
+
+```console
+    https://github.com/SYSTRAN/faster-whisper
+    https://github.com/openai/whisper
+    https://github.com/linto-ai/whisper-timestamped
+
+    https://github.com/explosion/spaCy
+```
+
+models for 'spaCy' (NLP)
 
 ```console
  - de_dep_news_trf-3.7.2
@@ -44,7 +54,7 @@ used packages
  the new converted models 3.8.0 are worse than 3.7.2
 ```
 
-## Models 'faster-whisper'
+mdels for 'faster-whisper' (SpeechToText)
 
 ```console
 
@@ -71,7 +81,7 @@ used packages
     Systran--faster-distil-whisper-large-v3
 ```
 
-## Models 'whisper', 'whisper timestamped'
+models for 'whisper', 'whisper timestamped' (SpeechToText)
 
 ```console
 
@@ -83,12 +93,4 @@ used packages
     openAI large-v2
     openAI large-v3
     openAI large-v3-turbo
-```
-
-```console
-    https://github.com/SYSTRAN/faster-whisper
-    https://github.com/openai/whisper
-    https://github.com/linto-ai/whisper-timestamped
-
-    https://github.com/explosion/spaCy
 ```
