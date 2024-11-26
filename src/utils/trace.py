@@ -1,5 +1,5 @@
 """
-    (c) Jürgen Schoenemeyer, 17.11.2024
+    (c) Jürgen Schoenemeyer, 26.11.2024
 
     PUBLIC:
     remove_colors(text: str) -> str:
@@ -7,6 +7,9 @@
     @timeit(pre_text: str = "", rounds: int = 1)
 
     @timeit("argon2 (20 rounds)", 20) # test with 20 rounds => average duration for a round
+
+    @timeit("ttx => font '{0}'")      # 0 -> args
+    @timeit("ttx => font '{type}'")   # type -> kwargs
 
     class Trace:
 
@@ -94,6 +97,7 @@ class Color(StrEnum):
 def remove_colors(text: str) -> str:
     return re.sub(r"\033\[[0-9;]*m", "", text)
 
+
 # decorator for time measure
 
 def timeit(pre_text: str = "", rounds: int = 1):
@@ -106,11 +110,21 @@ def timeit(pre_text: str = "", rounds: int = 1):
             end_time = time.perf_counter()
             total_time = (end_time - start_time) / rounds
 
+            def replace_args(match):
+                word = match.group(1)
+                if word.isnumeric():
+                    return str(args[int(word)]) # {1} -> args[1]
+                else:
+                    return kwargs.get(word)     # {type} -> kwargs["type"]
+
+            pattern = r"\{(.*?)\}"
+            pretext = re.sub(pattern, replace_args, pre_text)
+
             text = f"{Color.GREEN}{Color.BOLD}{total_time:.3f} sec{Color.RESET}"
-            if pre_text == "":
+            if pretext == "":
                 Trace.time(f"{text}")
             else:
-                Trace.time(f"{pre_text}: {text}")
+                Trace.time(f"{pretext}: {text}")
 
             return result
         return wrapper

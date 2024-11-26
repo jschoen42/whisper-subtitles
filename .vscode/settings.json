@@ -1,30 +1,27 @@
 {
   "explorer.compactFolders": false,
   "editor.fontSize": 12,
-  "editor.fontFamily": "Consolas, 'Courier New', monospace",
   "editor.insertSpaces": true,
   "files.trimTrailingWhitespace": true,
-  "editor.autoClosingQuotes": "never",
-  "editor.autoSurround": "never",
-  "editor.tabSize": 3,
-
+  // "editor.autoClosingQuotes": "never",
+  // "editor.autoSurround": "never",
   "[html]": {
     "editor.formatOnSave": true,
     "editor.tabSize": 2,
-    "editor.formatOnType": true,
+    "editor.formatOnType": true
   },
   "[css]": {
     "editor.formatOnSave": true,
     "editor.tabSize": 2,
-    "editor.formatOnType": true,
+    "editor.formatOnType": true
   },
   "[json]": {
     "editor.formatOnSave": true,
     "editor.tabSize": 2,
-    "editor.fontFamily": "'Ubuntu Mono', Consolas",
-    "editor.fontWeight": 400,
-    "editor.lineHeight": 1.4,
-    "editor.fontSize": 14,
+    "editor._fontFamily": "'Ubuntu Mono', Consolas",
+    "editor._fontWeight": 400,
+    "editor._lineHeight": 1.4,
+    "editor._fontSize": 14,
     "editor.quickSuggestions": {
       "strings": true
     },
@@ -54,12 +51,12 @@
   },
   "pylint.args": [
     // Convention
-    // "--disable=C0103", // invalid-name
+    "--disable=C0103", // invalid-name
     "--disable=C0114", // missing-module-docstring
     "--disable=C0115", // missing-class-docstring
     "--disable=C0116", // missing-function-docstring
-    // "--disable=C0200", // consider-using-enumerate
-    // "--disable=C0206", // consider-using-dict-items
+    "--disable=C0200", // consider-using-enumerate
+    "--disable=C0206", // consider-using-dict-items
     "--disable=C0207", // use-maxsplit-arg
     "--disable=C0301", // line-too-long
     "--disable=C0302", // too-many-lines
@@ -79,7 +76,7 @@
     "--disable=W0105", // pointless-string-statement
     "--disable=W0511", // fixme (TODO)
     "--disable=W0603", // global-statement
-    // "--disable=W0611", // unused-import
+    "--disable=W0611", // unused-import
     "--disable=W0613", // unused-argument
     "--disable=W0621", // redefined-outer-name
     "--disable=W0622", // redefined-builtin

@@ -1,0 +1,29 @@
+[project]
+name = "whisper-subtitles"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12, <3.13"
+dependencies = [
+    "openai-whisper>=20240930",
+    "spacy-curated-transformers<1",
+    "spacy<3.9",
+    "spylls>=0.1.7",
+    "torch<2.5",
+    "whisper-timestamped>=1.15.8",
+    "tzdata>=2024.2",
+    "pyyaml>=6.0.2",
+    "arrow>=1.3.0",
+    "openpyxl>=3.1.5",
+    "openpyxl-stubs>=0.1.25",
+    "webvtt-py>=0.5.1",
+    "pymediainfo>=6.1.0",
+    "av>=13.1.0",
+    "ctranslate2<5",
+    "huggingface-hub>=0.26.2",
+    "tokenizers<1",
+    "onnxruntime<2",
+]
+
+[tool.uv]
+cache-dir = "G:/.uv_cache"

@@ -1,0 +1,122 @@
+##################   uv   ######################
+
+uv self update
+
+uv init -p 3.12
+
+├── .python-version
+├── README.md
+├── hello.py
+└── pyproject.toml
+
+myproject.toml:
+ - add path to uv cache dir, if not on system drive
+
+[tool.uv]
+cache-dir = "G:/.uv_cache"
+
+-------------------- uv venv -------------------
+
+uv venv .venv -p 3.12
+.venv\Scripts\activate
+deactivate
+
+├── .venv
+│   ├── bin
+│   ├── lib
+│   └── pyvenv.cfg
+├── .python-version
+├── README.md
+├── hello.py
+├── pyproject.toml
+└── uv.lock
+
+---------- uv dependencies -> uv pip  -----------
+
+uv pip install -r requirements.txt
+
+----- uv dependencies -> uv add, uv remove  -----
+
+uv add result orjson arrow xmltodict dicttoxml
+uv remove ...
+
+uv add torch<2.5
+uv add openai-whisper
+uv add whisper-timestamped
+uv add spylls spacy<3.9 spacy_curated_transformers<1
+
+uv add tzdata PyYAML arrow
+uv add openpyxl openpyxl-stubs
+uv add webvtt-py pymediainfo
+
+uv add av<13 ctranslate2<5 huggingface_hub tokenizers<1 onnxruntime<2
+
+------------------ helper: uv -------------------
+
+uv sync
+
+uv run
+uv lock
+
+uv pip list
+uv pip list --outdated
+
+uv pip tree
+
+################### pip - venv ####################
+
+python.exe -m venv .venv
+.venv\Scripts\activate
+
+------------------- Powershell --------------------
+
+& 'C:\Program Files\_prog\Python311\python.exe' -m venv .venv-3.11
+.venv-3.11\Scripts\activate
+
+& 'C:\Program Files\_prog\Python312\python.exe' -m venv .venv-3.12
+.venv-3.12\Scripts\activate
+
+& 'C:\Program Files\_prog\Python313\python.exe' -m venv .venv-3.13
+.venv-3.13\Scripts\activate
+
+############### pip - dependencies  ###############
+
+python.exe -m pip install --upgrade pip
+pip install pip-tools
+pip install setuptools -U
+pip-compile -v requirements.in
+
+pip install -r requirements.txt
+
+pip list --outdated
+
+####################################################
+
+pip install pip-licenses
+pip-licenses > _licenses.txt
+pip uninstall pip-licenses
+
+################# start with py ####################
+
+py -3.10
+py -3.11
+py -3.12
+py -3.13
+
+###################### git #########################
+
+git init
+git remote add origin https://github.com/ ...
+
+git add .
+git commit -m "..."
+git push -u origin main
+
+git log --oneline origin/main
+git log --graph --pretty=format:'%C(auto)%h%d (%ci) %s
+
+git fetch origin
+git log origin/main
+git diff --name-only origin/main
+git diff origin/main -- _prefs/base.yaml
+git diff origin/main
