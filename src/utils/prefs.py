@@ -1,5 +1,5 @@
 """
-    (c) Jürgen Schoenemeyer, 02.11.2024
+    (c) Jürgen Schoenemeyer, 10.11.2024
 
     PUBLIC:
     class Prefs:
@@ -10,13 +10,16 @@
     merge_dicts(dict1: dict, dict2: dict) -> dict
     build_tree(tree: list, in_key: str, value: str) -> dict
 """
+import sys
 
 from typing import Any
 from pathlib import Path
 
 import yaml
 
-from src.utils.trace import Trace, BASE_PATH
+from src.utils.trace import Trace
+
+BASE_PATH = Path(sys.argv[0]).parent
 
 class Prefs:
     pref_path   = BASE_PATH / "prefs"

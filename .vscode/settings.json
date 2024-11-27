@@ -1,10 +1,11 @@
 {
   "explorer.compactFolders": false,
   "editor.fontSize": 12,
+  "editor._fontFamily": "Consolas, 'Courier New', monospace",
   "editor.insertSpaces": true,
   "files.trimTrailingWhitespace": true,
-  // "editor.autoClosingQuotes": "never",
-  // "editor.autoSurround": "never",
+  "editor._autoClosingQuotes": "never",
+  "editor._autoSurround": "never",
   "[html]": {
     "editor.formatOnSave": true,
     "editor.tabSize": 2,

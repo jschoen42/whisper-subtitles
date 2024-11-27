@@ -51,6 +51,12 @@ uv add webvtt-py pymediainfo
 
 uv add av<13 ctranslate2<5 huggingface_hub tokenizers<1 onnxruntime<2
 
+------------------ licenses  -------------------
+
+uv add pip-licenses
+pip-licenses > __licenses.txt
+uv remove pip-licenses
+
 ------------------ helper: uv -------------------
 
 uv sync
@@ -93,7 +99,7 @@ pip list --outdated
 ####################################################
 
 pip install pip-licenses
-pip-licenses > _licenses.txt
+pip-licenses > __licenses.txt
 pip uninstall pip-licenses
 
 ################# start with py ####################
