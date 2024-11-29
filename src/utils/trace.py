@@ -1,5 +1,5 @@
 """
-    (c) Jürgen Schoenemeyer, 26.11.2024
+    (c) Jürgen Schoenemeyer, 29.11.2024
 
     PUBLIC:
     remove_colors(text: str) -> str:
@@ -155,6 +155,8 @@ class Trace:
 
     default_base = BASE_PATH.resolve()
     default_base_folder = str(default_base).replace("\\", "/")
+
+    # sys.stdout.encoding = "utf-8"
 
     settings = {
         "appl_folder":    default_base_folder + "/",
@@ -323,10 +325,22 @@ class Trace:
             else:
                 cls.messages.append(remove_colors(text_no_tabs))
 
-        if cls.settings["color"]:
-            print(text_no_tabs)
+        # https://docs.python.org/3/library/io.html#io.IOBase.isatty
+
+        def is_redirected(stream):
+            return not hasattr(stream, "isatty") or not stream.isatty()
+
+        if not cls.settings["color"] or is_redirected(sys.stdout):
+            text_no_tabs = remove_colors(text_no_tabs)
+
+        # https://docs.python.org/3/library/sys.html#sys.displayhook
+
+        bytes = (text_no_tabs + "\n").encode("utf-8", "backslashreplace")
+        if hasattr(sys.stdout, "buffer"):
+            sys.stdout.buffer.write(bytes)
         else:
-            print(remove_colors(text_no_tabs))
+            text = bytes.decode("utf-8", "strict")
+            sys.stdout.write(text)
 
     @classmethod
     def __get_time(cls) -> str:
@@ -393,4 +407,3 @@ class ProcessLog:
 
     def get(self):
         return self.log
-
