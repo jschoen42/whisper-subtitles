@@ -50,6 +50,10 @@
       "other": "on"
     }
   },
+  "_errorLens.codeLensEnabled": true,
+  "errorLens.delay": 2000,
+  "errorLens.followCursor": "activeLine",
+
   "pylint.args": [
     // Convention
     "--disable=C0103", // invalid-name

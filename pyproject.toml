@@ -3,7 +3,7 @@ name = "whisper-subtitles"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.12, <3.13"
+requires-python = ">=3.12"
 dependencies = [
     "openai-whisper>=20240930",
     "spacy-curated-transformers<1",
@@ -24,6 +24,3 @@ dependencies = [
     "tokenizers<1",
     "onnxruntime<2",
 ]
-
-[tool.uv]
-cache-dir = "G:/.uv_cache"

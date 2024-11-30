@@ -9,11 +9,16 @@ uv init -p 3.12
 ├── hello.py
 └── pyproject.toml
 
-myproject.toml:
- - add path to uv cache dir, if not on system drive
+------------- define cache drive ---------------
 
-[tool.uv]
-cache-dir = "G:/.uv_cache"
+"warning: Failed to hardlink files" =>
+
+sysdm.cpl
+ -> Tab "Advanced"
+ -> "Environment Variables"
+ -> "System variables"
+
+UV_CACHE_DIR -> G:\.uv_cache
 
 -------------------- uv venv -------------------
 
