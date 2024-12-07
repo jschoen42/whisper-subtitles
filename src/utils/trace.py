@@ -1,23 +1,28 @@
 """
-    (c) Jürgen Schoenemeyer, 29.11.2024
+    (c) Jürgen Schoenemeyer, 07.12.2024
 
     PUBLIC:
     remove_colors(text: str) -> str:
 
-    @timeit(pre_text: str = "", rounds: int = 1)
+    @duration(pre_text: str = "", rounds: int = 1)
 
-    @timeit("argon2 (20 rounds)", 20) # test with 20 rounds => average duration for a round
+    @duration("argon2 (20 rounds)", 20) # test with 20 rounds => average duration for a round
 
-    @timeit("ttx => font '{0}'")      # 0 -> args
-    @timeit("ttx => font '{type}'")   # type -> kwargs
+    @duration("ttx => font '{0}'")      # 0    -> args
+    @duration("ttx => font '{type}'")   # type -> kwargs
 
     class Trace:
-
-        Trace.set(appl_folder="/trace/", debug_mode=False, reduced_mode=False, show_timestamp=True, time_zone="")
+        Trace.set(debug_mode=True)
+        Trace.set(reduced_mode=True)
         Trace.set(color=False)
+        Trace.set(timezone=False)
+        Trace.set(timezone="Europe/Berlin") # "UTC", "America/New_York"
 
+        Trace.set( appl_folder="/trace/" )
         Trace.file_init(["action", "result", "warning", "error"], csv=False) # csv with TAB instead of comma
         Trace.file_save("./logs", "testTrace")
+
+        Trace.redirect(function) # -> e.g. qDebug (PySide6)
 
         Trace.action()
         Trace.result()
@@ -45,7 +50,9 @@ import os
 import re
 import inspect
 import time
+import importlib.util
 
+from typing import Callable
 from enum import StrEnum
 from pathlib import Path
 from datetime import datetime
@@ -61,9 +68,6 @@ else:
     import tty
     import termios
 
-# force tomezone available, if "tzdata" is installed
-# DEFAULT_TIMEZONE = "UTC"
-DEFAULT_TIMEZONE = "Europe/Berlin"
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 
@@ -96,39 +100,6 @@ class Color(StrEnum):
 
 def remove_colors(text: str) -> str:
     return re.sub(r"\033\[[0-9;]*m", "", text)
-
-
-# decorator for time measure
-
-def timeit(pre_text: str = "", rounds: int = 1):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            start_time = time.perf_counter()
-
-            result = func(*args, **kwargs)
-
-            end_time = time.perf_counter()
-            total_time = (end_time - start_time) / rounds
-
-            def replace_args(match):
-                word = match.group(1)
-                if word.isnumeric():
-                    return str(args[int(word)]) # {1} -> args[1]
-                else:
-                    return kwargs.get(word)     # {type} -> kwargs["type"]
-
-            pattern = r"\{(.*?)\}"
-            pretext = re.sub(pattern, replace_args, pre_text)
-
-            text = f"{Color.GREEN}{Color.BOLD}{total_time:.3f} sec{Color.RESET}"
-            if pretext == "":
-                Trace.time(f"{text}")
-            else:
-                Trace.time(f"{pretext}: {text}")
-
-            return result
-        return wrapper
-    return decorator
 
 pattern = {
     "clear":     "     ", # only internal
@@ -167,20 +138,43 @@ class Trace:
 
         "show_timestamp": True,
         "show_caller":    True,
-        "time_zone":      DEFAULT_TIMEZONE,
+        "timezone":       True,
     }
 
     pattern:list[str]  = []
     messages:list[str] = []
     csv = False
+    output = None
 
     @classmethod
     def set(cls, **kwargs) -> None:
         for key, value in kwargs.items():
             if key in cls.settings:
                 cls.settings[key] = value
+
+                if key == "timezone" and isinstance(value, str):
+
+                    # tzdata installed ?
+
+                    if importlib.util.find_spec("tzdata") is None:
+                        print( f"{pattern["warning"]} install 'tzdata' for named timezones")
+                        cls.settings[key] = True
+                    else:
+
+                        # timezone valid ?
+
+                        try:
+                            _ = ZoneInfo(value)
+                        except ZoneInfoNotFoundError:
+                            print( f"{pattern['error']} tzdata '{value}' unknown timezone")
+                            cls.settings[key] = True
+
             else:
                 print(f"trace settings: unknown parameter {key}")
+
+    @classmethod
+    def redirect(cls, output: Callable) -> None:
+        cls.output = output
 
     @classmethod
     def file_init(cls, pattern_list: None | list = None, csv: bool = False) -> None:
@@ -199,11 +193,7 @@ class Trace:
         for message in Trace.messages:
             text += message + "\n"
 
-        try:
-            timezone = ZoneInfo(cls.settings["time_zone"])
-            curr_time = datetime.now().astimezone(timezone).strftime("%Y.%d.%m • %H-%M-%S")
-        except ZoneInfoNotFoundError:
-            curr_time = datetime.now().strftime("%Y.%d.%m • %H-%M-%S") # "tzdata" not installed
+        curr_time = cls.__get_time_timezone(cls.settings["timezone"]).replace(":", "-")
 
         try:
             if not trace_path.is_dir():
@@ -310,53 +300,48 @@ class Trace:
             except KeyboardInterrupt:
                 sys.exit()
 
+
     @classmethod
-    def __show_message(cls, file_output: bool, pre: str, message: str, *optional: any) -> None:
-        extra = ""
-        for opt in optional:
-            extra += " > " + str(opt)
+    def __check_file_output(cls) -> bool:
+        trace_type = inspect.currentframe().f_back.f_code.co_name
+        return trace_type in list(cls.pattern)
 
-        text = f"{pre}{message}{extra}"
-        text_no_tabs = text.replace("\t", " ")
+    @classmethod
+    def __get_time_timezone(cls, tz: bool | str) -> str:
+        if tz is False:
+            return datetime.now().strftime("%H:%M:%S.%f")[:-3]
 
-        if file_output:
-            if cls.csv:
-                cls.messages.append(remove_colors(text))
-            else:
-                cls.messages.append(remove_colors(text_no_tabs))
+        elif tz is True:
+            tz = datetime.now().astimezone()
+            return tz.strftime("%H:%M:%S.%f")[:-3] + tz.strftime("%z")
 
-        # https://docs.python.org/3/library/io.html#io.IOBase.isatty
-
-        def is_redirected(stream):
-            return not hasattr(stream, "isatty") or not stream.isatty()
-
-        if not cls.settings["color"] or is_redirected(sys.stdout):
-            text_no_tabs = remove_colors(text_no_tabs)
-
-        # https://docs.python.org/3/library/sys.html#sys.displayhook
-
-        bytes = (text_no_tabs + "\n").encode("utf-8", "backslashreplace")
-        if hasattr(sys.stdout, "buffer"):
-            sys.stdout.buffer.write(bytes)
         else:
-            text = bytes.decode("utf-8", "strict")
-            sys.stdout.write(text)
-
-    @classmethod
-    def __get_time(cls) -> str:
-        if cls.settings["show_timestamp"]:
             try:
-                timezone = ZoneInfo(cls.settings["time_zone"])
-                curr_time = datetime.now().astimezone(timezone).strftime("%H:%M:%S.%f")[:-3]
-                return f"{Color.BLUE}{curr_time}{Color.RESET}\t"
+                timezone = ZoneInfo(tz)
+                tz = datetime.now().astimezone(timezone)
+                return tz.strftime("%H:%M:%S.%f")[:-3] + tz.strftime("%z")
 
             # "tzdata" not installed
 
             except ZoneInfoNotFoundError:
-                curr_time = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-                return f"{Color.BLACK}{curr_time}{Color.RESET}\t"
+                tz = datetime.now().astimezone()
+                return tz.strftime("%H:%M:%S.%f")[:-3] + tz.strftime("%z")
+
+    @classmethod
+    def __get_time(cls) -> str:
+        if cls.settings["show_timestamp"]:
+            curr_time = cls.__get_time_timezone(cls.settings["timezone"])
+            return f"{Color.BLUE}{curr_time}{Color.RESET}\t"
 
         return ""
+
+    @staticmethod
+    def __get_pattern() -> str:
+        trace_type = inspect.currentframe().f_back.f_code.co_name
+        if trace_type in pattern:
+            return pattern[trace_type]
+        else:
+            return pattern["clear"]
 
     @classmethod
     def __get_caller(cls) -> str:
@@ -384,17 +369,73 @@ class Trace:
         return f"\t{Color.BLUE}[{text}]{Color.RESET}\t"
 
     @classmethod
-    def __check_file_output(cls) -> bool:
-        trace_type = inspect.currentframe().f_back.f_code.co_name
-        return trace_type in list(cls.pattern)
+    def __show_message(cls, file_output: bool, pre: str, message: str, *optional: any) -> None:
+        extra = ""
+        for opt in optional:
+            extra += " > " + str(opt)
 
-    @staticmethod
-    def __get_pattern() -> str:
-        trace_type = inspect.currentframe().f_back.f_code.co_name
-        if trace_type in pattern:
-            return pattern[trace_type]
+        text = f"{pre}{message}{extra}"
+        text_no_tabs = text.replace("\t", " ")
+
+        if cls.output is not None:
+            cls.output(text_no_tabs)
+            return
+
+        if file_output:
+            if cls.csv:
+                cls.messages.append(remove_colors(text))
+            else:
+                cls.messages.append(remove_colors(text_no_tabs))
+
+        # https://docs.python.org/3/library/io.html#io.IOBase.isatty
+
+        def is_redirected(stream):
+            return not hasattr(stream, "isatty") or not stream.isatty()
+
+        if not cls.settings["color"] or is_redirected(sys.stdout):
+            text_no_tabs = remove_colors(text_no_tabs)
+
+        # https://docs.python.org/3/library/sys.html#sys.displayhook
+
+        bytes = (text_no_tabs + "\n").encode("utf-8", "backslashreplace")
+        if hasattr(sys.stdout, "buffer"):
+            sys.stdout.buffer.write(bytes)
+            sys.stdout.flush()
         else:
-            return pattern["clear"]
+            text = bytes.decode("utf-8", "strict")
+            sys.stdout.write(text)
+
+# decorator for time measure
+
+def duration(pre_text: str = "", rounds: int = 1):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            start_time = time.perf_counter()
+
+            result = func(*args, **kwargs)
+
+            end_time = time.perf_counter()
+            total_time = (end_time - start_time) / rounds
+
+            def replace_args(match):
+                word = match.group(1)
+                if word.isnumeric():
+                    return str(args[int(word)]) # {1} -> args[1]
+                else:
+                    return kwargs.get(word)     # {type} -> kwargs["type"]
+
+            pattern = r"\{(.*?)\}"
+            pretext = re.sub(pattern, replace_args, pre_text)
+
+            text = f"{Color.GREEN}{Color.BOLD}{total_time:.3f} sec{Color.RESET}"
+            if pretext == "":
+                Trace.time(f"{text}")
+            else:
+                Trace.time(f"{pretext}: {text}")
+
+            return result
+        return wrapper
+    return decorator
 
 #######################
 

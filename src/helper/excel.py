@@ -11,7 +11,7 @@ from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import NamedStyle, Font, Alignment, PatternFill
 
-from src.utils.trace import Trace, timeit
+from src.utils.trace import Trace, duration
 from src.utils.file  import check_excel_file_exists, get_modification_timestamp
 
 from src.helper.captions import seconds_to_timecode_excel
@@ -438,7 +438,7 @@ def check_quotes(wb_name: str, word: str, line_number: int, function_name: str) 
         Trace.error(f"{function_name} '{wb_name}': line {line_number} quotes missing: '{word}'")
         return True, ""
 
-@timeit("Custom text replacements loaded")
+@duration("Custom text replacements loaded")
 def import_dictionary_excel(pathname: str, filename: str) -> None | tuple[ dict[str,list[str|int]], list[str], float ]:
     filepath = Path(pathname, filename)
 

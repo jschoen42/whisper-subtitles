@@ -16,7 +16,7 @@ from importlib.metadata import version
 import spacy
 
 from src.utils.prefs import Prefs
-from src.utils.trace import Trace, timeit, BASE_PATH
+from src.utils.trace import Trace, duration, BASE_PATH
 
 # https://spacy.io/models/de
 
@@ -37,7 +37,7 @@ if spacy_version == "spacy_37":
 #
 ###########################################################################
 
-@timeit("spacy - loading model")
+@duration("spacy - loading model")
 def init_spacy(language: str) -> None:
     global nlp
 
@@ -65,7 +65,7 @@ def get_modelname_spacy(language: str) -> str:
 #
 ###########################################################################
 
-@timeit("spacy - analyse sentences")
+@duration("spacy - analyse sentences")
 def analyse_sentences_spacy(text: str, language: str = "de-DE") -> list:
     # global nlp
 

@@ -1,5 +1,5 @@
 """
-    (c) Jürgen Schoenemeyer, 02.11.2024
+    (c) Jürgen Schoenemeyer, 06.12.2024
 
     PUBLIC:
     get_modification_timestamp(filename: Path | str) -> float
@@ -19,24 +19,22 @@
     make_dir(in_path)
     beautify_path( path: Path | str ) -> str
 
-    get_trace_path(filepath: str) -> str
+    get_trace_path(filepath: Path | str) -> str
     get_files_in_folder( path: Path ) -> list
     get_folders_in_folder( path: Path ) -> list
     get_save_filename( path, stem, suffix ) -> str
     export_binary_file(filepath: Path | str, filename: str, data: bytes, _timestamp: int=0, create_folder: bool=False) -> None
     export_file(filepath: Path|str, filename: str, text: str, in_type: str = None, timestamp: int=0, create_folder: bool=False, encoding: str ="utf-8", overwrite: bool=True) -> str
 
-    get_next_filename(path: str) -> str
+    get_filename_unique(dirpath: Path, filename: str) -> str
     find_matching_file(path_name: str) -> bool | str
+    find_matching_file_path(dirname: Path, filename: str) -> Path | bool
     get_valid_filename(name: str) -> str
     get_file_infos(path: Path | str, filename: str, _in_type: str) -> None | dict
 
     copy_my_file(source: str, dest: str, _show_updated: bool) -> bool
 
     convert_datetime( time_string: str ) -> int
-
-    PRIVAT:
-    _increment_filename(filename_stem: str) -> str:
 
 """
 
@@ -83,6 +81,10 @@ def check_file_exists(filepath: str, filename: str) -> bool: # case sensitive
     filepath = path.parent
     filename = path.name
 
+    if not filepath.exists():
+        Trace.error(f"directory missing '{filepath}'")
+        return False
+
     try:
         filenames = os.listdir(filepath)
     except OSError as err:
@@ -103,21 +105,25 @@ def check_excel_file_exists(filename: str) -> bool:
 
 # dir listing
 
-def list_files(path: str, extensions: list) -> list:
-    ret: list = []
-
+def list_files(path: str, extensions: list) -> tuple[list, list]:
+    files: list = []
+    dirs = []
     try:
         for filename in os.listdir(path):
-            if os.path.isfile(os.path.join(path, filename)):
+            filepath = os.path.join(path, filename)
+
+            if os.path.isfile(filepath):
                 for extention in extensions:
                     if "." + extention in filename:
-                        ret.append(filename)
+                        files.append(filename)
                         break
+            else:
+                dirs.append(filename)
 
     except OSError as err:
         Trace.error(f"{err}")
 
-    return ret
+    return files, dirs
 
 def list_directories(path: str) -> list:
     ret: list = []
@@ -198,14 +204,16 @@ def beautify_path( path: Path | str ) -> str:
 #
 # D:\Projekte_P4\Articulate-Storyline\WebService1\_workdir\jobs\c4c3dda9-0e58-49dd-86d0-151fe2267edb\tmp\media\image\resultslideVectorText.png -> media\image\resultslideVectorText.png
 #
-def get_trace_path(filepath: str) -> str:
+def get_trace_path(filepath: Path | str) -> str:
+
     tmp_path = os.path.normpath(filepath).replace("\\", "/")
 
     if "/_workdir/" in tmp_path:
         trace_path = "./" + tmp_path.split("/tmp/")[1]
     else:
-        trace_path = os.path.normpath(filepath).replace("\\", "/")
+        trace_path = tmp_path
 
+    # Trace.info(f"trace_path: {trace_path}")
     return trace_path
 
 
@@ -254,7 +262,7 @@ def export_binary_file(filepath: Path | str, filename: str, data: bytes, _timest
         binary_file.write(data)
 
 
-def export_file(filepath: Path|str, filename: str, text: str, in_type: str = None, timestamp: float=0, create_new_folder: bool=False, encoding: str ="utf-8", overwrite: bool=True) -> str:
+def export_file(filepath: Path|str, filename: str, text: str, in_type: str = None, timestamp: float=0, create_new_folder: bool=True, encoding: str ="utf-8", overwrite: bool=True) -> str:
     trace_export_path_folder = get_trace_path(Path(filepath))
     trace_export_path        = get_trace_path(Path(filepath, filename))
 
@@ -312,19 +320,26 @@ def export_file(filepath: Path|str, filename: str, text: str, in_type: str = Non
             if timestamp != 0:
                 set_modification_timestamp(Path(filepath, my_filename), timestamp)
 
-            if in_type:
-                Trace.update( f"{in_type} changed '{trace_export_path}'")
+            if ref_text == "":
+                if in_type:
+                    Trace.update( f"'{in_type}' created '{trace_export_path}'")
+                else:
+                    Trace.update( f"created '{trace_export_path}'")
             else:
-                Trace.update( f"changed '{trace_export_path}'")
+                if in_type:
+                    Trace.update( f"'{in_type}' changed '{trace_export_path}'")
+                else:
+                    Trace.update( f"changed '{trace_export_path}'")
 
-            return my_filename
+                return my_filename
 
         except OSError as err:
             error = str(err).split(":")[0]
             Trace.error(f"{error} '{trace_export_path}'")
             return None
 
-def get_next_filename(path: str) -> str:
+"""
+def get_filename_unique(path: str) -> str:
     tmp = path.split(".")
     ext = tmp.pop()
     dest2 = ".".join(tmp)
@@ -340,6 +355,19 @@ def get_next_filename(path: str) -> str:
 
     dest = dest2 + copy + "." + ext
     return dest
+"""
+
+def get_filename_unique(dirpath: Path, filename: str) -> str:
+    suffix = Path(filename).suffix
+    stem = Path(filename).stem
+
+    number = 1
+    append = ""
+    while os.path.isfile(dirpath / (stem + append + suffix)):
+        number += 1
+        append = "_[" + str(number) + "]"
+
+    return stem + append + suffix
 
 def find_matching_file(path_name: str) -> bool | str:
     s = glob.glob(path_name)
@@ -354,6 +382,22 @@ def find_matching_file(path_name: str) -> bool | str:
         return False
 
     return s[0].replace("\\", "/")
+
+def find_matching_file_path(dirpath: Path, filename: str) -> Path | bool:
+    filepath = str(dirpath / filename)
+
+    s = glob.glob( filepath )
+
+    if len(s) == 0:
+        Trace.error(f"file not found: {filepath}")
+        return False
+
+    if len(s) > 1:
+        Trace.error(f"file not unique: {filepath}")
+        Trace.error(s)
+        return False
+
+    return Path(s[0].replace("\\", "/"))
 
 def get_valid_filename(name: str) -> str:
     s = str(name).strip().replace(" ", "_")

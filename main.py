@@ -338,9 +338,9 @@ def main():
 
 
 if __name__ == "__main__":
-    Trace.set( debug_mode=False, show_timestamp=True )
+    Trace.set( debug_mode=False, show_timestamp=True, timezone=True )
     Trace.action(f"Python version {sys.version}")
-    Trace.action(f"base path: '{BASE_PATH}'")
+    # Trace.action(f"base path: '{BASE_PATH}'")
 
     try:
         main()

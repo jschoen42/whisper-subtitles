@@ -86,4 +86,7 @@
     "--disable=W0621", // redefined-outer-name
     "--disable=W0622", // redefined-builtin
   ],
+  "markdownlint.config": {
+    "MD041": false
+  }
 }

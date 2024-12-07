@@ -4,7 +4,7 @@ from pathlib import Path
 
 from spylls.hunspell import Dictionary
 
-from src.utils.trace import Trace, timeit
+from src.utils.trace import Trace, duration
 from src.helper.excel import import_hunspell_PreCheck_excel
 
 # ../data/_hunspell/de-DE.dic
@@ -16,7 +16,7 @@ global_special_dot_words:       None | list = None   # 'Abs.', 'bspw.', 'bzw.', 
 global_precheck_single_words:   None | list = None   # 'AAG', 'AfA', 'AG' ... 'www.datev.de' ... 'und/oder' ...
 global_precheck_multiple_words: None | list = None   # ['Corporate', 'Design'], ['summa', 'summarum'], ['Stock', 'Appreciation', 'Rights'], ... (ws 'multiple')
 
-@timeit("Hunspell dictionary loaded")
+@duration("Hunspell dictionary loaded")
 def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "de-DE") -> None:
     global global_dictionary_data
     global global_special_dot_words

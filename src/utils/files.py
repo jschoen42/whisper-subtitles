@@ -1,5 +1,5 @@
 """
-    (c) Jürgen Schoenemeyer, 25.11.2024
+    (c) Jürgen Schoenemeyer, 06.12.2024
 
     error channel -> rustedpy/result
 
@@ -7,8 +7,10 @@
     result = get_timestamp(filepath: Path | str) -> Result[float, str]:
     result = set_timestamp(filepath: Path | str, timestamp: float) -> Result[(), str]:
 
+    result = get_files_dirs(path: str, extensions: list) -> Result[tuple[list, list], str]:
+
     result = read_file(filepath: Path | str, encoding: str="utf-8" ) -> Result[any, str]
-    result = write_file(filepath: Path | str, data: any, encoding: str="utf-8", create_dir: bool = True) -> Result[str, str]:
+    result = write_file(filepath: Path | str, data: any, encoding: str="utf-8", create_dir: bool = True, show_message: bool=True) -> Result[str, str]:
 
     from result import is_err, is_ok
 
@@ -28,22 +30,26 @@ import os
 import sys
 
 from datetime import datetime
+from pathlib import Path
 
 from xml.dom import minidom
 import xml.etree.ElementTree as ET
 
-if "xmltodict" in sys.modules:
+try:
     import xmltodict
+except ModuleNotFoundError:
+    pass
 
-if "dicttoxml" in sys.modules:
-    from dicttoxml import dicttoxml
+try:
+    import dicttoxml
+except ModuleNotFoundError:
+    pass
 
-if "orjson" in sys.modules:
-    import orjson # Rust library optional
-else:
+try:
+    import orjson
+except ModuleNotFoundError:
     import json
 
-from pathlib import Path
 from result import Result, Ok, Err
 
 from src.utils.trace import Trace
@@ -103,6 +109,28 @@ def set_timestamp(filepath: Path | str, timestamp: int|float) -> Result[str, str
 
     return Ok("")
 
+# dir listing -> list of files and dirs
+
+def get_files_dirs(path: str, extensions: list) -> Result[tuple[list, list], str]:
+    files: list = []
+    dirs = []
+    try:
+        for filename in os.listdir(path):
+            filepath = os.path.join(path, filename)
+
+            if os.path.isfile(filepath):
+                for extention in extensions:
+                    if "." + extention in filename:
+                        files.append(filename)
+                        break
+            else:
+                dirs.append(filename)
+
+    except OSError as err:
+        Trace.error(f"{err}")
+        return Err(f"{err}")
+
+    return Ok(files, dirs)
 
 def read_file(filepath: Path | str, encoding: str="utf-8") -> Result[any, str]:
     """
@@ -197,7 +225,7 @@ def read_file(filepath: Path | str, encoding: str="utf-8") -> Result[any, str]:
         return Ok(data)
 
 
-def write_file(filepath: Path | str, data: any, filename_timestamp: bool = False, timestamp: int|float = 0, encoding: str="utf-8", newline: str="\n" , create_dir: bool = True) -> Result[str, str]:
+def write_file(filepath: Path | str, data: any, filename_timestamp: bool = False, timestamp: int|float = 0, encoding: str="utf-8", newline: str="\n", create_dir: bool = True, show_message: bool=True) -> Result[str, str]:
     """
     ### write file (text, json, xml)
 
@@ -253,15 +281,24 @@ def write_file(filepath: Path | str, data: any, filename_timestamp: bool = False
 
         # json -> json
 
-        if isinstance(data, dict) or isinstance(data, list):
-            if "orjson" in sys.modules:
-                text = orjson.dumps(data, option=orjson.OPT_INDENT_2).decode("utf-8")
-            else:
-                text = json.dumps(data, indent=2, ensure_ascii=False)
+        def serialize_sets(obj):
+            if isinstance(obj, set):
+                return sorted(obj)
 
+            return obj
+
+        if isinstance(data, dict) or isinstance(data, list):
+            try:
+                if "orjson" in sys.modules:
+                    text = orjson.dumps(data, default=serialize_sets, option=orjson.OPT_INDENT_2).decode("utf-8")
+                else:
+                    text = json.dumps(data, default=serialize_sets, indent=2, ensure_ascii=False)
+            except TypeError as err:
+                Trace.error(f"TypeError: {err}")
+                return Err(err)
         else:
             err = f"Type '{type(data)}' is not supported for '{suffix}'"
-            Trace.debug(err)
+            Trace.error(err)
             return Err(err)
 
     elif suffix == ".xml":
@@ -325,7 +362,8 @@ def write_file(filepath: Path | str, data: any, filename_timestamp: bool = False
         except OSError as err:
             return Err(f"{err}")
 
-        Trace.update(f"'{filepath}' updated")
+        if show_message:
+            Trace.update(f"'{filepath}' updated")
 
     else:
         try:
@@ -334,7 +372,9 @@ def write_file(filepath: Path | str, data: any, filename_timestamp: bool = False
         except OSError as err:
             Trace.debug(f"{err}")
             return Err(f"{err}")
-        Trace.update(f"'{filepath}' created")
+
+        if show_message:
+            Trace.update(f"'{filepath}' created")
 
     # 4: optional: set file timestamp
 

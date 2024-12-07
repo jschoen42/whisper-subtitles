@@ -11,7 +11,7 @@ import warnings
 import stanza
 
 # from src.utils.prefs import Prefs
-from src.utils.trace import Trace, timeit
+from src.utils.trace import Trace, duration
 
 
 text = " Beginnen wir mit einer Entscheidung des Bundesarbeitsgerichts vom 23. Mai 2024. Ist ein Unternehmen gezwungen, innerhalb eines kurzen Zeitraums mehrere Mitarbeiter zu kündigen, dann ist er verpflichtet, ab einer bestimmten Anzahl von zu kündigenden Mitarbeitern bei der Agentur für Arbeit eine sogenannte Massenentlassungsanzeige nach § 17 Kündigungsschutzgesetz zu erstatten."
@@ -22,12 +22,12 @@ warnings.simplefilter("ignore", FutureWarning)
 
 MODEL_PATH = "../models/stanza"
 
-@timeit("Stanza: loading")
+@duration("Stanza: loading")
 def init_stanza(language: str):
     Trace.info(f"loading stanza '{language}'")
     return stanza.Pipeline(lang=language, verbose=False, dir=MODEL_PATH, download_method=None, use_gpu=False)
 
-@timeit("Stanza: analyse")
+@duration("Stanza: analyse")
 def analyse( nlp, text ):
     return nlp(text)
 

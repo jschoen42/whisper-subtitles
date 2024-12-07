@@ -20,6 +20,8 @@ sysdm.cpl
 
 UV_CACHE_DIR -> G:\.uv_cache
 
+uv cache dir
+
 -------------------- uv venv -------------------
 
 uv venv .venv -p 3.12
@@ -62,8 +64,16 @@ uv add pip-licenses
 pip-licenses > __licenses.txt
 uv remove pip-licenses
 
+------------------ install Python -------------------
+
+uv python list
+
+uv python install 3.11 3.12 3.13
+uv python uninstall 3.9
+
 ------------------ helper: uv -------------------
 
+uv add -U ...
 uv sync
 
 uv run
