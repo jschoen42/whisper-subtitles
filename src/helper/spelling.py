@@ -4,7 +4,9 @@ from pathlib import Path
 
 from spylls.hunspell import Dictionary
 
-from src.utils.trace import Trace, duration
+from src.utils.trace     import Trace
+from src.utils.decorator import duration
+
 from src.helper.excel import import_hunspell_PreCheck_excel
 
 # ../data/_hunspell/de-DE.dic

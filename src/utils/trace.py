@@ -1,16 +1,7 @@
 """
-    (c) Jürgen Schoenemeyer, 07.12.2024
+    (c) Jürgen Schoenemeyer, 08.12.2024
 
     PUBLIC:
-    remove_colors(text: str) -> str:
-
-    @duration(pre_text: str = "", rounds: int = 1)
-
-    @duration("argon2 (20 rounds)", 20) # test with 20 rounds => average duration for a round
-
-    @duration("ttx => font '{0}'")      # 0    -> args
-    @duration("ttx => font '{type}'")   # type -> kwargs
-
     class Trace:
         Trace.set(debug_mode=True)
         Trace.set(reduced_mode=True)
@@ -38,6 +29,10 @@
         Trace.debug()    # only in debug mode
         Trace.wait()     # only in debug mode
 
+    class Color:
+        Color.<color_name>
+        Color.clear(text: str) -> str:
+
     class ProcessLog (array cache)
         - add
         - get
@@ -49,7 +44,6 @@ import sys
 import os
 import re
 import inspect
-import time
 import importlib.util
 
 from typing import Callable
@@ -98,8 +92,10 @@ class Color(StrEnum):
     CYAN_BG       = "\033[46m"
     GREY_BG       = "\033[47m"
 
-def remove_colors(text: str) -> str:
-    return re.sub(r"\033\[[0-9;]*m", "", text)
+    @staticmethod
+    def clear(text: str) -> str:
+        return re.sub(r"\033\[[0-9;]*m", "", text)
+
 
 pattern = {
     "clear":     "     ", # only internal
@@ -122,8 +118,6 @@ pattern = {
 }
 
 class Trace:
-    # default_base_folder = os.getcwd().replace("\\", "/").split("/")[-1]
-
     default_base = BASE_PATH.resolve()
     default_base_folder = str(default_base).replace("\\", "/")
 
@@ -383,9 +377,9 @@ class Trace:
 
         if file_output:
             if cls.csv:
-                cls.messages.append(remove_colors(text))
+                cls.messages.append(Color.clear(text))
             else:
-                cls.messages.append(remove_colors(text_no_tabs))
+                cls.messages.append(Color.clear(text_no_tabs))
 
         # https://docs.python.org/3/library/io.html#io.IOBase.isatty
 
@@ -393,7 +387,7 @@ class Trace:
             return not hasattr(stream, "isatty") or not stream.isatty()
 
         if not cls.settings["color"] or is_redirected(sys.stdout):
-            text_no_tabs = remove_colors(text_no_tabs)
+            text_no_tabs = Color.clear(text_no_tabs)
 
         # https://docs.python.org/3/library/sys.html#sys.displayhook
 
@@ -404,40 +398,6 @@ class Trace:
         else:
             text = bytes.decode("utf-8", "strict")
             sys.stdout.write(text)
-
-# decorator for time measure
-
-def duration(pre_text: str = "", rounds: int = 1):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            start_time = time.perf_counter()
-
-            result = func(*args, **kwargs)
-
-            end_time = time.perf_counter()
-            total_time = (end_time - start_time) / rounds
-
-            def replace_args(match):
-                word = match.group(1)
-                if word.isnumeric():
-                    return str(args[int(word)]) # {1} -> args[1]
-                else:
-                    return kwargs.get(word)     # {type} -> kwargs["type"]
-
-            pattern = r"\{(.*?)\}"
-            pretext = re.sub(pattern, replace_args, pre_text)
-
-            text = f"{Color.GREEN}{Color.BOLD}{total_time:.3f} sec{Color.RESET}"
-            if pretext == "":
-                Trace.time(f"{text}")
-            else:
-                Trace.time(f"{pretext}: {text}")
-
-            return result
-        return wrapper
-    return decorator
-
-#######################
 
 class ProcessLog:
     def __init__(self):

@@ -11,8 +11,9 @@ from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import NamedStyle, Font, Alignment, PatternFill
 
-from src.utils.trace import Trace, duration
-from src.utils.file  import check_excel_file_exists, get_modification_timestamp
+from src.utils.trace     import Trace
+from src.utils.decorator import duration
+from src.utils.file      import check_excel_file_exists, get_modification_timestamp
 
 from src.helper.captions import seconds_to_timecode_excel
 

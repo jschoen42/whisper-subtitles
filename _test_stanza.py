@@ -11,7 +11,8 @@ import warnings
 import stanza
 
 # from src.utils.prefs import Prefs
-from src.utils.trace import Trace, duration
+from src.utils.trace     import Trace
+from src.utils.decorator import duration
 
 
 text = " Beginnen wir mit einer Entscheidung des Bundesarbeitsgerichts vom 23. Mai 2024. Ist ein Unternehmen gezwungen, innerhalb eines kurzen Zeitraums mehrere Mitarbeiter zu kündigen, dann ist er verpflichtet, ab einer bestimmten Anzahl von zu kündigenden Mitarbeitern bei der Agentur für Arbeit eine sogenannte Massenentlassungsanzeige nach § 17 Kündigungsschutzgesetz zu erstatten."
