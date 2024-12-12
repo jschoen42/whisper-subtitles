@@ -1,11 +1,13 @@
 """
+    (c) Jürgen Schoenemeyer, 03.12.2024
+
     PUBLIC:
     clean_import_json(text: str) -> str | bool
     check_html(text_id: str, text: str) -> None
     exception(function)
     check_url(url: str) -> bool
     insert_meta_node(data: OrderedDict, in_type: str, language: str = None) -> None
-    insert_data_node(data: OrderedDict, paths: list, key: str, value: Any) -> None
+    insert_data_node(data: OrderedDict, paths: list, key: str, value: any) -> None
     prepare_smart_sort(text:str, count:int = 6) -> str:
 """
 
@@ -14,7 +16,6 @@ import functools
 import traceback
 import re
 
-from typing import Any
 from collections import OrderedDict
 
 from src.utils.prefs import Prefs
@@ -109,7 +110,7 @@ def insert_meta_node(data: OrderedDict, in_type: str, language: str = None) -> N
     data[".meta"]["eventName"] = Prefs.get("eventName")
     data[".meta"]["font"]      = Prefs.get("eventFont")
 
-def insert_data_node(data: OrderedDict, paths: list, key: str, value: Any) -> None:
+def insert_data_node(data: OrderedDict, paths: list, key: str, value: any) -> None:
     curr_node = data
 
     for node in paths:

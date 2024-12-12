@@ -1,5 +1,5 @@
 """
-    (c) Jürgen Schoenemeyer, 06.12.2024
+    (c) Jürgen Schoenemeyer, 11.12.2024
 
     PUBLIC:
     format_subtitle( start_time: float, end_time: float, text: str, color=True ) -> str
@@ -88,7 +88,7 @@ def import_text(folderpath: Path | str, filename: Path|str, show_error: bool=Tru
 
     else:
         if show_error:
-            Trace.info(f"file not exist {filepath}")
+            Trace.error(f"file not exist {filepath}")
         return None
 
 def import_json_timestamp(folderpath: Path | str, filename: str, show_error: bool=True) -> Tuple[dict | None, float | None]:

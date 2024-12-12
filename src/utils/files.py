@@ -23,7 +23,6 @@
      - .txt
      - .json (json or orjson)
      - .xml (minidom or xml.etree.ElementTree)
-
 """
 
 import os

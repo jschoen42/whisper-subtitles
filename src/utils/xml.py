@@ -1,6 +1,8 @@
 """
+    (c) Jürgen Schoenemeyer, 03.12.2024
+
     PUBLIC:
-    open_xml_as_dict(myzip: ZipFile, path: Path | str, comment: str = "[open_xml_as_dict]") -> None | dict
+    open_xml_as_dict(myzip: ZipFile, path: Path | str, comment: str = "[open_xml_as_dict]") -> dict | None
 """
 
 from pathlib import Path
@@ -11,7 +13,7 @@ import xmltodict
 from src.utils.trace import Trace
 from src.utils.file import get_trace_path
 
-def open_xml_as_dict(myzip: ZipFile, path: Path | str, comment: str = "[open_xml_as_dict]") -> None | dict:
+def open_xml_as_dict(myzip: ZipFile, path: Path | str, comment: str = "[open_xml_as_dict]") -> dict | None:
     try:
         with myzip.open(path) as xml_file:
             data = xmltodict.parse(xml_file.read())

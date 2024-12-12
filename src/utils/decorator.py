@@ -1,5 +1,5 @@
 """
-    (c) Jürgen Schoenemeyer, 08.12.2024
+    (c) Jürgen Schoenemeyer, 10.12.2024
 
     @duration(pre_text: str = "", rounds: int = 1)
 
@@ -9,10 +9,13 @@
     @duration("ttx => font '{type}'")   # type -> kwargs
 
 """
+
 import contextlib
 import time
 import re
-from typing import Generator, Callable
+
+from typing import Generator
+from collections.abc import Callable
 
 from src.utils.trace import Trace, Color
 

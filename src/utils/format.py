@@ -1,4 +1,6 @@
 """
+    (c) Jürgen Schoenemeyer, 03.12.2024
+
     PUBLIC:
     floor(number: float, decimals: int=2) -> int
 

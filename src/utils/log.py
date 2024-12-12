@@ -1,6 +1,7 @@
 """
-    PUBLIC:
+    (c) Jürgen Schoenemeyer, 03.12.2024
 
+    PUBLIC:
     log_clear()
     log_add(mediafile: str, text: str, corrected_details: list[dict], last_segment_text: str, repetition_error: list[dict], pause_error: list[dict], spelling_failed: list[dict] ):
     log_get_data() -> Tuple[str, str]

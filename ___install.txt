@@ -84,6 +84,19 @@ uv pip list --outdated
 
 uv pip tree
 
+------------------ upgrade Python -------------------
+
+uv python list --all-versions
+uv python install 3.13.1
+
+uv python uninstall 3.13.0
+ -> ruff extention fails !!!
+
+---- for every env
+
+uv venv .venv -p 3.13.1
+uv sync
+
 ################### pip - venv ####################
 
 python.exe -m venv .venv

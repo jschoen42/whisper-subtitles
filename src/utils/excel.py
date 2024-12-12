@@ -1,8 +1,10 @@
 """
-    PUBLIC:
-    get_excel_file(source_path: str, filename: str, comment: str, last_timestamp: int = 0) -> Tuple[int, Workbook, int]
+    (c) Jürgen Schoenemeyer, 12.12.2024
 
-    get_excel_sheet(source_path: str, filename: str, sheet: str, comment: str, last_timestamp: int = 0) -> Tuple[bool, Worksheet, int]
+    PUBLIC:
+    get_excel_file(source_path: str, filename: str, comment: str, last_timestamp: float = 0) -> Tuple[int, Workbook, int]
+
+    get_excel_sheet(source_path: str, filename: str, sheet: str, comment: str, last_timestamp: float = 0.0) -> Tuple[bool, Worksheet, float]
     get_excel_sheet_special(workbook: Workbook, sheet: str, comment: str) -> Tuple[bool, None | Worksheet]
 
     get_cell_value(in_cell: cell) -> str
@@ -14,6 +16,8 @@ import unicodedata
 import re
 import datetime
 
+import warnings
+
 from typing import Tuple
 
 from openpyxl import Workbook, cell
@@ -22,7 +26,10 @@ from openpyxl import load_workbook
 from src.utils.trace import Trace
 from src.utils.file  import get_modification_timestamp, check_excel_file_exists
 
-def get_excel_file(source_path: str, filename: str, comment: str, last_timestamp: int = 0) -> Tuple[int, Workbook, int]:
+# UserWarning: Data Validation extension is not supported and will be removed
+warnings.simplefilter("ignore")
+
+def get_excel_file(source_path: str, filename: str, comment: str, last_timestamp: float = 0.0) -> Tuple[int, Workbook, int]:
     file_path = source_path + filename
 
     if check_excel_file_exists(file_path) is False:
@@ -37,7 +44,7 @@ def get_excel_file(source_path: str, filename: str, comment: str, last_timestamp
 
     return (0, workbook, max(last_timestamp, get_modification_timestamp(file_path)))
 
-def get_excel_sheet(source_path: str, filename: str, sheet: str, comment: str, last_timestamp: int = 0) -> Tuple[bool, any, int]:
+def get_excel_sheet(source_path: str, filename: str, sheet: str, comment: str, last_timestamp: float = 0.0) -> Tuple[bool, any, float]:
     file_path = source_path + filename
 
     if check_excel_file_exists(file_path) is False:

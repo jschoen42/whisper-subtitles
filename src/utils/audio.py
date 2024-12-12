@@ -1,6 +1,7 @@
 """
-    PUBLIC:
+    (c) Jürgen Schoenemeyer, 03.12.2024
 
+    PUBLIC:
     split_audio(source_path: Path | str, dest_path: Path | str, filename: str, ffmpeg: str) -> None
 
     convert_to_mp3(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str) -> None
@@ -120,7 +121,7 @@ def filter_to_wav(source_path: Path | str, dest_path: Path | str, filename: str,
     if dest.is_file():
         Trace.info(f"{dest} always exists")
     else:
-        filter_cmd = f'arnndn=m={filter_path}/{filter_name}.rnnn'
+        filter_cmd = f"arnndn=m={filter_path}/{filter_name}.rnnn"
         commands = f'"{ffmpeg}" -y -loglevel error -i "{source}" -vn -ar {sampling} -ac {channels} -af "{filter_cmd}" "{dest}"'
 
         if subprocess.run(commands, check=False).returncode == 0:

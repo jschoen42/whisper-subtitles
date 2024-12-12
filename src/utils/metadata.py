@@ -1,9 +1,10 @@
-""" MediaInfo
+"""
+    (c) Jürgen Schoenemeyer, 03.12.2024
 
     PUBLIC:
     get_media_info(filepath: str) -> dict | None
     get_audio_duration(filepath: str) -> float
-    get_media_trackinfo(filepath: str) -> None | dict
+    get_media_trackinfo(filepath: str) -> dict | None
     get_video_metadata_mediainfo(filepath: str) -> dict
 """
 
@@ -82,7 +83,7 @@ def get_audio_duration(filepath: str) -> float:
 
     return duration
 
-def get_media_trackinfo(filepath: str) -> None | dict:
+def get_media_trackinfo(filepath: str) -> dict | None:
     ret = None
 
     media_info = MediaInfo.parse(filepath)
