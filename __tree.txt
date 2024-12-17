@@ -8,19 +8,29 @@ whisper-subtitles v0.1.0
 │   ├── numpy v2.0.2
 │   ├── pyyaml v6.0.2
 │   └── setuptools v75.6.0
-├── huggingface-hub v0.26.5
+├── huggingface-hub v0.27.0
 │   ├── filelock v3.16.1
 │   ├── fsspec v2024.10.0
 │   ├── packaging v24.2
 │   ├── pyyaml v6.0.2
 │   ├── requests v2.32.3
-│   │   ├── certifi v2024.8.30
+│   │   ├── certifi v2024.12.14
 │   │   ├── charset-normalizer v3.4.0
 │   │   ├── idna v3.10
 │   │   └── urllib3 v2.2.3
 │   ├── tqdm v4.67.1
 │   │   └── colorama v0.4.6
 │   └── typing-extensions v4.12.2
+├── mkl v2025.0.1
+│   ├── intel-openmp v2025.0.4
+│   │   └── intel-cmplr-lib-ur v2025.0.4
+│   │       └── umf v0.9.1
+│   │           └── tcmlib v1.2.0
+│   └── tbb v2022.0.0
+│       └── tcmlib v1.2.0
+├── numba v0.60.0
+│   ├── llvmlite v0.43.0
+│   └── numpy v2.0.2
 ├── onnxruntime v1.20.1
 │   ├── coloredlogs v15.0.1
 │   │   └── humanfriendly v10.0
@@ -33,22 +43,18 @@ whisper-subtitles v0.1.0
 │       └── mpmath v1.3.0
 ├── openai-whisper v20240930
 │   ├── more-itertools v10.5.0
-│   ├── numba v0.60.0
-│   │   ├── llvmlite v0.43.0
-│   │   └── numpy v2.0.2
+│   ├── numba v0.60.0 (*)
 │   ├── numpy v2.0.2
 │   ├── tiktoken v0.8.0
 │   │   ├── regex v2024.11.6
 │   │   └── requests v2.32.3 (*)
-│   ├── torch v2.3.1
+│   ├── torch v2.4.1
 │   │   ├── filelock v3.16.1
 │   │   ├── fsspec v2024.10.0
 │   │   ├── jinja2 v3.1.4
 │   │   │   └── markupsafe v3.0.2
-│   │   ├── mkl v2021.4.0
-│   │   │   ├── intel-openmp v2021.4.0
-│   │   │   └── tbb v2021.13.1
 │   │   ├── networkx v3.4.2
+│   │   ├── setuptools v75.6.0
 │   │   ├── sympy v1.13.3 (*)
 │   │   └── typing-extensions v4.12.2
 │   └── tqdm v4.67.1 (*)
@@ -87,8 +93,8 @@ whisper-subtitles v0.1.0
 │   ├── spacy-loggers v1.0.5
 │   ├── srsly v2.5.0
 │   │   └── catalogue v2.0.10
-│   ├── thinc v8.3.2
-│   │   ├── blis v1.0.2
+│   ├── thinc v8.3.3
+│   │   ├── blis v1.1.0
 │   │   │   └── numpy v2.0.2
 │   │   ├── catalogue v2.0.10
 │   │   ├── confection v0.1.5
@@ -130,12 +136,13 @@ whisper-subtitles v0.1.0
 │   ├── curated-tokenizers v0.0.9
 │   │   └── regex v2024.11.6
 │   ├── curated-transformers v0.1.1
-│   │   └── torch v2.3.1 (*)
-│   └── torch v2.3.1 (*)
+│   │   └── torch v2.4.1 (*)
+│   └── torch v2.4.1 (*)
 ├── spylls v0.1.7
+├── tbb v2022.0.0 (*)
 ├── tokenizers v0.21.0
-│   └── huggingface-hub v0.26.5 (*)
-├── torch v2.3.1 (*)
+│   └── huggingface-hub v0.27.0 (*)
+├── torch v2.4.1 (*)
 ├── tzdata v2024.2
 ├── webvtt-py v0.5.1
 └── whisper-timestamped v1.15.8

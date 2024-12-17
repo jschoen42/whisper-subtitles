@@ -7,8 +7,9 @@ import time
 
 from pathlib import Path
 
-from src.utils.prefs import Prefs
-from src.utils.trace import Trace, BASE_PATH
+from src.utils.globals import BASE_PATH
+from src.utils.prefs   import Prefs
+from src.utils.trace   import Trace
 
 from src.utils.audio import convert_to_wav # , filter_to_wav
 

@@ -7,12 +7,13 @@ import time
 
 from pathlib import Path
 
-from src.utils.prefs import Prefs
-from src.utils.trace import Trace, BASE_PATH
-from src.utils.util  import export_text, CacheJSON
-from src.utils.file  import check_file_exists
-from src.utils.log   import log_clear, log_add, log_get_data
-from src.utils.log   import DictionaryLog
+from src.utils.globals import BASE_PATH
+from src.utils.prefs   import Prefs
+from src.utils.trace   import Trace
+from src.utils.util    import export_text, CacheJSON
+from src.utils.file    import check_file_exists
+from src.utils.log     import log_clear, log_add, log_get_data
+from src.utils.log     import DictionaryLog
 
 from src.helper.excel    import import_project_excel, import_dictionary_excel
 from src.helper.captions import seconds_to_timecode_vtt

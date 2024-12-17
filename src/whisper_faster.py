@@ -10,8 +10,9 @@ import arrow
 
 from faster_whisper_custom import WhisperModel
 
+from src.utils.globals  import BASE_PATH
 from src.utils.prefs    import Prefs
-from src.utils.trace    import Trace, BASE_PATH
+from src.utils.trace    import Trace
 from src.utils.file     import get_file_infos #, set_modification_timestamp
 from src.utils.util     import import_json_timestamp, export_json, export_text, format_subtitle, CacheJSON
 from src.utils.metadata import get_media_info

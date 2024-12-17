@@ -1,5 +1,5 @@
 """
-    (c) Jürgen Schoenemeyer, 08.12.2024
+    (c) Jürgen Schoenemeyer, 17.12.2024
 
     PUBLIC:
     class Trace:
@@ -53,8 +53,6 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from zoneinfo._common import ZoneInfoNotFoundError
 
-BASE_PATH = Path(sys.argv[0]).parent
-
 system = platform.system()
 if system == "Windows":
     import msvcrt
@@ -62,35 +60,52 @@ else:
     import tty
     import termios
 
-
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 
 class Color(StrEnum):
-    RESET         = "\033[0m"
-    BOLD          = "\033[1m"
-    DISABLE       = "\033[2m"
-    ITALIC        = "\033[3m"
-    UNDERLINE     = "\033[4m"
-    INVERSE       = "\033[7m"
-    INVISIBLE     = "\033[8m"
-    STRIKETHROUGH = "\033[9m"
-    NORMAL        = "\033[22m"
+    RESET            = "\033[0m"
+    BOLD             = "\033[1m"
+    DISABLE          = "\033[2m"
+    ITALIC           = "\033[3m"
+    UNDERLINE        = "\033[4m"
+    INVERSE          = "\033[7m"
+    INVISIBLE        = "\033[8m"
+    STRIKETHROUGH    = "\033[9m"
+    NORMAL           = "\033[22m"
 
-    BLACK         = "\033[30m"
-    RED           = "\033[31m"
-    GREEN         = "\033[32m"
-    BLUE          = "\033[34m"
-    PURPLE        = "\033[35m"
-    CYAN          = "\033[36m"
-    GREY          = "\033[37m"
+    BLACK            = "\033[30m"
+    RED              = "\033[31m"
+    GREEN            = "\033[32m"
+    YELLOW           = "\033[33m"
+    BLUE             = "\033[34m"
+    MAGENTA          = "\033[35m"
+    CYAN             = "\033[36m"
+    LIGHT_GRAY       = "\033[37m"
+    DARK_GRAY        = "\033[90m"
+    LIGHT_RED        = "\033[91m"
+    LIGHT_GREEN      = "\033[92m"
+    LIGHT_YELLOW     = "\033[93m"
+    LIGHT_BLUE       = "\033[94m"
+    LIGHT_MAGENTA    = "\033[95m"
+    LIGHT_CYAN       = "\033[96m"
+    WHITE            = "\033[97m"
 
-    BLACK_BG      = "\033[40m"
-    RED_BG        = "\033[41m"
-    GREEN_BG      = "\033[42m"
-    BLUE_BG       = "\033[44m"
-    PURPLE_BG     = "\033[45m"
-    CYAN_BG       = "\033[46m"
-    GREY_BG       = "\033[47m"
+    BLACK_BG         = "\033[40m"
+    RED_BG           = "\033[41m"
+    GREEN_BG         = "\033[42m"
+    YELLOW_BG        = "\033[43m"
+    BLUE_BG          = "\033[44m"
+    MAGENTA_BG       = "\033[45m"
+    CYAN_BG          = "\033[46m"
+    LIGHT_GRAY_BG    = "\033[47m"
+    DARK_GRAY_BG     = "\033[100m"
+    LIGHT_RED_BG     = "\033[101m"
+    LIGHT_GREEN_BG   = "\033[102m"
+    LIGHT_YELLOW_BG  = "\033[103m"
+    LIGHT_BLUE_BG    = "\033[104m"
+    LIGHT_MAGENTA_BG = "\033[105m"
+    LIGHT_CYAN_BG    = "\033[106m"
+    WHITE_BG         = "\033[107m"
 
     @staticmethod
     def clear(text: str) -> str:
@@ -98,8 +113,6 @@ class Color(StrEnum):
 
 
 pattern = {
-    "clear":     "     ", # only internal
-
     "action":    " >>> ",
     "result":    " ==> ",
     "time":      " --> ",
@@ -110,18 +123,20 @@ pattern = {
 
     "warning":   "*****",
     "error":     "#####", # + rot
-    "exception": "!!!!!",
-    "fatal":     "FATAL",
+    "exception": "!!!!!", # + rot
+    "fatal":     "FATAL", # + rot
 
-    "debug":     "DEBUG", # only in special debug mode
-    "wait":      "WAIT ", # only in special debug mode
+    "debug":     "DEBUG", # only in debug mode
+    "wait":      "WAIT ", # only in debug mode
+
+    "clear":     "     ", # only internal
 }
 
 class Trace:
+    BASE_PATH = Path(sys.argv[0]).parent
+
     default_base = BASE_PATH.resolve()
     default_base_folder = str(default_base).replace("\\", "/")
-
-    # sys.stdout.encoding = "utf-8"
 
     settings = {
         "appl_folder":    default_base_folder + "/",
@@ -216,6 +231,11 @@ class Trace:
     @classmethod
     def time(cls, message: str = "", *optional: any) -> None:
         pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_custom_caller('duration')}"
+        cls.__show_message(cls.__check_file_output(), pre, message, *optional)
+
+    @classmethod
+    def custom(cls, message: str = "", *optional: any, path = "custom") -> None:
+        pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_custom_caller(path)}"
         cls.__show_message(cls.__check_file_output(), pre, message, *optional)
 
     @classmethod

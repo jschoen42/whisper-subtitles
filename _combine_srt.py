@@ -3,8 +3,9 @@
 
 import sys
 
-from src.utils.prefs import Prefs
-from src.utils.trace import Trace, BASE_PATH
+from src.utils.globals import BASE_PATH
+from src.utils.prefs   import Prefs
+from src.utils.trace   import Trace
 
 from src.helper.excel    import import_project_excel
 from src.helper.analyse  import get_video_length

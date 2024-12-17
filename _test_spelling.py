@@ -1,4 +1,4 @@
-# .venv-3.12\Scripts\activate
+# .venv\Scripts\activate
 # python _test_spelling.py
 
 import sys
@@ -221,7 +221,11 @@ word_list = [
     "Werkstudierender",
     "AOK", # wird vorher ausgefiltert !
     "AOKs",
-    "SARS-CoV-2-Virus"
+    "SARS-CoV-2-Virus",
+    "Altersvorsorgebeitrag",
+    "Altersvorsorgebeiträge",
+    "Geringverdienergrenze",
+    "Empfänge",
 ]
 
 def main():
@@ -237,7 +241,6 @@ def main():
 
 
 if __name__ == "__main__":
-    Trace.set( debug_mode=True, show_timestamp=False )
+    Trace.set( debug_mode=True, timezone=False )
     Trace.action(f"Python version {sys.version}")
-
     main()

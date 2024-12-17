@@ -6,9 +6,10 @@ import sys
 
 from pathlib import Path
 
-from src.utils.prefs import Prefs
-from src.utils.trace import Trace, BASE_PATH
-from src.utils.file import get_folders_in_folder, get_files_in_folder
+from src.utils.globals import BASE_PATH
+from src.utils.prefs   import Prefs
+from src.utils.trace   import Trace
+from src.utils.file    import get_folders_in_folder, get_files_in_folder
 
 PROJECTS: str = "projects_all.yaml"  # "projects.yaml", "projects_all.yaml"
 

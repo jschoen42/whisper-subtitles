@@ -3,8 +3,9 @@
 
 import os
 
-from src.utils.prefs import Prefs
-from src.utils.trace import Trace, BASE_PATH
+from src.utils.globals import BASE_PATH
+from src.utils.prefs   import Prefs
+from src.utils.trace   import Trace
 
 from src.helper.captions import import_caption, writefile_srt #, writefile_vtt
 

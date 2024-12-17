@@ -1,26 +1,66 @@
 """
-    (c) Jürgen Schoenemeyer, 10.12.2024
+    (c) Jürgen Schoenemeyer, 15.12.2024
 
-    @duration(pre_text: str = "", rounds: int = 1)
+    public
+     - def duration(pre_text: str="", rounds: int=1) -> Callable:
+     - def retry_exception(pre_text: str="", exception=Exception, delay: int|float=1, retries: int=5) -> Callable:
 
-    @duration("argon2 (20 rounds)", 20) # test with 20 rounds => average duration for a round
-
-    @duration("ttx => font '{0}'")      # 0    -> args
-    @duration("ttx => font '{type}'")   # type -> kwargs
-
+    privat
+      - def replace_arguments(match: Match, *args, **kwargs) -> str:
 """
 
 import contextlib
 import time
 import re
+import functools
 
-from typing import Generator
+from typing import Generator, Match
 from collections.abc import Callable
 
 from src.utils.trace import Trace, Color
 
-def duration(pre_text: str = "", rounds: int = 1) -> Callable:
+""" Decorator: @decorator
+
+def my_decorator(func: Callable) -> Callable:
+    @functools.wraps(func)
+    def wrapper(*args: any, **kwargs: any) -> any:
+
+        # before ...
+
+        result = func(*args, **kwargs)
+
+        # after ...
+
+        return result
+    return wrapper
+"""
+
+""" Decorator Factory: @decorator( params )
+
+def my_decorator( ... ) -> Callable:
     def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def wrapper(*args: any, **kwargs: any) -> any:
+
+            # before ...
+
+            result = func(*args, **kwargs)
+
+            # after ...
+
+            return result
+        return wrapper
+    return decorator
+"""
+# @duration()
+# @duration("ttx => font '{0}'")      # 0    -> args
+# @duration("ttx => font '{type}'")   # type -> kwargs
+
+# @duration("argon2 (20 rounds)", 20) # test with 20 rounds => average duration for a round
+
+def duration(pre_text: str=None, rounds: int=1) -> Callable:
+    def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
         def wrapper(*args: any, **kwargs: any) -> any:
             start_time = time.perf_counter()
 
@@ -29,34 +69,91 @@ def duration(pre_text: str = "", rounds: int = 1) -> Callable:
             end_time = time.perf_counter()
             total_time = (end_time - start_time) / rounds
 
-            def replace_args(match):
-                word = match.group(1)
-                if word.isnumeric():
-                    return str(args[int(word)]) # {1} -> args[1]
-                else:
-                    return kwargs.get(word)     # {type} -> kwargs["type"]
+            if pre_text is None:
+                pretext = func.__name__
+            else:
+                def replace(match: Match) -> str:
+                    return replace_arguments( match, *args, **kwargs )
 
-            pattern = r"\{(.*?)\}"
-            pretext = re.sub(pattern, replace_args, pre_text)
+                pattern = r"\{(.*?)\}"
+                pretext = re.sub(pattern, replace, pre_text)
 
             text = f"{Color.GREEN}{Color.BOLD}{total_time:.3f} sec{Color.RESET}"
             if pretext == "":
-                Trace.time(f"{text}")
+                Trace.custom(f"{text}", path="duration")
             else:
-                Trace.time(f"{pretext}: {text}")
+                Trace.custom(f"{pretext}: {text}", path="duration")
+
+            return result
+        return wrapper
+    return decorator
+
+# @retry_exception(exception=ValueError)
+# @retry_exception("error limit '{0}'", exception=ValueError)
+# @retry_exception("ttx => font '{0}'", exception=ValueError, delay=2.5, retries=10)
+
+def retry_exception(pre_text: str=None, exception=Exception, delay: int|float=1, retries: int=5) -> Callable:
+    def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def wrapper(*args: any, **kwargs: any) -> any:
+
+            if pre_text is None:
+                pretext = func.__name__
+            else:
+                def replace(match: Match) -> str:
+                    return replace_arguments( match, *args, **kwargs )
+
+                pattern = r"\{(.*?)\}"
+                pretext = re.sub(pattern, replace, pre_text)
+
+            attempts = 0
+            while attempts < retries:
+                try:
+                    return func(*args, **kwargs)
+                except exception as _err:
+                    attempts += 1
+                    text = f"{Color.RED}{Color.BOLD}failed ({attempts}/{retries}){Color.RESET}"
+                    if pretext == "":
+                        Trace.custom(f"{text}", path="retry")
+                    else:
+                        Trace.custom(f"{pretext}: {text}", path="retry")
+
+                    time.sleep(delay)
+
+            raise exception
+        return wrapper
+    return decorator
+
+
+# https://www.youtube.com/watch?v=xI4TJyd8FGk&t=860s
+#
+# @type_check(int, int)
+#  - not for kwargs !
+#  - not using the existing annotation !
+
+def type_check(*expected_types) -> Callable:
+    def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def wrapper(*args: any, **kwargs: any) -> any:
+            result = func(*args, **kwargs)
+
+            for arg, expected_type in zip(args, expected_types):
+                if not isinstance(arg, expected_type):
+                    Trace.error( "TypeError - expected {expected_type}, but got {type}" )
 
             return result
         return wrapper
     return decorator
 
 
+###### decorator with ContextManager
 
 # https://www.youtube.com/watch?v=_QXlbwRmqgI&t=260s
 
 # BUT: arg, *kwarg not available
 
 @contextlib.contextmanager
-def timeit(name: str) -> Generator[None, None, None]:
+def duration_cm(name: str) -> Generator[None, None, None]:
     start_time = time.perf_counter()
     try:
         yield
@@ -65,4 +162,26 @@ def timeit(name: str) -> Generator[None, None, None]:
         total_time = (end_time - start_time)
 
         text = f"{Color.GREEN}{Color.BOLD}{total_time:.3f} sec{Color.RESET}"
-        Trace.time(f"{name}: {text}")
+        Trace.custom(f"{name}: {text}", path="duration")
+
+
+# helper
+
+def replace_arguments(match: Match, *args, **kwargs) -> str:
+    argument = match.group(1)
+
+    if argument.isnumeric():
+        # args
+        pos = int(argument)
+        if pos < len(args):
+            return str(args[pos])  # {0} -> args[0]
+        else:
+            Trace.error(f"arg '{pos}' does not exist")
+            return f"<'{pos}' not exist>"
+    else:
+        # kwargs
+        if argument in kwargs:
+            return str(kwargs.get(argument)) # {type} -> kwargs["type"]
+        else:
+            Trace.error(f"kwarg '{argument}' does not exist")
+            return f"<'{argument}' not exist>"

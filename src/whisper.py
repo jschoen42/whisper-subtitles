@@ -8,8 +8,9 @@ from pathlib import Path
 
 import whisper
 
+from src.utils.globals  import BASE_PATH
 from src.utils.prefs    import Prefs
-from src.utils.trace    import Trace, BASE_PATH
+from src.utils.trace    import Trace
 from src.utils.util     import import_json, export_json, export_text, CacheJSON
 from src.utils.metadata import get_media_info
 
