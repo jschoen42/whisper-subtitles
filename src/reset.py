@@ -1,5 +1,5 @@
 # .venv/Scripts/activate
-# python src/_reset.py
+# python src/reset.py
 
 import sys
 
@@ -38,7 +38,7 @@ def main():
         reset_project_data(project)
 
 if __name__ == "__main__":
-    Trace.set( debug_mode=True, show_timestamp=False )
+    Trace.set( debug_mode=True, timezone=False )
     Trace.action(f"Python version {sys.version}")
 
     main()

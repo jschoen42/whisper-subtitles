@@ -1,5 +1,5 @@
 # .venv/Scripts/activate
-# python src/_update_excel.py
+# python src/update_excel.py
 
 import sys
 
@@ -10,7 +10,7 @@ from utils.util  import import_json
 from helper.excel import update_dictionary_excel
 
 def main():
-    Prefs.init( "_prefs" )
+    Prefs.init("settings")
     Prefs.read("base.yaml")
 
     path_dictionary = Prefs.get("dictionary.path")
@@ -33,7 +33,7 @@ def main():
 
 
 if __name__ == "__main__":
-    Trace.set( debug_mode=True, show_timestamp=False )
+    Trace.set( debug_mode=True, timezone=False )
     Trace.action(f"Python version {sys.version}")
 
     main()

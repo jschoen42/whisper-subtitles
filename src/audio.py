@@ -1,5 +1,5 @@
 # .venv/Scripts/activate
-# python src/_audio.py
+# python src/audio.py
 
 import sys
 import os
@@ -50,7 +50,7 @@ def main():
         Trace.info(f"{project} converted: {duration:.2f} sec" )
 
 if __name__ == "__main__":
-    Trace.set( debug_mode=True, show_timestamp=False )
+    Trace.set( debug_mode=True, timezone=False )
     Trace.action(f"Python version {sys.version}")
 
     main()

@@ -1,5 +1,5 @@
 # .venv/Scripts/activate
-# python src/_final_srt_vtt.py
+# python src/final_srt_vtt.py
 
 import os
 
@@ -47,4 +47,5 @@ def main():
         Trace.info("")
 
 if __name__ == "__main__":
+    Trace.set( debug_mode=True, timezone=False )
     main()

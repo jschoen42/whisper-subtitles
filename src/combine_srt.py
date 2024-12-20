@@ -1,5 +1,5 @@
 # .venv/Scripts/activate
-# python src/_combine_srt.py
+# python src/combine_srt.py
 
 import sys
 
@@ -15,7 +15,7 @@ data_path = BASE_PATH / "../data"
 
 def main():
     Prefs.init("settings")
-    Prefs.read("projectsCombine.yaml")
+    Prefs.read("projects_combine.yaml")
 
     for project_info in Prefs.get("projects"):
         project  = project_info[0]
