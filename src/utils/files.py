@@ -53,7 +53,7 @@ except ModuleNotFoundError:
 
 from result import Result, Ok, Err
 
-from src.utils.trace import Trace
+from utils.trace import Trace
 
 TIMESTAMP = "%Y-%m-%d_%H-%M-%S"
 

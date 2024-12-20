@@ -1,13 +1,13 @@
-# .venv\Scripts\activate
-# python _test_load_spacy.py
+# .venv/Scripts/activate
+# python src/_test_load_spacy.py
 
 import time
 from typing import Any
 from pathlib import Path
 import spacy
 
-from src.utils.prefs import Prefs
-from src.utils.trace import Trace
+from utils.prefs import Prefs
+from utils.trace import Trace
 
 model_doc: Any = None
 
@@ -22,7 +22,7 @@ def get_modelname_nlp(language: str) -> str:
 def test_load_spacy(language) -> None:
     global model_doc
 
-    Prefs.init("./_prefs")
+    Prefs.init("settings")
     Prefs.read("base.yaml")
 
     model_path = Prefs.get("spacy.model_path")

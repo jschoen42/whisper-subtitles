@@ -1,12 +1,12 @@
-# .venv\Scripts\activate
-# python _test_spelling.py
+# .venv/Scripts/activate
+# python src/_test_spelling.py
 
 import sys
 
-from src.utils.prefs import Prefs
-from src.utils.trace import Trace
+from utils.prefs import Prefs
+from utils.trace import Trace
 
-from src.helper.spelling import hunspell_dictionary_init, spellcheck
+from helper.spelling import hunspell_dictionary_init, spellcheck
 
 # https://manpages.ubuntu.com/manpages/focal/man5/hunspell.5.html
 
@@ -225,7 +225,7 @@ word_list = [
 ]
 
 def main():
-    Prefs.init("./_prefs")
+    Prefs.init("settings")
     Prefs.read("base.yaml")
 
     language   = Prefs.get("language")

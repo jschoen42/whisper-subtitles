@@ -12,10 +12,10 @@ from pathlib import Path
 
 from spylls.hunspell import Dictionary
 
-from src.utils.trace     import Trace
-from src.utils.decorator import duration
+from utils.trace     import Trace
+from utils.decorator import duration
 
-from src.helper.excel import import_hunspell_PreCheck_excel
+from helper.excel import import_hunspell_PreCheck_excel
 
 # ../data/_hunspell/de-DE.dic
 # ../data/_hunspell/PreCheck_de-DE.xlsx

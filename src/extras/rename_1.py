@@ -4,8 +4,8 @@ import os
 import shutil
 from pathlib import Path
 
-from src.utils.globals import BASE_PATH
-from src.utils.trace   import Trace
+from utils.globals import BASE_PATH
+from utils.trace   import Trace
 
 base_path = BASE_PATH / "../data"
 

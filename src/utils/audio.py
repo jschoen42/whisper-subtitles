@@ -1,14 +1,14 @@
 """
-    (c) Jürgen Schoenemeyer, 03.12.2024
+    (c) Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-    split_audio(source_path: Path | str, dest_path: Path | str, filename: str, ffmpeg: str) -> None
+     - split_audio(source_path: Path | str, dest_path: Path | str, filename: str, ffmpeg: str) -> None
 
-    convert_to_mp3(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str) -> None
-    convert_to_wav(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str) -> None
-    convert_to_flac(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str) -> None
+     - convert_to_mp3(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str) -> None
+     - convert_to_wav(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str) -> None
+     - convert_to_flac(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str) -> None
 
-    filter_to_wav(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str, filter_path: str, filter_name: str) -> None
+     - filter_to_wav(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str, filter_path: str, filter_name: str) -> None
 """
 
 import subprocess
@@ -16,7 +16,7 @@ import os
 
 from pathlib import Path
 
-from src.utils.trace import Trace
+from utils.trace import Trace
 
 """ FFmeg
 

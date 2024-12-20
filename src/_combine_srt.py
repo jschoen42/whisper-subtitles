@@ -1,20 +1,20 @@
-# .venv\Scripts\activate
-# python _combine_srt.py
+# .venv/Scripts/activate
+# python src/_combine_srt.py
 
 import sys
 
-from src.utils.globals import BASE_PATH
-from src.utils.prefs   import Prefs
-from src.utils.trace   import Trace
+from utils.globals import BASE_PATH
+from utils.prefs   import Prefs
+from utils.trace   import Trace
 
-from src.helper.excel    import import_project_excel
-from src.helper.analyse  import get_video_length
-from src.helper.captions import import_caption, writefile_srt
+from helper.excel    import import_project_excel
+from helper.analyse  import get_video_length
+from helper.captions import import_caption, writefile_srt
 
 data_path = BASE_PATH / "../data"
 
 def main():
-    Prefs.init("_prefs")
+    Prefs.init("settings")
     Prefs.read("projectsCombine.yaml")
 
     for project_info in Prefs.get("projects"):

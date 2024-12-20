@@ -1,20 +1,20 @@
-# .venv\Scripts\activate
-# python final_srt_vtt.py
+# .venv/Scripts/activate
+# python src/_final_srt_vtt.py
 
 import os
 
-from src.utils.globals import BASE_PATH
-from src.utils.prefs   import Prefs
-from src.utils.trace   import Trace
+from utils.globals import BASE_PATH
+from utils.prefs   import Prefs
+from utils.trace   import Trace
 
-from src.helper.captions import import_caption, writefile_srt #, writefile_vtt
+from helper.captions import import_caption, writefile_srt #, writefile_vtt
 
 PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
 
 data_path = BASE_PATH / "../data"
 
 def main():
-    Prefs.init("_prefs")
+    Prefs.init("settings")
     Prefs.read(PROJECTS)
 
     if not Prefs.read( PROJECTS, False ):

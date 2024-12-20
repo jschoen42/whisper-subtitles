@@ -13,8 +13,8 @@ import os
 from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
 
-from src.utils.trace import Trace
-from src.utils.file  import get_trace_path
+from utils.trace import Trace
+from utils.file  import get_trace_path
 
 def check_zip(myzip, path: str | Path, files: list) -> dict[str]:
     path = Path(path)

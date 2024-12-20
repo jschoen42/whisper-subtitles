@@ -20,9 +20,9 @@ from typing  import Any, Tuple
 
 import yaml
 
-from src.utils.globals import BASE_PATH
-from src.utils.trace   import Trace
-from src.utils.file    import beautify_path
+from utils.globals import BASE_PATH
+from utils.trace   import Trace
+from utils.file    import beautify_path
 
 class Prefs:
     pref_path   = BASE_PATH / "prefs"
@@ -46,7 +46,7 @@ class Prefs:
 
         pref_name = cls.pref_prefix + pref_name
         if not Path(cls.pref_path, pref_name).is_file():
-            Trace.error(f"pref not found '{pref_name}'")
+            Trace.error(f"pref not found '{cls.pref_path}\\{pref_name}'")
             return False
         try:
             with open( Path(cls.pref_path, pref_name), "r", encoding="utf-8") as file:

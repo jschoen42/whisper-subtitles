@@ -4,8 +4,8 @@ import os
 from rapidfuzz import fuzz # Levenshtein
 import jaro                # Jaro-Winkler
 
-from src.utils.trace import Trace
-from src.utils.util import import_json
+from utils.trace import Trace
+from utils.util import import_json
 
 def compare_file(folderpath: str, project: str, pattern: str) -> None:
     files = os.listdir(folderpath)

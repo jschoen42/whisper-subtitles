@@ -10,7 +10,7 @@
 
 from pymediainfo import MediaInfo
 
-from src.utils.trace import Trace
+from utils.trace import Trace
 
 def get_media_info(filepath: str) -> dict | None:
     """

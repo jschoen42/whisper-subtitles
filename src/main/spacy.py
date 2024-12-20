@@ -16,10 +16,10 @@ from importlib.metadata import version
 
 import spacy
 
-from src.utils.globals   import BASE_PATH
-from src.utils.prefs     import Prefs
-from src.utils.trace     import Trace
-from src.utils.decorator import duration
+from utils.globals   import BASE_PATH
+from utils.prefs     import Prefs
+from utils.trace     import Trace
+from utils.decorator import duration
 
 # https://spacy.io/models/de
 

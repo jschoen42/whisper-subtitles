@@ -17,8 +17,8 @@ from pathlib import Path
 
 import webvtt
 
-from src.utils.trace import Trace
-from src.utils.util import export_text, format_timestamp
+from utils.trace import Trace
+from utils.util import export_text, format_timestamp
 
 def second_to_timecode_srt(x: float, fps: float) -> str:
     return format_timestamp(x, always_include_hours=True, decimal_marker=",", fps=fps)

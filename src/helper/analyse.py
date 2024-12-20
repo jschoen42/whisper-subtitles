@@ -14,10 +14,10 @@ from typing import Tuple
 
 import numpy
 
-from src.utils.trace import Trace
-from src.utils.util import import_json
-from src.utils.metadata import get_audio_duration
-from src.utils.metadata_mutagen import get_audio_metadata_mutagen, get_video_metadata_mutagen
+from utils.trace import Trace
+from utils.util import import_json
+from utils.metadata import get_audio_duration
+from utils.metadata_mutagen import get_audio_metadata_mutagen, get_video_metadata_mutagen
 
 def analyse_results(model_id: str, model_name: str, media_type: str, media_name: str, media_path: str, json_path: str, _info_path: str, _analyse_path: str, beam_size: int) -> None | dict:
 

@@ -1,5 +1,5 @@
-# .venv\Scripts\activate
-# python main.py
+# .venv/Scripts/activate
+# python src/main.py
 
 import sys
 import json
@@ -8,24 +8,24 @@ import time
 from typing import Tuple
 from pathlib import Path
 
-from src.utils.globals import BASE_PATH
-from src.utils.prefs   import Prefs
-from src.utils.trace   import Trace
-from src.utils.util    import export_text, CacheJSON
-from src.utils.file    import check_file_exists
-from src.utils.log     import log_clear, log_add, log_get_data
-from src.utils.log     import DictionaryLog
+from utils.globals import BASE_PATH
+from utils.prefs   import Prefs
+from utils.trace   import Trace
+from utils.util    import export_text, CacheJSON
+from utils.file    import check_file_exists
+from utils.log     import log_clear, log_add, log_get_data
+from utils.log     import DictionaryLog
 
-from src.helper.excel    import import_project_excel, import_dictionary_excel
-from src.helper.captions import seconds_to_timecode_vtt
-from src.helper.spelling import hunspell_dictionary_init
-from src.helper.whisper_util import are_inner_prompts_possible, prompt_main_normalize, prompt_normalize, get_filename_parameter
+from helper.excel    import import_project_excel, import_dictionary_excel
+from helper.captions import seconds_to_timecode_vtt
+from helper.spelling import hunspell_dictionary_init
+from helper.whisper_util import are_inner_prompts_possible, prompt_main_normalize, prompt_normalize, get_filename_parameter
 
-from src.spacy import get_modelname_spacy
+from main.spacy import get_modelname_spacy
 
-from src.whisper_faster import precheck_models, transcribe_fasterwhisper
-from src.whisper import transcribe_whisper
-from src.whisper_timestamped import transcribe_whisper_timestamped
+from main.whisper_faster import precheck_models, transcribe_fasterwhisper
+from main.whisper import transcribe_whisper
+from main.whisper_timestamped import transcribe_whisper_timestamped
 
 PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
 
@@ -58,7 +58,7 @@ force_condition_on_previous_text: bool = False  # default v3: False, otherwise T
 reset_cache_spacy: bool = False
 
 def main():
-    Prefs.init("_prefs")
+    Prefs.init("settings")
     Prefs.read("base.yaml")
     Prefs.read(PROJECTS)
 

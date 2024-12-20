@@ -1,55 +1,43 @@
+
 """
     © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-     - search_model_path(model_name: str) -> None | str
      - load_model_whisper(model_name: str) -> Any
-     - transcribe_whisper(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict
+     - transcribe_whisper_timestamped(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict
 """
 
 import io
 import time
 import hashlib
-# import warnings
+import warnings
 
-from typing import Any
 from pathlib import Path
+from typing import Any
 
-import whisper
+import whisper_timestamped as whisper
 
-from src.utils.globals  import BASE_PATH
-from src.utils.prefs    import Prefs
-from src.utils.trace    import Trace
-from src.utils.util     import import_json, export_json, export_text, CacheJSON
-from src.utils.metadata import get_media_info
+from main.whisper import search_model_path
 
-from src.helper.captions import export_srt, export_vtt
-from src.helper.excel    import export_TextToSpeech_excel
-from src.helper.whisper_util import get_filename_parameter, prepare_words, split_to_lines, split_to_sentences
+from utils.trace    import Trace
+from utils.util     import import_json, export_json, export_text, CacheJSON
+from utils.metadata import get_media_info
+
+from helper.captions import export_srt, export_vtt
+from helper.excel    import export_TextToSpeech_excel
+
+from helper.whisper_util import get_filename_parameter, prepare_words, split_to_lines, split_to_sentences
 
 # warnings.simplefilter("ignore", UserWarning)
-# warnings.simplefilter("ignore", FutureWarning) #
+warnings.simplefilter("ignore", FutureWarning)
 
-# https://github.com/openai/whisper
+# https://github.com/linto-ai/whisper-timestamped
+#
+# uses "dtw-python" license GPLv2+ !!!
+#
 
 current_model_name: str = "none"
 current_model: Any = None
-
-def search_model_path(model_name: str) -> None | str:
-    model_path = BASE_PATH / Prefs.get("whisper.whisper.model_base")
-
-    if model_name not in Prefs.get("whisper.whisper.models.types"):
-        Trace.fatal(f"model '{model_name}' not found in pref")
-
-    if not Path(model_path).is_dir():
-        Trace.fatal(f"model base path '{model_path}' not found")
-        return None
-
-    if not Path(model_path, model_name + ".pt").is_file():
-        Trace.fatal(f"'{model_name}.pt' not found")
-        return None
-
-    return model_path
 
 def load_model_whisper(model_name: str) -> Any:
     global current_model_name
@@ -73,10 +61,9 @@ def load_model_whisper(model_name: str) -> Any:
         Trace.info(f"{current_model_name} loaded: {duration:.2f} sec")
         return model
     else:
-        Trace.error(f"no model_path for '{model_name}'")
         return None
 
-def transcribe_whisper(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict:
+def transcribe_whisper_timestamped(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict:
     global current_model
 
     # inModelID     = project_params["modelNumber"]
@@ -84,7 +71,7 @@ def transcribe_whisper(project_params: dict, media_params: dict, cache_nlp: Cach
     language        = project_params["language"]
     no_prompt       = project_params["noPrompt"]
     beam_size       = project_params["beam"]
-    # use_vad       = project_params["VAD"]
+    use_vad         = project_params["VAD"]
     dictionary_data = project_params["dictionary"]
     media_type      = project_params["type"]
     path_media      = project_params["mediaPath"]
@@ -110,10 +97,17 @@ def transcribe_whisper(project_params: dict, media_params: dict, cache_nlp: Cach
     else:
         curr_prompt = prompt
 
+    if use_vad:
+        vad = True  # "auditok"
+    else:
+        vad = None
+
     param = {
         "language": language.split("-")[0],                       # default "en"
         "fp16": False,                                            # default True
         "verbose": verbose,                                       # default: False
+
+        "vad": vad,                                               # True -> silero, "silero:v3.1", "auditok"
 
         "beam_size": beam_size,                                   # default: 5
         "best_of": 5,
@@ -125,7 +119,7 @@ def transcribe_whisper(project_params: dict, media_params: dict, cache_nlp: Cach
         "condition_on_previous_text": condition_on_previous_text, # default: True
 
         "initial_prompt": curr_prompt,
-        "word_timestamps": True,                                  # default False
+        "detect_disfluencies": True,
     }
 
     media_pathname = Path(path_media, media_name + "." + media_type)
@@ -186,7 +180,7 @@ def transcribe_whisper(project_params: dict, media_params: dict, cache_nlp: Cach
         result["segments"] = []
 
         start_time = time.time()
-        ret = current_model.transcribe(str(media_pathname), **param)
+        ret = whisper.transcribe(current_model, str(media_pathname), **param)
         duration_cpu = time.time() - start_time
 
         result["cpuTime"]  = round(duration_cpu, 2)

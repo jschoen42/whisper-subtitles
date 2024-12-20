@@ -7,8 +7,8 @@
 
 from typing import Tuple
 
-from src.utils.trace import Trace
-from src.utils.util  import format_timestamp
+from utils.trace import Trace
+from utils.util  import format_timestamp
 
 """
 TranscriptionInfo(

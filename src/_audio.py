@@ -1,5 +1,5 @@
-# .venv\Scripts\activate
-# python _audio.py
+# .venv/Scripts/activate
+# python src/_audio.py
 
 import sys
 import os
@@ -7,11 +7,11 @@ import time
 
 from pathlib import Path
 
-from src.utils.globals import BASE_PATH
-from src.utils.prefs   import Prefs
-from src.utils.trace   import Trace
+from utils.globals import BASE_PATH
+from utils.prefs   import Prefs
+from utils.trace   import Trace
 
-from src.utils.audio import convert_to_wav # , filter_to_wav
+from utils.audio import convert_to_wav # , filter_to_wav
 
 SOURCE_TYPE  = ".mp4"
 SAMPLING     = 16000
@@ -26,7 +26,7 @@ PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
 data_path = BASE_PATH / "../data"
 
 def main():
-    Prefs.init("_prefs")
+    Prefs.init("settings")
     Prefs.read("base.yaml")
     Prefs.read(PROJECTS)
 

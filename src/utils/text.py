@@ -4,7 +4,7 @@
     PUBLIC:
      - check_quote(test_id: str, text: None | str, language: str) -> str
 """
-from src.utils.trace import Trace
+from utils.trace import Trace
 
 quote_info = {
     # unten99, oben66

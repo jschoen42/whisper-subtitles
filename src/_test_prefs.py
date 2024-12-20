@@ -1,13 +1,13 @@
-# .venv\Scripts\activate
-# python _test_prefs.py
+# .venv/Scripts/activate
+# python src/_test_prefs.py
 
 import sys
 
-from src.utils.prefs import Prefs
-from src.utils.trace import Trace
+from utils.prefs import Prefs
+from utils.trace import Trace
 
 def main():
-    Prefs.init("_prefs")
+    Prefs.init("settings")
     Prefs.read("base.yaml")
     Prefs.read("projects.yaml")
 

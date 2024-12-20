@@ -54,7 +54,7 @@ try:
 except ImportError:
     pass
 
-from src.utils.trace import Trace
+from utils.trace import Trace
 
 # timestamp
 

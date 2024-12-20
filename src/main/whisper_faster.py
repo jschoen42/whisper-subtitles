@@ -21,18 +21,18 @@ import arrow
 
 from faster_whisper_custom import WhisperModel
 
-from src.utils.globals  import BASE_PATH
-from src.utils.prefs    import Prefs
-from src.utils.trace    import Trace
-from src.utils.file     import get_file_infos #, set_modification_timestamp
-from src.utils.util     import import_json_timestamp, export_json, export_text, format_subtitle, CacheJSON
-from src.utils.metadata import get_media_info
+from utils.globals  import BASE_PATH
+from utils.prefs    import Prefs
+from utils.trace    import Trace
+from utils.file     import get_file_infos #, set_modification_timestamp
+from utils.util     import import_json_timestamp, export_json, export_text, format_subtitle, CacheJSON
+from utils.metadata import get_media_info
 
-from src.helper.captions import export_srt, export_vtt
-from src.helper.excel import export_TextToSpeech_excel
+from helper.captions import export_srt, export_vtt
+from helper.excel import export_TextToSpeech_excel
 
-from src.helper.whisper_util import get_filename_parameter, are_prompts_allowed, prepare_words, split_to_lines, split_to_sentences
-from src.helper.whisper_faster_util import get_settings_transcribe_faster
+from helper.whisper_util import get_filename_parameter, are_prompts_allowed, prepare_words, split_to_lines, split_to_sentences
+from helper.whisper_faster_util import get_settings_transcribe_faster
 
 # https://github.com/SYSTRAN/faster-whisper
 

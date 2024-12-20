@@ -1,11 +1,10 @@
-""" mutagen
+"""
+    © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-    get_audioinfo_mutagen(filepath: str) -> dict
-    get_audio_metadata_mutagen(filepath: Path | str) -> None | dict
-    get_video_metadata_mutagen(filepath: Path | str) -> None | dict
-
-    IMPORTANT: License GPL3 -> Copyleft
+     - get_audioinfo_mutagen(filepath: str) -> dict:
+     - get_audio_metadata_mutagen(filepath: Path | str) -> dict | None:
+     - get_video_metadata_mutagen(filepath: Path | str) -> dict | None:
 """
 
 from pathlib import Path
@@ -19,7 +18,14 @@ import mutagen.mp4
 #from mutagen.wave import WAVE
 
 from utils.trace import Trace
+from utils.decorator import deprecation
 
+###########################################
+#  mutagen
+#  https://pypi.org/project/mutagen/
+###########################################
+
+@deprecation("licence does not fit")
 def get_audioinfo_mutagen(filepath: str) -> dict:
     metadata = mutagen.mp3.Open(filepath)
 
@@ -45,7 +51,8 @@ def get_audioinfo_mutagen(filepath: str) -> dict:
     }
     return info
 
-def get_audio_metadata_mutagen(filepath: Path | str) -> None | dict:
+@deprecation("licence does not fit")
+def get_audio_metadata_mutagen(filepath: Path | str) -> dict | None:
 
     try:
         metadata = mutagen.mp3.Open(Path(filepath))
@@ -54,11 +61,11 @@ def get_audio_metadata_mutagen(filepath: Path | str) -> None | dict:
         return None
 
     duration     = metadata.info.length
-    channels     = getattr(metadata.info, 'channels', None)
+    channels     = getattr(metadata.info, "channels", None)
     mode         = ["STEREO", "JOINTSTEREO", "DUALCHANNEL", "MONO"][int(getattr(metadata.info, "mode", None))]
-    bitrate_mode = str(getattr(metadata.info, 'bitrate_mode', None)).split(".")[1]
-    bitrate      = getattr(metadata.info, 'bitrate', None)
-    sample_rate  = getattr(metadata.info, 'sample_rate', None)
+    bitrate_mode = str(getattr(metadata.info, "bitrate_mode", None)).split(".")[1]
+    bitrate      = getattr(metadata.info, "bitrate", None)
+    sample_rate  = getattr(metadata.info, "sample_rate", None)
 
     return {
         "duration":    round(duration, 2),
@@ -69,7 +76,8 @@ def get_audio_metadata_mutagen(filepath: Path | str) -> None | dict:
         "sampleRate":  sample_rate,
     }
 
-def get_video_metadata_mutagen(filepath: Path | str) -> None | dict:
+@deprecation("licence does not fit")
+def get_video_metadata_mutagen(filepath: Path | str) -> dict | None:
     try:
         metadata = mutagen.mp4.Open(Path(filepath))
     except MutagenError as err:
@@ -78,8 +86,8 @@ def get_video_metadata_mutagen(filepath: Path | str) -> None | dict:
 
     duration    = metadata.info.length
     mode        = ["STEREO", "JOINTSTEREO", "DUALCHANNEL", "MONO"][int(getattr(metadata.info, "mode", None))]
-    bitrate     = getattr(metadata.info, 'bitrate', None)
-    sample_rate = getattr(metadata.info, 'sample_rate', None)
+    bitrate     = getattr(metadata.info, "bitrate", None)
+    sample_rate = getattr(metadata.info, "sample_rate", None)
 
     return {
         "audio":           True,

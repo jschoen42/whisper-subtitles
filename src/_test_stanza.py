@@ -1,5 +1,5 @@
-# .venv\Scripts\activate
-# python _test_stanza.py
+# .venv/Scripts/activate
+# python src/_test_stanza.py
 
 import sys
 # import re
@@ -10,9 +10,9 @@ import warnings
 
 import stanza
 
-# from src.utils.prefs import Prefs
-from src.utils.trace     import Trace
-from src.utils.decorator import duration
+# from utils.prefs import Prefs
+from utils.trace     import Trace
+from utils.decorator import duration
 
 
 text = " Beginnen wir mit einer Entscheidung des Bundesarbeitsgerichts vom 23. Mai 2024. Ist ein Unternehmen gezwungen, innerhalb eines kurzen Zeitraums mehrere Mitarbeiter zu kündigen, dann ist er verpflichtet, ab einer bestimmten Anzahl von zu kündigenden Mitarbeitern bei der Agentur für Arbeit eine sogenannte Massenentlassungsanzeige nach § 17 Kündigungsschutzgesetz zu erstatten."
@@ -33,7 +33,7 @@ def analyse( nlp, text ):
     return nlp(text)
 
 def main():
-    # Prefs.init("./_prefs")
+    # Prefs.init("settings")
     # Prefs.read("base.yaml")
 
     # stanza.download("en")

@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 DRIVE: Path     = Path(Path(__file__).drive)
-BASE_PATH: Path = Path(sys.argv[0]).parent
+BASE_PATH: Path = Path(sys.argv[0]).parent.parent
 
 system_paths = os.getenv("PATH")
 if system_paths[-1:] == ";":

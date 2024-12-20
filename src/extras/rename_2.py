@@ -6,10 +6,10 @@ import sys
 
 from pathlib import Path
 
-from src.utils.globals import BASE_PATH
-from src.utils.prefs   import Prefs
-from src.utils.trace   import Trace
-from src.utils.file    import get_folders_in_folder, get_files_in_folder
+from utils.globals import BASE_PATH
+from utils.prefs   import Prefs
+from utils.trace   import Trace
+from utils.file    import get_folders_in_folder, get_files_in_folder
 
 PROJECTS: str = "projects_all.yaml"  # "projects.yaml", "projects_all.yaml"
 
@@ -178,7 +178,7 @@ def rename_folder( folder ):
 
 
 def main():
-    Prefs.init("./_prefs")
+    Prefs.init("settings")
     Prefs.read(PROJECTS)
 
     for project in Prefs.get("projects"):

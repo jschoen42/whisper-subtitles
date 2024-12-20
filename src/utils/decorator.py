@@ -19,7 +19,7 @@ import functools
 from typing import Any, Generator, Match
 from collections.abc import Callable
 
-from src.utils.trace import Trace, Color
+from utils.trace import Trace, Color
 
 """ Decorator: @decorator
 

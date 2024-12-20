@@ -29,8 +29,8 @@ import json
 from typing import Tuple
 from pathlib import Path
 
-from src.utils.trace import Trace, Color
-from src.utils.file  import create_folder, get_modification_timestamp, set_modification_timestamp
+from utils.trace import Trace, Color
+from utils.file  import create_folder, get_modification_timestamp, set_modification_timestamp
 
 def format_subtitle( start_time: float, end_time: float, text: str, color=True ) -> str:
     start = format_timestamp(start_time)

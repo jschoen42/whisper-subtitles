@@ -19,8 +19,8 @@ import re
 from typing import Any
 from collections import OrderedDict
 
-from src.utils.prefs import Prefs
-from src.utils.trace import Trace
+from utils.prefs import Prefs
+from utils.trace import Trace
 
 def clean_import_json(text: str) -> str | bool:
     # mutiple space -> single space

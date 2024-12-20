@@ -1,12 +1,12 @@
-# .venv\Scripts\activate
-# python _test_spacy.py
+# .venv/Scripts/activate
+# python src/_test_spacy.py
 
 import sys
 
-from src.utils.prefs import Prefs
-from src.utils.trace import Trace
+from utils.prefs import Prefs
+from utils.trace import Trace
 
-from src.spacy import init_spacy, analyse_sentences_spacy
+from spacy import init_spacy, analyse_sentences_spacy
 
 text_list = [
     [
@@ -129,10 +129,10 @@ text_list = [
     # ],
 ]
 
-# from src.trace import trace
+# from trace import trace
 
 def main():
-    Prefs.init("_prefs")
+    Prefs.init("settings")
     Prefs.read("base.yaml")
 
     init_spacy( "de_DE")

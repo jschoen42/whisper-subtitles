@@ -1,13 +1,13 @@
-# .venv\Scripts\activate
-# python reset.py
+# .venv/Scripts/activate
+# python src/_reset.py
 
 import sys
 
 from pathlib import Path
 
-from src.utils.prefs import Prefs
-from src.utils.trace import Trace
-from src.utils.file  import delete_folder_tree, get_folders_in_folder
+from utils.prefs import Prefs
+from utils.trace import Trace
+from utils.file  import delete_folder_tree, get_folders_in_folder
 
 PROJECTS: str = "projects_all.yaml"  # "projects.yaml", "projects_all.yaml"
 
@@ -30,7 +30,7 @@ def clear_cache_spacy(project_path):
         delete_folder_tree( Path(path_base, folder, "tmp") )
 
 def main():
-    Prefs.init("./_prefs")
+    Prefs.init("settings")
     Prefs.read(PROJECTS)
 
     for project in Prefs.get("projects"):

@@ -21,12 +21,12 @@ import hashlib
 import numpy
 from typing import Tuple
 
-from src.spacy import analyse_sentences_spacy
+from main.spacy import analyse_sentences_spacy
 
-from src.utils.trace import Trace
-from src.utils.prefs import Prefs
-from src.utils.util  import format_timestamp, CacheJSON
-from src.helper.spelling import spellcheck
+from utils.trace import Trace
+from utils.prefs import Prefs
+from utils.util  import format_timestamp, CacheJSON
+from helper.spelling import spellcheck
 
 #################################################################################################################
 #

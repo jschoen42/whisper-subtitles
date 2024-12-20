@@ -10,8 +10,8 @@ from zipfile import ZipFile
 
 import xmltodict
 
-from src.utils.trace import Trace
-from src.utils.file import get_trace_path
+from utils.trace import Trace
+from utils.file import get_trace_path
 
 def open_xml_as_dict(myzip: ZipFile, path: Path | str, comment: str = "[open_xml_as_dict]") -> dict | None:
     try:
