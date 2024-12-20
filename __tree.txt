@@ -8,9 +8,10 @@ whisper-subtitles v0.1.0
 │   ├── numpy v2.0.2
 │   ├── pyyaml v6.0.2
 │   └── setuptools v75.6.0
+├── fsspec v2024.12.0
 ├── huggingface-hub v0.27.0
 │   ├── filelock v3.16.1
-│   ├── fsspec v2024.10.0
+│   ├── fsspec v2024.12.0
 │   ├── packaging v24.2
 │   ├── pyyaml v6.0.2
 │   ├── requests v2.32.3
@@ -38,7 +39,7 @@ whisper-subtitles v0.1.0
 │   ├── flatbuffers v24.3.25
 │   ├── numpy v2.0.2
 │   ├── packaging v24.2
-│   ├── protobuf v5.29.1
+│   ├── protobuf v5.29.2
 │   └── sympy v1.13.3
 │       └── mpmath v1.3.0
 ├── openai-whisper v20240930
@@ -50,7 +51,7 @@ whisper-subtitles v0.1.0
 │   │   └── requests v2.32.3 (*)
 │   ├── torch v2.4.1
 │   │   ├── filelock v3.16.1
-│   │   ├── fsspec v2024.10.0
+│   │   ├── fsspec v2024.12.0
 │   │   ├── jinja2 v3.1.4
 │   │   │   └── markupsafe v3.0.2
 │   │   ├── networkx v3.4.2
@@ -61,7 +62,7 @@ whisper-subtitles v0.1.0
 ├── openpyxl v3.1.5
 │   └── et-xmlfile v2.0.0
 ├── openpyxl-stubs v0.1.25
-│   ├── mypy v1.13.0
+│   ├── mypy v1.14.0
 │   │   ├── mypy-extensions v1.0.0
 │   │   └── typing-extensions v4.12.2
 │   ├── openpyxl v3.1.5 (*)
@@ -82,9 +83,9 @@ whisper-subtitles v0.1.0
 │   ├── preshed v3.0.9
 │   │   ├── cymem v2.0.10
 │   │   └── murmurhash v1.0.11
-│   ├── pydantic v2.10.3
+│   ├── pydantic v2.10.4
 │   │   ├── annotated-types v0.7.0
-│   │   ├── pydantic-core v2.27.1
+│   │   ├── pydantic-core v2.27.2
 │   │   │   └── typing-extensions v4.12.2
 │   │   └── typing-extensions v4.12.2
 │   ├── requests v2.32.3 (*)
@@ -98,14 +99,14 @@ whisper-subtitles v0.1.0
 │   │   │   └── numpy v2.0.2
 │   │   ├── catalogue v2.0.10
 │   │   ├── confection v0.1.5
-│   │   │   ├── pydantic v2.10.3 (*)
+│   │   │   ├── pydantic v2.10.4 (*)
 │   │   │   └── srsly v2.5.0 (*)
 │   │   ├── cymem v2.0.10
 │   │   ├── murmurhash v1.0.11
 │   │   ├── numpy v2.0.2
 │   │   ├── packaging v24.2
 │   │   ├── preshed v3.0.9 (*)
-│   │   ├── pydantic v2.10.3 (*)
+│   │   ├── pydantic v2.10.4 (*)
 │   │   ├── setuptools v75.6.0
 │   │   ├── srsly v2.5.0 (*)
 │   │   └── wasabi v1.1.3
@@ -125,9 +126,9 @@ whisper-subtitles v0.1.0
 │       ├── cloudpathlib v0.20.0
 │       ├── confection v0.1.5 (*)
 │       ├── packaging v24.2
-│       ├── pydantic v2.10.3 (*)
+│       ├── pydantic v2.10.4 (*)
 │       ├── requests v2.32.3 (*)
-│       ├── smart-open v7.0.5
+│       ├── smart-open v7.1.0
 │       │   └── wrapt v1.17.0
 │       ├── srsly v2.5.0 (*)
 │       ├── typer v0.15.1 (*)

@@ -1,28 +1,28 @@
 """
-    (c) Jürgen Schoenemeyer, 07.12.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
     class Prefs:
-        init(cls, pref_path = None, pref_prefix = None ) -> None
-        read(cls, pref_name: str) -> bool
-        get(cls, key_path: str) -> any
+      - init(cls, pref_path = None, pref_prefix = None ) -> None
+      - read(cls, pref_name: str) -> bool
+      - get(cls, key_path: str) -> Any
 
     merge_dicts(a: dict, b: dict) -> dict
     build_tree(tree: list, in_key: str, value: str) -> dict
 """
-import sys
+
 import json
 import re
 
 from json    import JSONDecodeError
 from pathlib import Path
+from typing  import Any, Tuple
 
 import yaml
 
-from src.utils.trace import Trace
-from src.utils.file  import beautify_path
-
-BASE_PATH = Path(sys.argv[0]).parent
+from src.utils.globals import BASE_PATH
+from src.utils.trace   import Trace
+from src.utils.file    import beautify_path
 
 class Prefs:
     pref_path   = BASE_PATH / "prefs"
@@ -69,9 +69,9 @@ class Prefs:
         return cls.data
 
     @classmethod
-    def get(cls, key: str) -> any:
+    def get(cls, key: str) -> Any:
 
-        def get_pref_key(key_path: str) -> any:
+        def get_pref_key(key_path: str) -> Any:
             keys = key_path.split(".")
 
             data = cls.data
@@ -125,7 +125,7 @@ def get_pref_special(pref_path: Path, pref_prexix, pref_name: str, key: str) -> 
         Trace.error(f"unknown pref: {pref_name} / {key}")
         return ""
 
-def read_pref( pref_path: Path, pref_name: str ) -> tuple[bool, dict]:
+def read_pref( pref_path: Path, pref_name: str ) -> Tuple[bool, dict]:
     try:
         with open( Path(pref_path, pref_name), "r", encoding="utf-8") as file:
             data = yaml.safe_load(file)
@@ -139,7 +139,7 @@ def read_pref( pref_path: Path, pref_name: str ) -> tuple[bool, dict]:
 
 # https://stackoverflow.com/questions/7204805/deep-merge-dictionaries-of-dictionaries-in-python?page=1&tab=scoredesc#answer-7205672
 
-def merge_dicts(a: dict, b: dict) -> any:
+def merge_dicts(a: dict, b: dict) -> Any:
     for k in set(a.keys()).union(b.keys()):
         if k in a and k in b:
             if isinstance(a[k], dict) and isinstance(b[k], dict):
@@ -156,7 +156,7 @@ def merge_dicts(a: dict, b: dict) -> any:
 
 # https://stackoverflow.com/questions/7204805/deep-merge-dictionaries-of-dictionaries-in-python?page=1&tab=scoredesc#answer-7205107
 
-def merge(a: dict, b: dict, path=[]) -> any:
+def merge(a: dict, b: dict, path=[]) -> Any:
     for key in b:
         if key in a:
             if isinstance(a[key], dict) and isinstance(b[key], dict):

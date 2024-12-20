@@ -1,8 +1,8 @@
 """
-    (c) Jürgen Schoenemeyer, 10.11.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-    check_quote(test_id: str, text: None | str, language: str) -> str
+     - check_quote(test_id: str, text: None | str, language: str) -> str
 """
 from src.utils.trace import Trace
 

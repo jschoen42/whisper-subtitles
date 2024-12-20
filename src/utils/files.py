@@ -1,17 +1,18 @@
 """
-    (c) Jürgen Schoenemeyer, 06.12.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
     error channel -> rustedpy/result
 
     PUBLIC:
-    result = get_timestamp(filepath: Path | str) -> Result[float, str]:
-    result = set_timestamp(filepath: Path | str, timestamp: float) -> Result[(), str]:
-
-    result = get_files_dirs(path: str, extensions: list) -> Result[tuple[list, list], str]:
-
-    result = read_file(filepath: Path | str, encoding: str="utf-8" ) -> Result[any, str]
-    result = write_file(filepath: Path | str, data: any, encoding: str="utf-8", create_dir: bool = True, show_message: bool=True) -> Result[str, str]:
-
+     - result = get_timestamp(filepath: Path | str) -> Result[float, str]:
+     - result = set_timestamp(filepath: Path | str, timestamp: float) -> Result[(), str]:
+    #
+     - result = get_files_dirs(path: str, extensions: list) -> Result[Tuple[list, list], str]:
+    #
+     - result = read_file(filepath: Path | str, encoding: str="utf-8" ) -> Result[Any, str]
+     - result = write_file(filepath: Path | str, data: Any, encoding: str="utf-8", create_dir: bool = True, show_message: bool=True) -> Result[str, str]:
+    #
+    ------
     from result import is_err, is_ok
 
     if is_err(result):
@@ -28,6 +29,7 @@
 import os
 import sys
 
+from typing import Any, Tuple
 from datetime import datetime
 from pathlib import Path
 
@@ -110,7 +112,7 @@ def set_timestamp(filepath: Path | str, timestamp: int|float) -> Result[str, str
 
 # dir listing -> list of files and dirs
 
-def get_files_dirs(path: str, extensions: list) -> Result[tuple[list, list], str]:
+def get_files_dirs(path: str, extensions: list) -> Result[Tuple[list, list], str]:
     files: list = []
     dirs = []
     try:
@@ -131,7 +133,7 @@ def get_files_dirs(path: str, extensions: list) -> Result[tuple[list, list], str
 
     return Ok(files, dirs)
 
-def read_file(filepath: Path | str, encoding: str="utf-8") -> Result[any, str]:
+def read_file(filepath: Path | str, encoding: str="utf-8") -> Result[Any, str]:
     """
     ### read file (text, json, xml)
 
@@ -140,7 +142,7 @@ def read_file(filepath: Path | str, encoding: str="utf-8") -> Result[any, str]:
      - encoding: str - used only for '.txt'
 
     #### Return [rustedpy]
-     - Ok: data as any
+     - Ok: data as Any
      - Err: errortext as str
     ---
     #### Infos
@@ -224,7 +226,7 @@ def read_file(filepath: Path | str, encoding: str="utf-8") -> Result[any, str]:
         return Ok(data)
 
 
-def write_file(filepath: Path | str, data: any, filename_timestamp: bool = False, timestamp: int|float = 0, encoding: str="utf-8", newline: str="\n", create_dir: bool = True, show_message: bool=True) -> Result[str, str]:
+def write_file(filepath: Path | str, data: Any, filename_timestamp: bool = False, timestamp: int|float = 0, encoding: str="utf-8", newline: str="\n", create_dir: bool = True, show_message: bool=True) -> Result[str, str]:
     """
     ### write file (text, json, xml)
 

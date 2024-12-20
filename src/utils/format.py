@@ -1,21 +1,21 @@
 """
-    (c) Jürgen Schoenemeyer, 03.12.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-    floor(number: float, decimals: int=2) -> int
+     - floor(number: float, decimals: int=2) -> int
 
-    convert_date_time(time_string: str) -> int
+     - convert_date_time(time_string: str) -> int
 
-    format_bytes( size: int, unit: str ) -> str
-    format_bytes_v2(size: int) -> str
+     - format_bytes( size: int, unit: str ) -> str
+     - format_bytes_v2(size: int) -> str
 
-    convert_duration(duration: int) -> str
+     - convert_duration(duration: int) -> str
 
-    bin_nibble_null(val: int) -> str
-    bin_nibble(val: int) -> str
+     - bin_nibble_null(val: int) -> str
+     - bin_nibble(val: int) -> str
 
-    to_bool(in_text: str) -> bool
-    str_to_bool(value: str) -> bool
+     - to_bool(in_text: str) -> bool
+     - str_to_bool(value: str) -> bool
 """
 
 import math
@@ -40,10 +40,8 @@ def floor(number: float, decimals: int=2) -> int:
 def convert_date_time(time_string: str) -> int:
     my_time_string = parse(time_string.replace("UTC", ""))
 
-    timestamp = int(datetime.datetime.timestamp(my_time_string))
-
-    # Trace.info(f"{time_string} -> {my_time_string} => epoch: {timestamp}" )
-    return timestamp
+    timestamp = datetime.datetime.timestamp(my_time_string)
+    return int(timestamp)
 
 def convert_to_seconds(timestring: str) -> float:
     tmp = timestring.split(":")

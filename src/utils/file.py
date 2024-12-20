@@ -1,40 +1,40 @@
 """
-    (c) Jürgen Schoenemeyer, 10.12.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-    get_modification_timestamp(filename: Path | str) -> float
-    set_modification_timestamp(filename: Path | str, timestamp: float) -> None
-
-    check_path_exists(path: str) -> bool
-    check_file_exists(filepath: str, filename: str) -> bool
-    check_excel_file_exists(filename: str) -> bool
-
-    list_files(path: str, extensions: list) -> list
-    list_directories(path: str) -> list
-    listdir_match_extention(folder_path: Path | str, extensions: list=None) -> list
-
-    clear_folder(path: str) -> None
-    delete_folder_tree(dest_path: str, relax: bool = False) -> bool
-    create_folder( folderpath: Path | str ) -> bool
-    make_dir(in_path)
-    beautify_path( path: Path | str ) -> str
-
-    get_trace_path(filepath: Path | str) -> str
-    get_files_in_folder( path: Path ) -> list
-    get_folders_in_folder( path: Path ) -> list
-    get_save_filename( path, stem, suffix ) -> str
-    export_binary_file(filepath: Path | str, filename: str, data: bytes, _timestamp: int=0, create_folder: bool=False) -> None
-    export_file(filepath: Path|str, filename: str, text: str, in_type: str = None, timestamp: int=0, create_folder: bool=False, encoding: str ="utf-8", overwrite: bool=True) -> str
-
-    get_filename_unique(dirpath: Path, filename: str) -> str
-    find_matching_file(path_name: str) -> bool | str
-    find_matching_file_path(dirname: Path, filename: str) -> Path | bool
-    get_valid_filename(name: str) -> str
-    get_file_infos(path: Path | str, filename: str, _in_type: str) -> None | dict
-
-    copy_my_file(source: str, dest: str, _show_updated: bool) -> bool
-
-    convert_datetime( time_string: str ) -> int
+     - get_modification_timestamp(filename: Path | str) -> float
+     - set_modification_timestamp(filename: Path | str, timestamp: float) -> None
+    #
+     - check_path_exists(path: str) -> bool
+     - check_file_exists(filepath: str, filename: str) -> bool
+     - check_excel_file_exists(filename: str) -> bool
+    #
+     - list_files(path: str, extensions: list) -> list
+     - list_directories(path: str) -> list
+     - listdir_match_extention(folder_path: Path | str, extensions: list=None) -> list
+    #
+     - clear_folder(path: str) -> None
+     - delete_folder_tree(dest_path: str, relax: bool = False) -> bool
+     - create_folder( folderpath: Path | str ) -> bool
+     - make_dir(in_path)
+     - beautify_path( path: Path | str ) -> str
+    #
+     - get_trace_path(filepath: Path | str) -> str
+     - get_files_in_folder( path: Path ) -> list
+     - get_folders_in_folder( path: Path ) -> list
+     - get_save_filename( path, stem, suffix ) -> str
+     - export_binary_file(filepath: Path | str, filename: str, data: bytes, _timestamp: int=0, create_folder: bool=False) -> None
+     - export_file(filepath: Path|str, filename: str, text: str, in_type: str = None, timestamp: int=0, create_folder: bool=False, encoding: str ="utf-8", overwrite: bool=True) -> str
+    #
+     - get_filename_unique(dirpath: Path, filename: str) -> str
+     - find_matching_file(path_name: str) -> bool | str
+     - find_matching_file_path(dirname: Path, filename: str) -> Path | bool
+     - get_valid_filename(name: str) -> str
+     - get_file_infos(path: Path | str, filename: str, _in_type: str) -> None | dict
+    #
+     - copy_my_file(source: str, dest: str, _show_updated: bool) -> bool
+    #
+     - convert_datetime( time_string: str ) -> int
 """
 
 import shutil

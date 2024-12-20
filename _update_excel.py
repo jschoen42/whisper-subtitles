@@ -1,4 +1,4 @@
-# .venv-3.12\Scripts\activate
+# .venv\Scripts\activate
 # python _update_excel.py
 
 import sys

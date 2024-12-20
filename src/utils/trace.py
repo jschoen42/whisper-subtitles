@@ -1,41 +1,34 @@
 """
-    (c) Jürgen Schoenemeyer, 17.12.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
-    PUBLIC:
     class Trace:
-        Trace.set(debug_mode=True)
-        Trace.set(reduced_mode=True)
-        Trace.set(color=False)
-        Trace.set(timezone=False)
-        Trace.set(timezone="Europe/Berlin") # "UTC", "America/New_York"
-
-        Trace.set( appl_folder="/trace/" )
-        Trace.file_init(["action", "result", "warning", "error"], csv=False) # csv with TAB instead of comma
-        Trace.file_save("./logs", "testTrace")
-
-        Trace.redirect(function) # -> e.g. qDebug (PySide6)
-
-        Trace.action()
-        Trace.result()
-        Trace.info()     # not in reduced mode
-        Trace.update()   # not in reduced mode
-        Trace.download() # not in reduced mode
-
-        Trace.warning()
-        Trace.error()
-        Trace.exception()
-        Trace.fatal()
-
-        Trace.debug()    # only in debug mode
-        Trace.wait()     # only in debug mode
+      - Trace.set(debug_mode=True)
+      - Trace.set(reduced_mode=True)
+      - Trace.set(color=False)
+      - Trace.set(timezone=False)
+      - Trace.set(timezone="Europe/Berlin") # "UTC", "America/New_York"
+      - Trace.set(appl_folder="/trace/")
+      #
+      - Trace.file_init(["action", "result", "warning", "error"], csv=False)
+      - Trace.file_save("./logs", "testTrace")
+      #
+      - Trace.redirect(function) # -> e.g. qDebug (PySide6)
+      #
+      - Trace.action()
+      - Trace.result()
+      - Trace.info()     # not in reduced mode
+      - Trace.update()   # not in reduced mode
+      - Trace.download() # not in reduced mode
+      - Trace.warning()
+      - Trace.error()
+      - Trace.exception()
+      - Trace.fatal()
+      - Trace.debug()    # only in debug mode
+      - Trace.wait()     # only in debug mode
 
     class Color:
-        Color.<color_name>
-        Color.clear(text: str) -> str:
-
-    class ProcessLog (array cache)
-        - add
-        - get
+      - Color.<color_name>
+      - Color.clear(text: str) -> str:
 
 """
 
@@ -46,7 +39,7 @@ import re
 import inspect
 import importlib.util
 
-from typing import Callable
+from typing import Any, Callable
 from enum import StrEnum
 from pathlib import Path
 from datetime import datetime
@@ -122,9 +115,9 @@ pattern = {
     "download":  ">>>>>",
 
     "warning":   "*****",
-    "error":     "#####", # + rot
-    "exception": "!!!!!", # + rot
-    "fatal":     "FATAL", # + rot
+    "error":     "#####", # + red
+    "exception": "!!!!!", # + red
+    "fatal":     "FATAL", # + red
 
     "debug":     "DEBUG", # only in debug mode
     "wait":      "WAIT ", # only in debug mode
@@ -219,39 +212,39 @@ class Trace:
     # action, result, info, update, download
 
     @classmethod
-    def action(cls, message: str = "", *optional: any) -> None:
+    def action(cls, message: str = "", *optional: Any) -> None:
         pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
         cls.__show_message(cls.__check_file_output(), pre, message, *optional)
 
     @classmethod
-    def result(cls, message: str = "", *optional: any) -> None:
+    def result(cls, message: str = "", *optional: Any) -> None:
         pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
         cls.__show_message(cls.__check_file_output(), pre, message, *optional)
 
     @classmethod
-    def time(cls, message: str = "", *optional: any) -> None:
+    def time(cls, message: str = "", *optional: Any) -> None:
         pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_custom_caller('duration')}"
         cls.__show_message(cls.__check_file_output(), pre, message, *optional)
 
     @classmethod
-    def custom(cls, message: str = "", *optional: any, path = "custom") -> None:
+    def custom(cls, message: str = "", *optional: Any, path = "custom") -> None:
         pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_custom_caller(path)}"
         cls.__show_message(cls.__check_file_output(), pre, message, *optional)
 
     @classmethod
-    def info(cls, message: str = "", *optional: any) -> None:
+    def info(cls, message: str = "", *optional: Any) -> None:
         if not cls.settings["reduced_mode"]:
             pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
             cls.__show_message(cls.__check_file_output(), pre, message, *optional)
 
     @classmethod
-    def update(cls, message: str = "", *optional: any) -> None:
+    def update(cls, message: str = "", *optional: Any) -> None:
         if not cls.settings["reduced_mode"]:
             pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
             cls.__show_message(cls.__check_file_output(), pre, message, *optional)
 
     @classmethod
-    def download(cls, message: str = "", *optional: any) -> None:
+    def download(cls, message: str = "", *optional: Any) -> None:
         if not cls.settings["reduced_mode"]:
             pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
             cls.__show_message(cls.__check_file_output(), pre, message, *optional)
@@ -259,22 +252,22 @@ class Trace:
     # warning, error, exception, fatal => RED
 
     @classmethod
-    def warning(cls, message: str = "", *optional: any) -> None:
+    def warning(cls, message: str = "", *optional: Any) -> None:
         pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
         cls.__show_message(cls.__check_file_output(), pre, message, *optional)
 
     @classmethod
-    def error(cls, message: str = "", *optional: any) -> None:
+    def error(cls, message: str = "", *optional: Any) -> None:
         pre = f"{cls.__get_time()}{Color.RED}{cls.__get_pattern()}{cls.__get_caller()}"
         cls.__show_message(cls.__check_file_output(), pre, message, *optional)
 
     @classmethod
-    def exception(cls, message: str = "", *optional: any) -> None:
+    def exception(cls, message: str = "", *optional: Any) -> None:
         pre = f"{cls.__get_time()}{Color.RED}{cls.__get_pattern()}{cls.__get_caller()}"
         cls.__show_message(cls.__check_file_output(), pre, message, *optional)
 
     @classmethod
-    def fatal(cls, message: str = "", *optional: any) -> None:
+    def fatal(cls, message: str = "", *optional: Any) -> None:
         pre = f"{cls.__get_time()}{Color.RED}{Color.BOLD}{cls.__get_pattern()}{cls.__get_caller()}"
         cls.__show_message(cls.__check_file_output(), pre, message, *optional)
         raise SystemExit
@@ -282,18 +275,18 @@ class Trace:
     # debug, wait
 
     @classmethod
-    def debug(cls, message: str = "", *optional: any) -> None:
+    def debug(cls, message: str = "", *optional: Any) -> None:
         if cls.settings["debug_mode"] and not cls.settings["reduced_mode"]:
             pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
             cls.__show_message(cls.__check_file_output(), pre, message, *optional)
 
     @classmethod
-    def wait(cls, message: str = "", *optional: any) -> None:
+    def wait(cls, message: str = "", *optional: Any) -> None:
         if cls.settings["debug_mode"]:
             pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
             cls.__show_message(cls.__check_file_output(), pre, message, *optional)
             try:
-                print(f"{Color.RED}{Color.BOLD} >>> Press any key to continue or ESC to exit <<< {Color.RESET}", end="", flush=True)
+                print(f"{Color.RED}{Color.BOLD} >>> Press Any key to continue or ESC to exit <<< {Color.RESET}", end="", flush=True)
 
                 if system == "Windows":
                     key = msvcrt.getch()
@@ -383,7 +376,7 @@ class Trace:
         return f"\t{Color.BLUE}[{text}]{Color.RESET}\t"
 
     @classmethod
-    def __show_message(cls, file_output: bool, pre: str, message: str, *optional: any) -> None:
+    def __show_message(cls, file_output: bool, pre: str, message: str, *optional: Any) -> None:
         extra = ""
         for opt in optional:
             extra += " > " + str(opt)
@@ -418,13 +411,3 @@ class Trace:
         else:
             text = bytes.decode("utf-8", "strict")
             sys.stdout.write(text)
-
-class ProcessLog:
-    def __init__(self):
-        self.log = []
-
-    def add(self, info):
-        self.log.append(info)
-
-    def get(self):
-        return self.log

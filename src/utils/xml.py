@@ -1,8 +1,8 @@
 """
-    (c) Jürgen Schoenemeyer, 03.12.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-    open_xml_as_dict(myzip: ZipFile, path: Path | str, comment: str = "[open_xml_as_dict]") -> dict | None
+     - open_xml_as_dict(myzip: ZipFile, path: Path | str, comment: str = "[open_xml_as_dict]") -> dict | None
 """
 
 from pathlib import Path

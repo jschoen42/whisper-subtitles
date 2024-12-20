@@ -1,7 +1,25 @@
+"""
+    © Jürgen Schoenemeyer, 20.12.2024
+
+    PUBLIC:
+     - prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: dict, media_filename: str) -> Tuple[list, int, float, float, str, list, list]:
+     - split_to_lines(words: list, dictionary: list) -> Tuple[dict, str, str, dict, dict, list]:
+     - split_to_sentences(words: dict, dictionary: dict) -> list:
+
+     - get_filename_parameter(params: dict) -> str:
+     - are_prompts_allowed(model_name) -> bool:
+     - are_inner_prompts_possible(model_name) -> bool:
+     - prompt_main_normalize(text: str) -> str:
+     - prompt_normalize(text: str) -> str:
+     - format_euro(text: str, thousand_separator: str = ".", float_separator: str = ",", euro: str = "€") -> str:
+
+"""
+
 import re
 import hashlib
 
 import numpy
+from typing import Tuple
 
 from src.spacy import analyse_sentences_spacy
 
@@ -24,9 +42,9 @@ from src.helper.spelling import spellcheck
 #
 #   PASS 1
 #   def prepare_words(data: dict[dict], is_faster_whisper: bool, is_intro: bool, type_v3: bool, language: str,
-#                      cache_md5: dict, media_filename: str) -> tuple[list[dict], int, float, float, str, list[dict]]:
+#                      cache_md5: dict, media_filename: str) -> Tuple[list[dict], int, float, float, str, list[dict]]:
 #   PASS 2
-#   def split_to_lines(words: list[dict], dictionary: list[list]) -> tuple[dict, str, str, dict, dict, list]:
+#   def split_to_lines(words: list[dict], dictionary: list[list]) -> Tuple[dict, str, str, dict, dict, list]:
 #
 #   export in sentences -> TextToSpeech
 #   def split_to_sentences(words: dict, dictionary: dict) -> list:
@@ -293,7 +311,7 @@ def get_filename_parameter(params: dict) -> str:
 #   Pass 1
 ######################
 
-def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: CacheJSON, media_filename: str) -> tuple[list, int, float, float, str, list, list]:
+def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: CacheJSON, media_filename: str) -> Tuple[list, int, float, float, str, list, list]:
     words: list = []
     probability: list = []
 
@@ -590,7 +608,7 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
 #
 ####################################################
 
-def split_to_lines(words: list, dictionary: list) -> tuple[list, str, str, list, dict]:
+def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list, dict]:
     line  = ""
     lines = ""
 

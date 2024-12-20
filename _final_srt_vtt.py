@@ -1,4 +1,4 @@
-# .venv-3.12\Scripts\activate
+# .venv\Scripts\activate
 # python final_srt_vtt.py
 
 import os

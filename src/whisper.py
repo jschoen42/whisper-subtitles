@@ -1,3 +1,12 @@
+"""
+    © Jürgen Schoenemeyer, 20.12.2024
+
+    PUBLIC:
+     - search_model_path(model_name: str) -> None | str
+     - load_model_whisper(model_name: str) -> Any
+     - transcribe_whisper(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict
+"""
+
 import io
 import time
 import hashlib

@@ -1,12 +1,14 @@
 """
-    (c) Jürgen Schoenemeyer, 15.12.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
-    public
-     - def duration(pre_text: str="", rounds: int=1) -> Callable:
-     - def retry_exception(pre_text: str="", exception=Exception, delay: int|float=1, retries: int=5) -> Callable:
+    PUBLIC:
+     - @duration(pre_text: str="", rounds: int=1)
+     - @deprecation(message: str="")
 
-    privat
-      - def replace_arguments(match: Match, *args, **kwargs) -> str:
+     - @retry_exception(pre_text: str="", exception=Exception, delay: int|float=1, retries: int=5)
+
+    PRIVAT:
+      - def replace_arguments(match: Match, func_name: str, *args, **kwargs) -> str:
 """
 
 import contextlib
@@ -14,7 +16,7 @@ import time
 import re
 import functools
 
-from typing import Generator, Match
+from typing import Any, Generator, Match
 from collections.abc import Callable
 
 from src.utils.trace import Trace, Color
@@ -23,7 +25,7 @@ from src.utils.trace import Trace, Color
 
 def my_decorator(func: Callable) -> Callable:
     @functools.wraps(func)
-    def wrapper(*args: any, **kwargs: any) -> any:
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
 
         # before ...
 
@@ -40,7 +42,7 @@ def my_decorator(func: Callable) -> Callable:
 def my_decorator( ... ) -> Callable:
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
-        def wrapper(*args: any, **kwargs: any) -> any:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
 
             # before ...
 
@@ -60,8 +62,8 @@ def my_decorator( ... ) -> Callable:
 
 def duration(pre_text: str=None, rounds: int=1) -> Callable:
     def decorator(func: Callable) -> Callable:
-        @functools.wraps(func)
-        def wrapper(*args: any, **kwargs: any) -> any:
+        @functools.wraps(replace_arguments)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             start_time = time.perf_counter()
 
             result = func(*args, **kwargs)
@@ -73,7 +75,7 @@ def duration(pre_text: str=None, rounds: int=1) -> Callable:
                 pretext = func.__name__
             else:
                 def replace(match: Match) -> str:
-                    return replace_arguments( match, *args, **kwargs )
+                    return replace_arguments( match, func.__name__, *args, **kwargs )
 
                 pattern = r"\{(.*?)\}"
                 pretext = re.sub(pattern, replace, pre_text)
@@ -88,6 +90,29 @@ def duration(pre_text: str=None, rounds: int=1) -> Callable:
         return wrapper
     return decorator
 
+# @deprecation()
+# @deprecation("licence does not fit")
+
+def deprecation(message: str="") -> Callable:
+    def decorator(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+
+            # before ...
+
+            if message == "":
+                Trace.custom(f"{Color.RED}'{func.__name__}' is deprecated{Color.RESET}", path="deprecation")
+            else:
+                Trace.custom(f"{Color.RED}'{func.__name__}' is deprecated ({message}){Color.RESET}", path="deprecation")
+
+            result = func(*args, **kwargs)
+
+            # after ...
+
+            return result
+        return wrapper
+    return decorator
+
 # @retry_exception(exception=ValueError)
 # @retry_exception("error limit '{0}'", exception=ValueError)
 # @retry_exception("ttx => font '{0}'", exception=ValueError, delay=2.5, retries=10)
@@ -95,13 +120,13 @@ def duration(pre_text: str=None, rounds: int=1) -> Callable:
 def retry_exception(pre_text: str=None, exception=Exception, delay: int|float=1, retries: int=5) -> Callable:
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
-        def wrapper(*args: any, **kwargs: any) -> any:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
 
             if pre_text is None:
                 pretext = func.__name__
             else:
                 def replace(match: Match) -> str:
-                    return replace_arguments( match, *args, **kwargs )
+                    return replace_arguments( match, func.__name__, *args, **kwargs )
 
                 pattern = r"\{(.*?)\}"
                 pretext = re.sub(pattern, replace, pre_text)
@@ -124,7 +149,6 @@ def retry_exception(pre_text: str=None, exception=Exception, delay: int|float=1,
         return wrapper
     return decorator
 
-
 # https://www.youtube.com/watch?v=xI4TJyd8FGk&t=860s
 #
 # @type_check(int, int)
@@ -134,7 +158,7 @@ def retry_exception(pre_text: str=None, exception=Exception, delay: int|float=1,
 def type_check(*expected_types) -> Callable:
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
-        def wrapper(*args: any, **kwargs: any) -> any:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             result = func(*args, **kwargs)
 
             for arg, expected_type in zip(args, expected_types):
@@ -167,10 +191,13 @@ def duration_cm(name: str) -> Generator[None, None, None]:
 
 # helper
 
-def replace_arguments(match: Match, *args, **kwargs) -> str:
+def replace_arguments(match: Match, func_name: str, *args, **kwargs) -> str:
     argument = match.group(1)
 
-    if argument.isnumeric():
+    if argument == "__name__":
+        return( func_name )
+
+    elif argument.isnumeric():
         # args
         pos = int(argument)
         if pos < len(args):
@@ -178,6 +205,7 @@ def replace_arguments(match: Match, *args, **kwargs) -> str:
         else:
             Trace.error(f"arg '{pos}' does not exist")
             return f"<'{pos}' not exist>"
+
     else:
         # kwargs
         if argument in kwargs:

@@ -1,5 +1,14 @@
+"""
+    © Jürgen Schoenemeyer, 20.12.2024
+
+    PUBLIC:
+     - get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, float]:
+"""
+
+from typing import Tuple
+
 from src.utils.trace import Trace
-from src.utils.util import format_timestamp
+from src.utils.util  import format_timestamp
 
 """
 TranscriptionInfo(
@@ -44,7 +53,7 @@ TranscriptionInfo(
 )
 """
 
-def get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> tuple[dict, float]:
+def get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, float]:
     settings: dict = {}
 
     try:

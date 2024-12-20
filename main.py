@@ -5,6 +5,7 @@ import sys
 import json
 import time
 
+from typing import Tuple
 from pathlib import Path
 
 from src.utils.globals import BASE_PATH
@@ -45,7 +46,7 @@ data_path = BASE_PATH / "../data"
 # ("07", "large-v3•turbo-de")
 # ("07", "large-v3•turbo")
 
-models: list[ tuple[str, str] ] = [("06", "large-v2")] # [("07", "large-v3")]
+models: list[ Tuple[str, str] ] = [("06", "large-v2")] # [("07", "large-v3")]
 
 beams: list = [5] # [1, 3, 5, 7, 9] -> keinen signifikater Unterschied zw. 3 ... 9
 
@@ -339,7 +340,7 @@ def main():
 
 
 if __name__ == "__main__":
-    Trace.set( debug_mode=False, show_timestamp=True, timezone=True )
+    Trace.set( debug_mode=False, timezone=False )
     Trace.action(f"Python version {sys.version}")
     # Trace.action(f"base path: '{BASE_PATH}'")
 

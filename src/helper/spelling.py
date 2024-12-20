@@ -1,3 +1,11 @@
+"""
+    © Jürgen Schoenemeyer, 20.12.2024
+
+    PUBLIC:
+     - hunspell_dictionary_init(path: str, filename: str, language: str = "de-DE") -> None:
+     - spellcheck(words: list, debug: bool = False) -> dict:
+"""
+
 import re
 
 from pathlib import Path
@@ -38,7 +46,7 @@ def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "d
         else:
             Trace.fatal(f"unsupported language '{language}'")
 
-def spellcheck(words: list, debug=False) -> dict:
+def spellcheck(words: list, debug: bool=False) -> dict:
 
     def check_multiple_words(word: str, index: int) -> int:
         found = False

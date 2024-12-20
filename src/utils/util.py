@@ -1,32 +1,36 @@
 """
-    (c) Jürgen Schoenemeyer, 16.12.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-    format_subtitle( start_time: float, end_time: float, text: str, color=True ) -> str
-    format_timestamp(seconds: float, always_include_hours: bool=False, decimal_marker: str=".", fps: float = 30) -> str
+     - format_subtitle( start_time: float, end_time: float, text: str, color=True ) -> str
+     - format_timestamp(seconds: float, always_include_hours: bool=False, decimal_marker: str=".", fps: float = 30) -> str
 
-    import_text(folderpath: Path | str, filename: Path|str, show_error: bool=True) -> str | None:
-    import_json_timestamp(folderpath: Path | str, filename: str, show_error: bool=True) -> Tuple[dict | None, float | None]
-    import_json(folderpath: Path | str, filename: str, show_error: bool=True) -> dict | None
-    export_text(folderpath: Path | str, filename: str, text: str, timestamp: int=0, create_new_folder: bool=True, encoding: str = "utf-8", ret_lf: bool=False, show_message: bool=True) -> str | None
-    export_json(folderpath: Path | str, filename: str, data: dict | list, timestamp = None) -> str | None
+     - import_text(folderpath: Path | str, filename: Path|str, show_error: bool=True) -> str | None:
+     - import_json_timestamp(folderpath: Path | str, filename: str, show_error: bool=True) -> Tuple[dict | None, float | None]
+     - import_json(folderpath: Path | str, filename: str, show_error: bool=True) -> dict | None
+     - export_text(folderpath: Path | str, filename: str, text: str, timestamp: int=0, create_new_folder: bool=True, encoding: str = "utf-8", ret_lf: bool=False, show_message: bool=True) -> str | None
+     - export_json(folderpath: Path | str, filename: str, data: dict | list, timestamp = None) -> str | None
 
     class CacheJSON:
-        def __init__(self, path: Path | str, name: str, model: str, reset: bool)
-        def get(self, value_hash: str) -> dict | None
-        def add(self, value_hash: str, value: dict) -> None
-        def flush(self) -> None:
+      - def __init__(self, path: Path | str, name: str, model: str, reset: bool)
+      - def get(self, value_hash: str) -> dict | None
+      - def add(self, value_hash: str, value: dict) -> None
+      - def flush(self) -> None:
+
+    class ProcessLog (array cache)
+      - add
+      - get
 
 """
 
 import codecs
 import json
-from typing import Tuple
 
+from typing import Tuple
 from pathlib import Path
 
 from src.utils.trace import Trace, Color
-from src.utils.file import create_folder, get_modification_timestamp, set_modification_timestamp
+from src.utils.file  import create_folder, get_modification_timestamp, set_modification_timestamp
 
 def format_subtitle( start_time: float, end_time: float, text: str, color=True ) -> str:
     start = format_timestamp(start_time)
@@ -178,3 +182,13 @@ class CacheJSON:
 
     def flush(self) -> None:
         export_json(self.path, self.name, self.cache)
+
+class ProcessLog:
+    def __init__(self):
+        self.log = []
+
+    def add(self, info):
+        self.log.append(info)
+
+    def get(self):
+        return self.log

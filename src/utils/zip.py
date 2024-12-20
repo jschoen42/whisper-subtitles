@@ -1,10 +1,10 @@
 """
-    (c) Jürgen Schoenemeyer, 03.12.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-    check_zip(in_zip, path: str, files: list) -> dict[str]
-    expand_zip(source_path: str, dest_path: str) -> bool
-    create_zip(source_path: str, dest_path: str, filename: str, compression = 6) -> bool
+     - check_zip(in_zip, path: str, files: list) -> dict[str]
+     - expand_zip(source_path: str, dest_path: str) -> bool
+     - create_zip(source_path: str, dest_path: str, filename: str, compression = 6) -> bool
 """
 
 import shutil
@@ -14,7 +14,7 @@ from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
 
 from src.utils.trace import Trace
-from src.utils.file import get_trace_path
+from src.utils.file  import get_trace_path
 
 def check_zip(myzip, path: str | Path, files: list) -> dict[str]:
     path = Path(path)

@@ -1,3 +1,14 @@
+
+"""
+    © Jürgen Schoenemeyer, 20.12.2024
+
+    PUBLIC:
+     - precheck_models(models: list) -> bool
+     - search_model_path(model_name: str) -> str
+     - model_loaded_faster_whisper(model_name: str) -> None | WhisperModel
+     - transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict
+"""
+
 import io
 import time
 import hashlib
@@ -31,7 +42,7 @@ current_model: Any = None
 logging.basicConfig()
 logging.getLogger("faster_whisper").setLevel(logging.DEBUG)
 
-def precheck_models(models) -> bool:
+def precheck_models(models: list) -> bool:
     error = False
     for model in models:
         if search_model_path( model[1] ) is None:

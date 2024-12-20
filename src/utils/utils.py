@@ -1,12 +1,11 @@
 """
-    (c) Jürgen Schoenemeyer, 16.11.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-    camel_to_snake(name: str) -> str
-    snake_to_camel(name: str) -> str
-
-    pascal_to_snake(name: str) -> str
-    snake_to_pascal(name: str) -> str
+     - camel_to_snake(name: str) -> str
+     - snake_to_camel(name: str) -> str
+     - pascal_to_snake(name: str) -> str
+     - snake_to_pascal(name: str) -> str
 
 """
 
@@ -54,7 +53,6 @@ def convert_dump(*args, **kwargs):
     json.dump(*args, **kwargs)
 """
 
-
 # https://docs.python.org/3/library/stdtypes.html#str.title
 #
 # "they're bill's friends from the UK".title()   -> "They'Re Bill'S Friends From The Uk"
@@ -65,6 +63,3 @@ def to_title(text: str) -> str:
 
     pattern = re.compile(r"[A-Za-z]+('[A-Za-z]+)?")
     return pattern.sub(lambda mo: mo.group(0).capitalize(), text)
-
-
-

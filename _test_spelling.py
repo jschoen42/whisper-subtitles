@@ -221,11 +221,7 @@ word_list = [
     "Werkstudierender",
     "AOK", # wird vorher ausgefiltert !
     "AOKs",
-    "SARS-CoV-2-Virus",
-    "Altersvorsorgebeitrag",
-    "Altersvorsorgebeiträge",
-    "Geringverdienergrenze",
-    "Empfänge",
+    "SARS-CoV-2-Virus"
 ]
 
 def main():
@@ -241,6 +237,7 @@ def main():
 
 
 if __name__ == "__main__":
-    Trace.set( debug_mode=True, timezone=False )
+    Trace.set( debug_mode=True, show_timestamp=False )
     Trace.action(f"Python version {sys.version}")
+
     main()

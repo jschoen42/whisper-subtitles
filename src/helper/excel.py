@@ -1,9 +1,22 @@
-#import sys
+"""
+    © Jürgen Schoenemeyer, 20.12.2024
+
+    PUBLIC:
+     - import_project_excel(pathname: str, filename: str, inType: str) -> dict:
+     - set_print_settings(ws: Any):
+     - import_captions_excel(pathname: str, filename: str) -> list:
+     - import_dictionary_excel(pathname: str, filename: str) -> Tuple[ dict[str,list[str|int]], list[str], float ]:
+     - update_dictionary_excel(pathname: str, filename: str, filename_update: str, column_name: str, data: dict) -> None | bool:
+     - import_ssml_rules_excel(pathname: str, filename: str) -> dict:
+     - import_hunspell_PreCheck_excel(pathname: str, filename: str) -> Tuple[list[str], list[str], list[list]]:
+
+"""
+
 import os
 import re
 import unicodedata
 
-from typing import Any
+from typing import Any, Tuple
 from pathlib import Path
 
 import openpyxl
@@ -429,7 +442,7 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | list:
 #
 ######################################################################################
 
-def check_quotes(wb_name: str, word: str, line_number: int, function_name: str) -> tuple[dict | bool, str]:
+def check_quotes(wb_name: str, word: str, line_number: int, function_name: str) -> Tuple[dict | bool, str]:
     if word == "":
         return False, ""
 
@@ -440,7 +453,7 @@ def check_quotes(wb_name: str, word: str, line_number: int, function_name: str) 
         return True, ""
 
 @duration("Custom text replacements loaded")
-def import_dictionary_excel(pathname: str, filename: str) -> None | tuple[ dict[str,list[str|int]], list[str], float ]:
+def import_dictionary_excel(pathname: str, filename: str) -> None | Tuple[ dict[str,list[str|int]], list[str], float ]:
     filepath = Path(pathname, filename)
 
     if not check_excel_file_exists(filepath):
@@ -659,7 +672,7 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | dict[
 #
 #####################################################################################
 
-def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None | tuple[list[str], list[str], list[list]]:
+def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None | Tuple[list[str], list[str], list[list]]:
     filepath: Path = Path(pathname, filename)
 
     if not check_excel_file_exists(filepath):

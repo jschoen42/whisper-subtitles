@@ -18,7 +18,7 @@ import datetime
 
 import warnings
 
-from typing import Tuple
+from typing import Any, Tuple
 
 from openpyxl import Workbook, cell
 from openpyxl import load_workbook
@@ -44,7 +44,7 @@ def get_excel_file(source_path: str, filename: str, comment: str, last_timestamp
 
     return (0, workbook, max(last_timestamp, get_modification_timestamp(file_path)))
 
-def get_excel_sheet(source_path: str, filename: str, sheet: str, comment: str, last_timestamp: float = 0.0) -> Tuple[bool, any, float]:
+def get_excel_sheet(source_path: str, filename: str, sheet: str, comment: str, last_timestamp: float = 0.0) -> Tuple[bool, Any, float]:
     file_path = source_path + filename
 
     if check_excel_file_exists(file_path) is False:
@@ -71,7 +71,7 @@ def get_excel_sheet(source_path: str, filename: str, sheet: str, comment: str, l
         max(last_timestamp, get_modification_timestamp(file_path))
     )
 
-def get_excel_sheet_special(workbook: Workbook, sheet: str, comment: str) -> Tuple[bool, any]:
+def get_excel_sheet_special(workbook: Workbook, sheet: str, comment: str) -> Tuple[bool, Any]:
     try:
         sheet = workbook[sheet]
     except KeyError as err:

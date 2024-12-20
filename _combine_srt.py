@@ -1,4 +1,4 @@
-# .venv-3.12\Scripts\activate
+# .venv\Scripts\activate
 # python _combine_srt.py
 
 import sys

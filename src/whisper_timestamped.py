@@ -1,3 +1,14 @@
+
+"""
+    © Jürgen Schoenemeyer, 20.12.2024
+
+    PUBLIC:
+     - load_model_whisper(model_name: str) -> Any
+     - transcribe_whisper_timestamped(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict
+"""
+
+import io
+
 import io
 import time
 import hashlib

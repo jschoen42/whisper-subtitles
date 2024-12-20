@@ -1,9 +1,10 @@
 """
-    PUBLIC:
-    init_spacy(language: str) -> None
-    get_modelname_spacy(language: str) -> str
-    analyse_sentences_spacy(text: str, language: str = "de-DE") -> tuple[list, list]:
+    © Jürgen Schoenemeyer, 20.12.2024
 
+    PUBLIC:
+     - init_spacy(language: str) -> None
+     - get_modelname_spacy(language: str) -> str
+     - analyse_sentences_spacy(text: str, language: str = "de-DE") -> tuple[list, list]:
 """
 
 import re

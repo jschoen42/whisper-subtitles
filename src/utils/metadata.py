@@ -1,11 +1,11 @@
 """
-    (c) Jürgen Schoenemeyer, 03.12.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-    get_media_info(filepath: str) -> dict | None
-    get_audio_duration(filepath: str) -> float
-    get_media_trackinfo(filepath: str) -> dict | None
-    get_video_metadata_mediainfo(filepath: str) -> dict
+     - get_media_info(filepath: str) -> dict | None
+     - get_audio_duration(filepath: str) -> float
+     - get_media_trackinfo(filepath: str) -> dict | None
+     - get_video_metadata_mediainfo(filepath: str) -> dict
 """
 
 from pymediainfo import MediaInfo

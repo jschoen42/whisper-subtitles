@@ -26,4 +26,5 @@ dependencies = [
     "onnxruntime<2",
     "tbb>=2022.0.0",
     "mkl>=2025.0.1",
+    "fsspec>=2024.12.0",
 ]

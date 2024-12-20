@@ -1,3 +1,18 @@
+"""
+    © Jürgen Schoenemeyer, 20.12.2024
+
+    PUBLIC:
+     - second_to_timecode_srt(x: float, fps: float) -> str
+     - seconds_to_timecode_vtt(x: float, fps: float) -> str
+     - seconds_to_timecode_excel(x: float) -> str
+     - parse_timecode(text: str) -> float
+     - export_srt(captions: list[dict], fps: float = 30) -> str
+     - export_vtt(captions: list[dict],  fps: float = 30) -> str
+     - import_caption(dirname: Path|str, basename: str) -> None | tuple[dict, int, list]
+     - writefile_srt(data_captions: list, dirname: Path | str, basename: str)
+     - writefile_vtt(data_captions: list, dirname: Path | str, basename: str)
+"""
+
 from pathlib import Path
 
 import webvtt

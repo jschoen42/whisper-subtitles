@@ -1,14 +1,14 @@
 """
-    (c) Jürgen Schoenemeyer, 03.12.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-    log_clear()
-    log_add(mediafile: str, text: str, corrected_details: list[dict], last_segment_text: str, repetition_error: list[dict], pause_error: list[dict], spelling_failed: list[dict] ):
-    log_get_data() -> Tuple[str, str]
-
+     - log_clear()
+     - log_add(mediafile: str, text: str, corrected_details: list[dict], last_segment_text: str, repetition_error: list[dict], pause_error: list[dict], spelling_failed: list[dict] ):
+     - log_get_data() -> Tuple[str, str]
+    #
     class DictionaryLog:
-        add(self, data: dict, data_spelling: dict) -> None
-        get(self) -> Tuple[dict, dict, dict]
+     - add(self, data: dict, data_spelling: dict) -> None
+     - get(self) -> Tuple[dict, dict, dict]
 
 """
 
