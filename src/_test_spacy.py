@@ -133,7 +133,7 @@ text_list = [
 
 def main():
     Prefs.init("settings")
-    Prefs.read("base.yaml")
+    Prefs.load("base.yaml")
 
     init_spacy( "de_DE")
     for entry in text_list:

@@ -1,5 +1,5 @@
 """
-    (c) Jürgen Schoenemeyer, 20.12.2024
+    (c) Jürgen Schoenemeyer, 21.12.2024
 
     PUBLIC:
     get_excel_file(source_path: str, filename: str, comment: str, last_timestamp: float = 0) -> Tuple[int, Workbook, int]
@@ -12,8 +12,8 @@
     excel_date(date, time_zone) -> float
 """
 
-import unicodedata
 import re
+import unicodedata
 import datetime
 
 import warnings
@@ -81,9 +81,30 @@ def get_excel_sheet_special(workbook: Workbook, sheet: str, comment: str) -> Tup
     check_hidden(sheet, sheet)
     return False, sheet
 
+######################################################################################
+# get_cell_value with converting
+#  - '\n'  -> '<br>
+#  - '[-]' -> '&shy;'
+#  - 'true' -> True, 'false' -> False, 'N/A' -> ''
+#  - '[br]' -> <br>
+#  - [b]...[/b] -> <b>...</b>, same with i, u, mark, sub, sup
+#  - [nobr] -> <nobr>
+#  - [hide] -> <hide> (custom)
+######################################################################################
+
 def get_cell_value(in_cell: cell) -> bool | str:
     if in_cell.value is None:
         return ""
+
+    # data_type
+    #   f: formular
+    #   s: string
+    #   n: numeric
+    #   b: boolean
+    #   n: null
+    #   inlineStr: inline
+    #   e: error
+    #   str: formlar cached string
 
     if in_cell.data_type == "f":
         return f"formula not support: {in_cell.value}"
@@ -101,6 +122,16 @@ def get_cell_value(in_cell: cell) -> bool | str:
         return ""
 
     return re.sub(r"\[(\/*)(br|b|i|u|mark|hide|nobr|sub|sup)\]", r"<\1\2>", txt)
+
+def check_quotes( wb_name: str, word: str, line_number: int, function_name: str ) -> str:
+    if word == "":
+        return ""
+
+    if word[:1] == '"' and word[-1:] == '"':
+        return word[1:-1]
+    else:
+        Trace.error( f"[{function_name}] '{wb_name}': line {line_number} quotes missing: '{word}'")
+        return ""
 
 def check_hidden(sheet, comment: str) -> None:
     for key, value in sheet.column_dimensions.items():

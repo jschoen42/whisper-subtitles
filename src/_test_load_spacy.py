@@ -23,7 +23,7 @@ def test_load_spacy(language) -> None:
     global model_doc
 
     Prefs.init("settings")
-    Prefs.read("base.yaml")
+    Prefs.load("base.yaml")
 
     model_path = Prefs.get("spacy.model_path")
     model_name = get_modelname_nlp(language)

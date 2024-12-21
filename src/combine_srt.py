@@ -15,7 +15,7 @@ data_path = BASE_PATH / "../data"
 
 def main():
     Prefs.init("settings")
-    Prefs.read("projects_combine.yaml")
+    Prefs.load("projects_combine.yaml")
 
     for project_info in Prefs.get("projects"):
         project  = project_info[0]

@@ -15,9 +15,9 @@ data_path = BASE_PATH / "../data"
 
 def main():
     Prefs.init("settings")
-    Prefs.read(PROJECTS)
+    Prefs.load(PROJECTS)
 
-    if not Prefs.read( PROJECTS, False ):
+    if not Prefs.load( PROJECTS, False ):
         Trace.fatal("pref error empty")
 
     for project in Prefs.get("projects"):

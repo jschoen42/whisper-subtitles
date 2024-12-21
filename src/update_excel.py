@@ -11,7 +11,7 @@ from helper.excel import update_dictionary_excel
 
 def main():
     Prefs.init("settings")
-    Prefs.read("base.yaml")
+    Prefs.load("base.yaml")
 
     path_dictionary = Prefs.get("dictionary.path")
 

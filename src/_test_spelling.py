@@ -226,7 +226,7 @@ word_list = [
 
 def main():
     Prefs.init("settings")
-    Prefs.read("base.yaml")
+    Prefs.load("base.yaml")
 
     language   = Prefs.get("language")
     spelling   = Prefs.get("hunspell")

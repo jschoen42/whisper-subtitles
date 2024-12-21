@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 21.12.2024
 
     class Trace:
       - Trace.set(debug_mode=True)
@@ -7,6 +7,7 @@
       - Trace.set(color=False)
       - Trace.set(timezone=False)
       - Trace.set(timezone="Europe/Berlin") # "UTC", "America/New_York"
+      - Trace.set(show_caller=False)
       - Trace.set(appl_folder="/trace/")
       #
       - Trace.file_init(["action", "result", "warning", "error"], csv=False)
@@ -139,8 +140,9 @@ class Trace:
         "debug_mode":     False,
 
         "show_timestamp": True,
-        "show_caller":    True,
         "timezone":       True,
+
+        "show_caller":    True,
     }
 
     pattern:list[str]  = []

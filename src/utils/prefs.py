@@ -1,10 +1,10 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 21.12.2024
 
     PUBLIC:
     class Prefs:
       - init(cls, pref_path = None, pref_prefix = None ) -> None
-      - read(cls, pref_name: str) -> bool
+      - load(cls, pref_name: str) -> bool
       - get(cls, key_path: str) -> Any
 
     merge_dicts(a: dict, b: dict) -> dict
@@ -38,7 +38,7 @@ class Prefs:
         cls.data = {}
 
     @classmethod
-    def read(cls, pref_name: str) -> bool:
+    def load(cls, pref_name: str) -> bool:
         ext = Path(pref_name).suffix
         if ext not in [".yaml", ".yml"]:
             Trace.error(f"'{ext}' not supported")

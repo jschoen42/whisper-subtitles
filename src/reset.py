@@ -31,7 +31,7 @@ def clear_cache_spacy(project_path):
 
 def main():
     Prefs.init("settings")
-    Prefs.read(PROJECTS)
+    Prefs.load(PROJECTS)
 
     for project in Prefs.get("projects"):
         clear_cache_spacy(project)

@@ -179,7 +179,7 @@ def rename_folder( folder ):
 
 def main():
     Prefs.init("settings")
-    Prefs.read(PROJECTS)
+    Prefs.load(PROJECTS)
 
     for project in Prefs.get("projects"):
         rename_project(project)

@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 21.12.2024
 
     PUBLIC:
      - get_modification_timestamp(filename: Path | str) -> float
@@ -78,7 +78,7 @@ def set_modification_timestamp(filename: Path | str, timestamp: float) -> None:
 def check_path_exists(path: str) -> bool:
     return os.path.exists(path)
 
-def check_file_exists(filepath: str, filename: str) -> bool: # case sensitive
+def check_file_exists(filepath: Path|str, filename: str) -> bool: # case sensitive
     path = Path(filepath, filename )
 
     filepath = path.parent
@@ -100,11 +100,13 @@ def check_file_exists(filepath: str, filename: str) -> bool: # case sensitive
         Trace.error(f"file missing {path}")
         return False
 
-def check_excel_file_exists(filename: str) -> bool:
-    if str(filename)[-5:] != ".xlsx":
+def check_excel_file_exists(filename: Path|str) -> bool:
+    filename = Path(filename)
+    if filename.suffix != '.xlsx':
+        Trace.error(f"no excel file {filename}")
         return False
 
-    return os.path.isfile(filename)
+    return filename.is_file()
 
 # dir listing
 

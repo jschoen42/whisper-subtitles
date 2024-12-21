@@ -27,8 +27,8 @@ data_path = BASE_PATH / "../data"
 
 def main():
     Prefs.init("settings")
-    Prefs.read("base.yaml")
-    Prefs.read(PROJECTS)
+    Prefs.load("base.yaml")
+    Prefs.load(PROJECTS)
 
     media_type = Prefs.get("mediaType")
 

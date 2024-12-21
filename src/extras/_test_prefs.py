@@ -8,8 +8,8 @@ from utils.trace import Trace
 
 def main():
     Prefs.init("settings")
-    Prefs.read("base.yaml")
-    Prefs.read("projects.yaml")
+    Prefs.load("base.yaml")
+    Prefs.load("projects.yaml")
 
     spacy = Prefs.get("spacy")
     Trace.info( f"spacy: {spacy}" )

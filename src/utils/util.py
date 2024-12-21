@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 21.12.2024
 
     PUBLIC:
      - format_subtitle( start_time: float, end_time: float, text: str, color=True ) -> str
@@ -122,7 +122,7 @@ def export_text(folderpath: Path | str, filename: str, text: str, timestamp: int
     except OSError:
         text_old = ""
 
-    if text == text_old:
+    if text == text_old and show_message:
         Trace.info(f"not changed '{filepath}'")
         return str(filename)
 

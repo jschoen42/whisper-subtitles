@@ -34,7 +34,7 @@ def analyse( nlp, text ):
 
 def main():
     # Prefs.init("settings")
-    # Prefs.read("base.yaml")
+    # Prefs.load("base.yaml")
 
     # stanza.download("en")
     # nlp = init_stanza("en")

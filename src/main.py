@@ -59,8 +59,8 @@ reset_cache_spacy: bool = False
 
 def main():
     Prefs.init("settings")
-    Prefs.read("base.yaml")
-    Prefs.read(PROJECTS)
+    Prefs.load("base.yaml")
+    Prefs.load(PROJECTS)
 
     whisper_type = Prefs.get("whisper.whisper_type")
     if whisper_type == "faster-whisper":
