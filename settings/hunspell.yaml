@@ -1,0 +1,10 @@
+# -*- coding: utf-8; mode: yaml; indent-tabs-mode: nil; -*-
+%YAML 1.1
+---
+
+hunspell:
+    path: ./_hunspell
+    file:
+       'de-DE': de-DE
+       'en-GB': en_GB-large
+       'en_US': en_US-large

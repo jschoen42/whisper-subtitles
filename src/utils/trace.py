@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 21.12.2024
+    © Jürgen Schoenemeyer, 24.12.2024
 
     class Trace:
       - Trace.set(debug_mode=True)
@@ -67,22 +67,24 @@ class Color(StrEnum):
     STRIKETHROUGH    = "\033[9m"
     NORMAL           = "\033[22m"
 
-    BLACK            = "\033[30m"
-    RED              = "\033[31m"
-    GREEN            = "\033[32m"
-    YELLOW           = "\033[33m"
-    BLUE             = "\033[34m"
-    MAGENTA          = "\033[35m"
-    CYAN             = "\033[36m"
-    LIGHT_GRAY       = "\033[37m"
-    DARK_GRAY        = "\033[90m"
-    LIGHT_RED        = "\033[91m"
-    LIGHT_GREEN      = "\033[92m"
-    LIGHT_YELLOW     = "\033[93m"
-    LIGHT_BLUE       = "\033[94m"
-    LIGHT_MAGENTA    = "\033[95m"
-    LIGHT_CYAN       = "\033[96m"
-    WHITE            = "\033[97m"
+    BLACK            = "\033[30m" # light/dark mode: #666666 / #666666
+    RED              = "\033[31m" # light/dark mode: #CD3131 / #F14C4C
+    GREEN            = "\033[32m" # light/dark mode: #14CE14 / #23D18B
+    YELLOW           = "\033[33m" # light/dark mode: #B5BA00 / #F5F543
+    BLUE             = "\033[34m" # light/dark mode: #0451A5 / #3B8EEA
+    MAGENTA          = "\033[35m" # light/dark mode: #BC05BC / #D670D6
+    CYAN             = "\033[36m" # light/dark mode: #0598BC / #29B8DB
+    LIGHT_GRAY       = "\033[37m" # light/dark mode: #A5A5A5 / #E5E5E5
+
+    # LIGHT_GRAY       = "\033[37m"
+    # DARK_GRAY        = "\033[90m"
+    # LIGHT_RED        = "\033[91m"
+    # LIGHT_GREEN      = "\033[92m"
+    # LIGHT_YELLOW     = "\033[93m"
+    # LIGHT_BLUE       = "\033[94m"
+    # LIGHT_MAGENTA    = "\033[95m"
+    # LIGHT_CYAN       = "\033[96m"
+    # WHITE            = "\033[97m"
 
     BLACK_BG         = "\033[40m"
     RED_BG           = "\033[41m"
@@ -92,14 +94,15 @@ class Color(StrEnum):
     MAGENTA_BG       = "\033[45m"
     CYAN_BG          = "\033[46m"
     LIGHT_GRAY_BG    = "\033[47m"
-    DARK_GRAY_BG     = "\033[100m"
-    LIGHT_RED_BG     = "\033[101m"
-    LIGHT_GREEN_BG   = "\033[102m"
-    LIGHT_YELLOW_BG  = "\033[103m"
-    LIGHT_BLUE_BG    = "\033[104m"
-    LIGHT_MAGENTA_BG = "\033[105m"
-    LIGHT_CYAN_BG    = "\033[106m"
-    WHITE_BG         = "\033[107m"
+
+    # DARK_GRAY_BG     = "\033[100m"
+    # LIGHT_RED_BG     = "\033[101m"
+    # LIGHT_GREEN_BG   = "\033[102m"
+    # LIGHT_YELLOW_BG  = "\033[103m"
+    # LIGHT_BLUE_BG    = "\033[104m"
+    # LIGHT_MAGENTA_BG = "\033[105m"
+    # LIGHT_CYAN_BG    = "\033[106m"
+    # WHITE_BG         = "\033[107m"
 
     @staticmethod
     def clear(text: str) -> str:
@@ -107,15 +110,16 @@ class Color(StrEnum):
 
 
 pattern = {
+    "time":      " --> ",
     "action":    " >>> ",
     "result":    " ==> ",
-    "time":      " --> ",
+    "important": " ✶✶✶ ", # + magenta
 
     "info":      "-----",
     "update":    "+++++",
     "download":  ">>>>>",
 
-    "warning":   "*****",
+    "warning":   "✶✶✶✶✶",
     "error":     "#####", # + red
     "exception": "!!!!!", # + red
     "fatal":     "FATAL", # + red
@@ -123,7 +127,7 @@ pattern = {
     "debug":     "DEBUG", # only in debug mode
     "wait":      "WAIT ", # only in debug mode
 
-    "clear":     "     ", # only internal
+    "clear":     " ••• ", # only internal (for decorator, ...)
 }
 
 class Trace:
@@ -250,6 +254,13 @@ class Trace:
         if not cls.settings["reduced_mode"]:
             pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
             cls.__show_message(cls.__check_file_output(), pre, message, *optional)
+
+    # important => text MAGENTA, BOLD
+
+    @classmethod
+    def important(cls, message: str = "", *optional: Any) -> None:
+        pre = f"{cls.__get_time()}{Color.MAGENTA}{cls.__get_pattern()}{cls.__get_caller()}"
+        cls.__show_message(cls.__check_file_output(), pre, f"{Color.MAGENTAr.BOLD}{message}{Color.RESET}", *optional)
 
     # warning, error, exception, fatal => RED
 

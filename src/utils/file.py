@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 21.12.2024
+    © Jürgen Schoenemeyer, 23.12.2024
 
     PUBLIC:
      - get_modification_timestamp(filename: Path | str) -> float
@@ -102,7 +102,7 @@ def check_file_exists(filepath: Path|str, filename: str) -> bool: # case sensiti
 
 def check_excel_file_exists(filename: Path|str) -> bool:
     filename = Path(filename)
-    if filename.suffix != '.xlsx':
+    if filename.suffix != ".xlsx":
         Trace.error(f"no excel file {filename}")
         return False
 

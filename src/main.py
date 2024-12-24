@@ -60,6 +60,9 @@ reset_cache_spacy: bool = False
 def main():
     Prefs.init("settings")
     Prefs.load("base.yaml")
+    Prefs.load("whisper.yaml")
+    Prefs.load("spacy.yaml")
+    Prefs.load("hunspell.yaml")
     Prefs.load(PROJECTS)
 
     whisper_type = Prefs.get("whisper.whisper_type")
@@ -132,7 +135,8 @@ def main():
     # https://hunspell.github.io/
     # https://spylls.readthedocs.io/en/latest/
 
-    hunspell_dictionary_init( BASE_PATH / spelling["path"], spelling["file"], language)
+    hunspell_path = BASE_PATH / spelling["path"] / language
+    hunspell_dictionary_init( hunspell_path, spelling["file"][language], language)
 
     # prepare global trace
 

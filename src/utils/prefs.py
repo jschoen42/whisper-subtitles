@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 21.12.2024
+    © Jürgen Schoenemeyer, 23.12.2024
 
     PUBLIC:
     class Prefs:
@@ -55,8 +55,11 @@ class Prefs:
             cls.data = dict(merge_dicts(cls.data, data))
             # cls.data = merge(dict(cls.data), data) # -> Exception: Conflict at trainingCompany
 
+        except yaml.parser.ParserError as err:
+            Trace.fatal(f"ParserError '{pref_name}':\n{err}")
+
         except yaml.scanner.ScannerError as err:
-            Trace.fatal(f"{pref_name}:\n{err}")
+            Trace.fatal(f"ScannerError '{pref_name}':\n{err}")
 
         except OSError as err:
             Trace.error(f"{pref_name}: {err}")

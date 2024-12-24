@@ -34,15 +34,24 @@ def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "d
     global global_precheck_multiple_words
 
     if global_dictionary_data is None:
-        global_dictionary_data = Dictionary.from_files(str(Path(path, filename)))
-        Trace.result(f"'{Path(path, filename)}' loaded")
+        try:
+            global_dictionary_data = Dictionary.from_files(str(path / filename))
+            Trace.result(f"'{str(path / filename)}' loaded")
+        except OSError as err:
+            Trace.fatal(f"{err}")
 
     if global_precheck_single_words is None:
+        filename = "PreCheck_" + language + ".xlsx"
+
         if language == "de-DE":
-            (   global_special_dot_words,
-                global_precheck_single_words,
-                global_precheck_multiple_words
-            ) = import_hunspell_PreCheck_excel(path, "PreCheck_" + language + ".xlsx")
+            ret = import_hunspell_PreCheck_excel(path, filename)
+            if ret:
+                (   global_special_dot_words,
+                    global_precheck_single_words,
+                    global_precheck_multiple_words
+                ) = ret
+            else:
+                Trace.fatal( f"'{filename}' not found" )
         else:
             Trace.fatal(f"unsupported language '{language}'")
 
