@@ -159,7 +159,9 @@ git push -u origin main
 
 git log --oneline origin/main
 git log --graph --oneline --decorate
-git log --graph --pretty=format:'%C(auto)%h%d (%ci) %s
+
+git log --name-only --pretty=format:"%h (%ch)"
+git log --name-status --pretty=format:"%h (%ai)" > __history.txt
 
 git fetch origin
 git log origin/main
@@ -167,7 +169,7 @@ git diff --name-only origin/main
 git diff origin/main -- _prefs/base.yaml
 git diff origin/main
 
-git rebase -i --HEAD-5
+git rebase -i HEAD~5
 git rebase -i --root
 
 local branch -> https://www.youtube.com/watch?v=qY6IooRlNGI
@@ -188,6 +190,9 @@ git branche -d feature/...
 
 ....
 git push origin main feature/...
+
+--- reflog
+git reflog --date=iso > __reflog.txt
 
 
 --- stash
