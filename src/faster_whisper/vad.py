@@ -7,7 +7,7 @@ from typing import List, NamedTuple, Optional
 
 import numpy as np
 
-from faster_whisper_custom.utils import get_assets_path
+from faster_whisper.utils import get_assets_path
 
 
 # The code below is adapted from https://github.com/snakers4/silero-vad.

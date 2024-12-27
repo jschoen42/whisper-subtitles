@@ -19,7 +19,7 @@ from pathlib import Path
 
 import arrow
 
-from faster_whisper_custom import WhisperModel
+from faster_whisper import WhisperModel
 
 from utils.globals  import BASE_PATH
 from utils.prefs    import Prefs
