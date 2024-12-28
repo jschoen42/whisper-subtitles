@@ -24,6 +24,7 @@ from helper.whisper_util import are_inner_prompts_possible, prompt_main_normaliz
 from main.spacy import get_modelname_spacy
 
 from main.whisper_faster import precheck_models, transcribe_fasterwhisper
+
 from main.whisper import transcribe_whisper
 from main.whisper_timestamped import transcribe_whisper_timestamped
 
@@ -46,7 +47,7 @@ data_path = BASE_PATH / "../data"
 # ("07", "large-v3•turbo-de")
 # ("07", "large-v3•turbo")
 
-models: list[ Tuple[str, str] ] = [("06", "large-v2")] # [("07", "large-v3")]
+models: list[ Tuple[str, str] ] = [("01", "tiny")] # [("06", "large-v2")] # [("07", "large-v3")]
 
 beams: list = [5] # [1, 3, 5, 7, 9] -> keinen signifikater Unterschied zw. 3 ... 9
 

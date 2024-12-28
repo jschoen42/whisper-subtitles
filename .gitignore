@@ -8,7 +8,7 @@ _traceAll/*
 !_traceAll/.gitkeep
 
 *.7z
-__history.txt
+__history*.txt
 
 ### Python
 

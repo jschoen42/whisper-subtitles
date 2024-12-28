@@ -2,7 +2,7 @@
     © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-     - get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, float]:
+     - get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, list]:
 """
 
 from typing import Tuple
@@ -46,14 +46,14 @@ TranscriptionInfo(
         min_speech_duration_ms = 250,
         max_speech_duration_s = inf,
         min_silence_duration_ms = 2000,
-        window_size_samples = 1024,
+        # window_size_samples = 1024,
         speech_pad_ms = 400,
-        speech_pad_offset_ms = 200, # FMG neu
+        # speech_pad_offset_ms = 200, # FMG neu
    )
 )
 """
 
-def get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, float]:
+def get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, list]:
     settings: dict = {}
 
     try:
@@ -74,14 +74,15 @@ def get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict
         if info.vad_options is None:
             settings["vad_options"] = None
         else:
-            props = ["threshold", "min_speech_duration_ms", "max_speech_duration_s", "min_silence_duration_ms", "window_size_samples", "speech_pad_ms", "speech_pad_offset_ms"]
+            # props = ["threshold", "min_speech_duration_ms", "max_speech_duration_s", "min_silence_duration_ms", "window_size_samples", "speech_pad_ms", "speech_pad_offset_ms"]
+            props = ["threshold", "min_speech_duration_ms", "max_speech_duration_s", "min_silence_duration_ms", "speech_pad_ms"]
             settings["vad_options"] = {p: getattr(info.vad_options, p) for p in props}
     except Exception as error:
         settings["vad_options"] = None
         Trace.error(f"{error}")
 
     settings["source"] = {}
-    settings["source"]["type"]          = media_type
+    # settings["source"]["type"]          = media_type
     settings["source"]["channels"]      = media_info["channels"]
     settings["source"]["sampling_rate"] = media_info["samplingRate"]
 
@@ -96,4 +97,4 @@ def get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict
     else:
         settings["source"]["vad_result"] = None
 
-    return settings, settings["duration"]
+    return settings, settings["source"]
