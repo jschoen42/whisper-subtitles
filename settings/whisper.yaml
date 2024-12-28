@@ -1,4 +1,3 @@
-# -*- coding: utf-8; mode: yaml; indent-tabs-mode: nil; -*-
 %YAML 1.1
 ---
 
@@ -66,4 +65,3 @@ whisper:
             no_condition_on_previous_text:
             - large-v3
             - large-v3-turbo
-

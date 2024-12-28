@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 28.12.2024
 
     PUBLIC:
      - get_media_info(filepath: str) -> dict | None
@@ -65,7 +65,7 @@ def get_media_info(filepath: str) -> dict | None:
     try:
         ret = get_media_trackinfo(filepath)
         return {
-            "duration":     ret.duration/1000,
+            "duration":     round(ret.duration/1000, 3),
             "channels":     ret.channel_s,
             "samplingRate": ret.sampling_rate,
         }
@@ -79,7 +79,7 @@ def get_audio_duration(filepath: str) -> float:
     media_info = MediaInfo.parse(filepath)
     for track in media_info.tracks:
         if track.track_type == "Audio":
-            duration = track.duration / 1000
+            duration = round(track.duration / 1000, 3)
 
     return duration
 
@@ -137,7 +137,7 @@ def get_video_metadata_mediainfo(filepath: str) -> dict:
                 info["tracks"] += 1
 
                 if track.duration:
-                    info["duration"] = track.duration / 1000
+                    info["duration"] = round(track.duration / 1000, 3)
 
                 info["video"]["track"] = track.track_id
                 if track.bit_rate:
