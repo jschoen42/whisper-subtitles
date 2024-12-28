@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 28.12.2024
 
     PUBLIC:
      - get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, list]:

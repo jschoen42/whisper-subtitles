@@ -1,6 +1,6 @@
 
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 28.12.2024
 
     PUBLIC:
      - precheck_models(models: list) -> bool
@@ -184,6 +184,7 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
     duration = time.time() - start_time
 
     result = {
+        "created": "",
         "version": {
             "python": sys.version,
             "faster-whisper": faster_whisper.__version__,
@@ -214,7 +215,6 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
             "duration": round(media_info["duration"], 3),
             "details": {},
         },
-        "created": "",
         "language": "",
         "text": "",
         "segments": []
