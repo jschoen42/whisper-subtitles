@@ -441,9 +441,6 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
             word_info = {
                 "word":           "",
 
-                #"position-12:    0,
-                #"position-2":    0,
-
                 "sentence_start": 0,
                 "sentence_end":   0,
 
@@ -460,23 +457,40 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
 
             curr_word = ""
             if is_faster_whisper:
-                curr_word                   = word_info_original[2]
-                word_info["start"]         = round(word_info_original[0], 2)
-                word_info["end"]           = round(word_info_original[1], 2)
-                word_info["duration"]      = round(word_info_original[1] - word_info_original[0], 2)
-                word_info["pause"]         = -1
-                word_info["probability"]   = round(word_info_original[3], 3)
+                if isinstance(word_info_original, dict):
+
+                    # faster-whisper 1.1
+
+                    curr_word                  = word_info_original["word"]
+                    word_info["start"]         = word_info_original["start"]
+                    word_info["end"]           = word_info_original["end"]
+                    word_info["duration"]      = word_info_original["end"] - word_info_original["start"]
+                    word_info["pause"]         = -1
+                    word_info["probability"]   = round(word_info_original["probability"], 3)
+                else:
+
+                    # faster-whisper 1.0
+
+                    curr_word                  = word_info_original[2]
+                    word_info["start"]         = round(word_info_original[0], 2)
+                    word_info["end"]           = round(word_info_original[1], 2)
+                    word_info["duration"]      = round(word_info_original[1] - word_info_original[0], 2)
+                    word_info["pause"]         = -1
+                    word_info["probability"]   = round(word_info_original[3], 3)
             else:
                 word_info["start"]         = round(word_info_original["start"], 2)
                 word_info["end"]           = round(word_info_original["end"], 2)
                 word_info["duration"]      = round(word_info_original["end"] - word_info_original["start"], 2)
                 word_info["pause"]         = -1
+
                 if "word" in word_info_original:
+
                     # whisper
 
                     curr_word                = word_info_original["word"]
                     word_info["probability"] = round(word_info_original["probability"], 3)
                 elif "text" in word_info_original:
+
                     # whisper timestamped
 
                     if word_info_original["text"] == "[*]":

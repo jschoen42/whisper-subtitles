@@ -236,10 +236,11 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
             min_speech_duration_ms  = 250,   # default: 250
             max_speech_duration_s   = float("inf"),
             min_silence_duration_ms = 2000,  # default: 2000 bisher 1000 war zu kurz
-            window_size_samples     = 1024,  # default: 1024 / 512 = fein, 1024 = mittel, 1536 = grob
-            speech_pad_ms           = 600,   # 600 ist kompatibler mit prompts - default: 400  / 250 ist zuwenig für den Start, wenn mit prompts
-            speech_pad_offset_ms    = 200,   # 200 FMG neu: asymetrisch Auschnitt 200 ms zurück, d.h. [600, 600] -> [800, 400]
-            speech_pad_first        = False  # deactivated, was: not is_intro,
+            # window_size_samples     = 1024,  # default: 1024 / 512 = fein, 1024 = mittel, 1536 = grob
+            speech_pad_ms           = 400,   # 600 ist kompatibler mit prompts - default: 400  / 250 ist zuwenig für den Start, wenn mit prompts
+
+            # speech_pad_offset_ms    = 200,   # 200 FMG neu: asymetrisch Auschnitt 200 ms zurück, d.h. [600, 600] -> [800, 400]
+            # speech_pad_first        = False  # deactivated, was: not is_intro,
        )
 
 

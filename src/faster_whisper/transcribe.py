@@ -29,7 +29,7 @@ from faster_whisper.vad import (
     merge_segments,
 )
 
-print("FASTER-WHISPER PATCH 2")
+print("FASTER-WHISPER PATCH 2.1")
 
 @dataclass
 class Word:
@@ -940,11 +940,7 @@ class WhisperModel:
             initial_prompt=initial_prompt,
             prefix=prefix,
             suppress_blank=suppress_blank,
-            suppress_tokens=(
-                get_suppressed_tokens(tokenizer, suppress_tokens)
-                if suppress_tokens
-                else suppress_tokens
-            ),
+            suppress_tokens=get_suppressed_tokens(tokenizer, suppress_tokens),
             without_timestamps=without_timestamps,
             max_initial_timestamp=max_initial_timestamp,
             word_timestamps=word_timestamps,
@@ -974,7 +970,7 @@ class WhisperModel:
             all_language_probs=all_language_probs,
         )
 
-        return segments, info
+        return segments, info, sampling_rate, speech_chunks                                 # JS
 
     def _split_segments_by_timestamps(
         self,
