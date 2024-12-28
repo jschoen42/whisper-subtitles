@@ -536,7 +536,7 @@ class BatchedInferencePipeline:
             log_progress,
         )
 
-        return segments, info, sampling_rate, speech_chunks                                 # JS
+        return segments, info
 
     def _batched_segments_generator(
         self, features, tokenizer, chunks_metadata, batch_size, options, log_progress
@@ -1536,10 +1536,10 @@ class WhisperModel:
                     needs_fallback = True # -> temperatur 0.1 => only delete prompt (-> line 834) - before activate this part
 
                     result_log = {
-                        'type':              "deletePrompt",
-                        'temperature':       temperature,
-                        'compression_ratio': compression_ratio,
-                        'text':              text,
+                        "type":              "deletePrompt",
+                        "temperature":       temperature,
+                        "compression_ratio": compression_ratio,
+                        "text":              text,
                     }
 
                     if self.logger.isEnabledFor(logging.DEBUG):
@@ -1632,16 +1632,14 @@ class WhisperModel:
         if previous_tokens or (hotwords and not prefix):
             prompt.append(tokenizer.sot_prev)
             if hotwords and not prefix:
-                tmp = tokenizer.encode(" " + hotwords.strip())
+                hotwords_tokens = tokenizer.encode(" " + hotwords.strip())
                 # tmp = hotwords_tokens[: self.max_length // 2 - 1]
-                tmp = hotwords_tokens[: 218] # JS
+                tmp = hotwords_tokens[:218] # JS
 
                 # prompt.extend(hotwords_tokens)
             if previous_tokens:
                 # prompt.extend(previous_tokens[-(self.max_length // 2 - 1) :])
                 tmp = previous_tokens[-218:] # JS
-
-            print( "#####", len( tmp ) )
 
             # JS remove incomplete word from the start (not working for chinese, japanese, ...)
             shorten = False

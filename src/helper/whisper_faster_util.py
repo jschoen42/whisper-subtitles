@@ -2,7 +2,7 @@
     © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
-     - get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, float]:
+     - get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, list]:
 """
 
 from typing import Tuple
@@ -53,7 +53,7 @@ TranscriptionInfo(
 )
 """
 
-def get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, float]:
+def get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, list]:
     settings: dict = {}
 
     try:
@@ -82,7 +82,7 @@ def get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict
         Trace.error(f"{error}")
 
     settings["source"] = {}
-    settings["source"]["type"]          = media_type
+    # settings["source"]["type"]          = media_type
     settings["source"]["channels"]      = media_info["channels"]
     settings["source"]["sampling_rate"] = media_info["samplingRate"]
 
@@ -97,4 +97,4 @@ def get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict
     else:
         settings["source"]["vad_result"] = None
 
-    return settings, settings["duration"]
+    return settings, settings["source"]

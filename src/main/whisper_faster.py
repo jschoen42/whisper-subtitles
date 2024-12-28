@@ -9,16 +9,19 @@
      - transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict
 """
 
+import sys
 import io
 import time
 import hashlib
 import logging
+import platform
 
 from typing import Any
 from pathlib import Path
 
 import arrow
 
+import faster_whisper
 from faster_whisper import WhisperModel
 
 from utils.globals  import BASE_PATH
@@ -90,7 +93,7 @@ def model_loaded_faster_whisper(model_name: str) -> None | WhisperModel:
         device: str = "auto",
         device_index: Union[int, List[int]] = 0,
         compute_type: str = "default", # https://opennmt.net/CTranslate2/quantization.html
-        cpu_threads: int = 0,
+        cpu_threads: int = 4,
         num_workers: int = 1,
         download_root: Optional[str] = None,
         local_files_only: bool = False,
@@ -181,12 +184,18 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
     duration = time.time() - start_time
 
     result = {
-        "media": {
-            "md5": file_info["md5"],
-            "name": media_name,
-            "type": media_type,
-            "modDate": file_info["date"],
-            "duration": round(media_info["duration"], 2),
+        "version": {
+            "python": sys.version,
+            "faster-whisper": faster_whisper.__version__,
+        },
+        "cpu": {
+            "system": platform.system(),
+            "processor": platform.processor(),
+            "threads": Prefs.get("whisper.faster_whisper.cpu_threads"),
+            "timeMedia": round(duration, 2),
+            "timeLoadModel": 0,
+            "timeInitTranscribe": 0,
+            "timeTranscribe": 0,
         },
         "settings": {
             "model": model_name,
@@ -197,12 +206,13 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
             "no_speech_threshold": None,
             "max_initial_timestamp": 0,
         },
-        "cpu": {
-            "threads": Prefs.get("whisper.faster_whisper.cpu_threads"),
-            "timeMedia": round(duration, 2),
-            "timeLoadModel": 0,
-            "timeInitTranscribe": 0,
-            "timeTranscribe": 0,
+        "media": {
+            "md5": file_info["md5"],
+            "name": media_name,
+            "type": media_type,
+            "modDate": file_info["date"],
+            "duration": round(media_info["duration"], 3),
+            "details": {},
         },
         "created": "",
         "language": "",
@@ -242,7 +252,6 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
             # speech_pad_offset_ms    = 200,   # 200 FMG neu: asymetrisch Auschnitt 200 ms zurück, d.h. [600, 600] -> [800, 400]
             # speech_pad_first        = False  # deactivated, was: not is_intro,
        )
-
 
     cached, timestamp = import_json_timestamp(path_json, filename_two + ".json", show_error=False)
 
@@ -315,7 +324,7 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
 
         result["language"] = info.language
 
-        settings, duration = get_settings_transcribe_faster(info, media_type, media_info, vad_sampling_rate, vad_speech_chunks)
+        settings, result["media"]["details"] = get_settings_transcribe_faster(info, media_type, media_info, vad_sampling_rate, vad_speech_chunks)
         export_json(Path(path_settings, whisper_parameter), filename_two + ".json", settings, timestamp = timestamp)
 
         text = ""
