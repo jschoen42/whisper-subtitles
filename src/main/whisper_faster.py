@@ -225,33 +225,31 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
 
     vad_parameter = None
     if vad_enabled:
+
         # Attributes:
-        # threshold (default 0.5): Speech threshold. Silero VAD outputs speech probabilities for each audio chunk,
+        #   threshold: Speech threshold. Silero VAD outputs speech probabilities for each audio chunk,
         #     probabilities ABOVE this value are considered as SPEECH. It is better to tune this
         #     parameter for each dataset separately, but "lazy" 0.5 is pretty good for most datasets.
-        # min_speech_duration_ms (default 250): Final speech chunks shorter min_speech_duration_ms are thrown out.
-        # max_speech_duration_s (default "inf"): Maximum duration of speech chunks in seconds. Chunks longer
+        #   neg_threshold: Silence threshold for determining the end of speech. If a probability is lower
+        #     than neg_threshold, it is always considered silence. Values higher than neg_threshold
+        #     are only considered speech if the previous sample was classified as speech; otherwise,
+        #     they are treated as silence. This parameter helps refine the detection of speech
+        #      transitions, ensuring smoother segment boundaries.
+        #   min_speech_duration_ms: Final speech chunks shorter min_speech_duration_ms are thrown out.
+        #   max_speech_duration_s: Maximum duration of speech chunks in seconds. Chunks longer
         #     than max_speech_duration_s will be split at the timestamp of the last silence that
         #     lasts more than 100ms (if any), to prevent aggressive cutting. Otherwise, they will be
         #     split aggressively just before max_speech_duration_s.
-        # min_silence_duration_ms (default 2000 - faster, 100 original): In the end of each speech chunk wait for min_silence_duration_ms
+        #   min_silence_duration_ms: In the end of each speech chunk wait for min_silence_duration_ms
         #     before separating it
-        # window_size_samples (default 1024 - faster, 1536 original): Audio chunks of window_size_samples size are fed to the silero VAD model.
-        #     WARNING! Silero VAD models were trained using 512, 1024, 1536 samples for 16000 sample rate.
-        #     Values other than these may affect model performance!!
-        # speech_pad_ms (default 400 - faster, 30 original): Final speech chunks are padded by speech_pad_ms each side
+        #   speech_pad_ms: Final speech chunks are padded by speech_pad_ms each side
 
         vad_parameter = dict(
-            threshold               = 0.5,   # default: 0.5
-            min_speech_duration_ms  = 250,   # default: 250
+            min_speech_duration_ms  = 250,          # default: 250
             max_speech_duration_s   = float("inf"),
-            min_silence_duration_ms = 2000,  # default: 2000 bisher 1000 war zu kurz
-            # window_size_samples     = 1024,  # default: 1024 / 512 = fein, 1024 = mittel, 1536 = grob
-            speech_pad_ms           = 400,   # 600 ist kompatibler mit prompts - default: 400  / 250 ist zuwenig für den Start, wenn mit prompts
-
-            # speech_pad_offset_ms    = 200,   # 200 FMG neu: asymetrisch Auschnitt 200 ms zurück, d.h. [600, 600] -> [800, 400]
-            # speech_pad_first        = False  # deactivated, was: not is_intro,
-       )
+            min_silence_duration_ms = 2000,         # default: 2000 -> 1000 is to short
+            speech_pad_ms           = (600, 50),   # 600 more compatible with prompts, 200 -> less hallicinations at the last chunk
+        )
 
     cached, timestamp = import_json_timestamp(path_json, filename_two + ".json", show_error=False)
 

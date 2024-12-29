@@ -29,7 +29,7 @@ from faster_whisper.vad import (
     merge_segments,
 )
 
-print("FASTER-WHISPER PATCH 2.1")
+print("FASTER-WHISPER PATCH (29.12.2024)")
 
 @dataclass
 class Word:

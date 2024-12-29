@@ -16,10 +16,10 @@ from utils.file    import check_file_exists
 from utils.log     import log_clear, log_add, log_get_data
 from utils.log     import DictionaryLog
 
-from helper.excel    import import_project_excel, import_dictionary_excel
-from helper.captions import seconds_to_timecode_vtt
-from helper.spelling import hunspell_dictionary_init
-from helper.whisper_util import are_inner_prompts_possible, prompt_main_normalize, prompt_normalize, get_filename_parameter
+from helper.excel        import import_project_excel, import_dictionary_excel
+from helper.captions     import seconds_to_timecode_vtt
+from helper.spelling     import hunspell_dictionary_init
+from helper.whisper_util import init_special_text, are_inner_prompts_possible, prompt_main_normalize, prompt_normalize, get_filename_parameter
 
 from main.spacy import get_modelname_spacy
 
@@ -47,7 +47,7 @@ data_path = BASE_PATH / "../data"
 # ("07", "large-v3•turbo-de")
 # ("07", "large-v3•turbo")
 
-models: list[ Tuple[str, str] ] = [("07", "large-v3"), ("06", "large-v2")] # [("06", "large-v2")] # [("07", "large-v3")]
+models: list[ Tuple[str, str] ] = [("07", "large-v3•turbo"), ("06", "large-v2")]
 
 beams: list = [5] # [1, 3, 5, 7, 9] -> keinen signifikater Unterschied zw. 3 ... 9
 
@@ -77,6 +77,8 @@ def main():
     spelling   = Prefs.get("hunspell")
 
     Trace.action(f"Whisper type '{whisper_type}' ==> '{PROJECTS}' ({language})")
+
+    init_special_text( language )
 
     no_prompt  = not Prefs.get("whisper.use_initial_prompt")
 

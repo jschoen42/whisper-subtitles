@@ -2,6 +2,10 @@
 name = "whisper-subtitles"
 version = "0.1.0"
 description = "Add your description here"
+authors = [
+  { name="Jürgen Schoenemeyer", email="js007@web.de" },
+]
+license = {file = "LICENSE"}
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

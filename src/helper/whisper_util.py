@@ -172,6 +172,7 @@ def format_euro(text: str, thousand_separator: str = ".", float_separator: str =
 
     return ret
 
+"""
 split_words: list = [
     " und",
     " oder",
@@ -216,6 +217,7 @@ dont_split_two: list = [
     " heißt,", # das heißt
     " heißt",
 ]
+"""
 
 #
 # https://github.com/openai/whisper/discussions/928
@@ -224,6 +226,7 @@ dont_split_two: list = [
 #
 # not used anymore -> last segment: no_speech_prob>0.9
 
+"""
 silence_text: list = [
     " Mehr Informationen auf www.sas-medien.de",
     " Mehr Informationen auf www.bundestag.de",
@@ -266,6 +269,23 @@ silence_text: list = [
     " Gut.",
     " Amen.",
 ]
+"""
+
+silence_text   = []
+split_words    = []
+dont_split     = []
+dont_split_two = []
+
+def init_special_text( language ):
+    global silence_text, split_words, dont_split, dont_split_two
+
+    language = language[:2]
+
+    silence_text   = Prefs.get(f"silence_text.{language}")
+    split_words    = Prefs.get(f"split_words.{language}")
+    dont_split     = Prefs.get(f"dont_split.{language}")
+    dont_split_two = Prefs.get(f"dont_split_two.{language}")
+
 
 def get_filename_parameter(params: dict) -> str:
     engine      = params["whisper"]
