@@ -1112,10 +1112,10 @@ class WhisperModel:
         #     while seek < seek_clip_end
         while clip_idx < len(seek_clips):
 
-            if self.logger.isEnabledFor(logging.DEBUG):                                            # JS
-                self.logger.debug(                                                                 # JS
-                    f"[generate_segments] clip_idx {clip_idx} / {len(seek_clips)} ({seek_clips})"  # JS
-                )                                                                                  # JS
+            # if self.logger.isEnabledFor(logging.DEBUG):                                            # JS
+            #     self.logger.debug(                                                                 # JS
+            #         f"[generate_segments] clip_idx {clip_idx} / {len(seek_clips)} ({seek_clips})"  # JS
+            #     )                                                                                  # JS
 
             seek_clip_start, seek_clip_end = seek_clips[clip_idx]
             if seek_clip_end > content_frames:
@@ -1167,10 +1167,10 @@ class WhisperModel:
                 hotwords=options.hotwords,
             )
 
-            if self.logger.isEnabledFor(logging.DEBUG):                                                 # JS
-                self.logger.debug(                                                                      # JS
-                    f"[generate_segments] seek {seek} / {content_frames}, segment_size {segment_size}"  # JS
-                )                                                                                       # JS
+            # if self.logger.isEnabledFor(logging.DEBUG):                                                 # JS
+            #     self.logger.debug(                                                                      # JS
+            #         f"[generate_segments] seek {seek} / {content_frames}, segment_size {segment_size}"  # JS
+            #     )                                                                                       # JS
 
             # JS 26.03.2024
             special_lastsegment = False                                                                 # JS

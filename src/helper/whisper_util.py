@@ -183,7 +183,7 @@ dont_split: list = [
 
     # und
 
-    " Arbeitnehmer" # Arbeitnehmer und ANgestellten
+    " Arbeitnehmer" # Arbeitnehmer und Angestellten
     " Beratung",    # Beratung und Schulung
     " Lohn",        # Lohn und Gehalt
     " Löhne",       # Löhne und Gehälter

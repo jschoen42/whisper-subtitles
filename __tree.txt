@@ -8,7 +8,6 @@ whisper-subtitles v0.1.0
 │   ├── numpy v2.0.2
 │   ├── pyyaml v6.0.2
 │   └── setuptools v75.6.0
-├── fsspec v2024.12.0
 ├── huggingface-hub v0.27.0
 │   ├── filelock v3.16.1
 │   ├── fsspec v2024.12.0
@@ -16,19 +15,12 @@ whisper-subtitles v0.1.0
 │   ├── pyyaml v6.0.2
 │   ├── requests v2.32.3
 │   │   ├── certifi v2024.12.14
-│   │   ├── charset-normalizer v3.4.0
+│   │   ├── charset-normalizer v3.4.1
 │   │   ├── idna v3.10
-│   │   └── urllib3 v2.2.3
+│   │   └── urllib3 v2.3.0
 │   ├── tqdm v4.67.1
 │   │   └── colorama v0.4.6
 │   └── typing-extensions v4.12.2
-├── mkl v2025.0.1
-│   ├── intel-openmp v2025.0.4
-│   │   └── intel-cmplr-lib-ur v2025.0.4
-│   │       └── umf v0.9.1
-│   │           └── tcmlib v1.2.0
-│   └── tbb v2022.0.0
-│       └── tcmlib v1.2.0
 ├── numba v0.60.0
 │   ├── llvmlite v0.43.0
 │   └── numpy v2.0.2
@@ -36,7 +28,7 @@ whisper-subtitles v0.1.0
 │   ├── coloredlogs v15.0.1
 │   │   └── humanfriendly v10.0
 │   │       └── pyreadline3 v3.5.4
-│   ├── flatbuffers v24.3.25
+│   ├── flatbuffers v24.12.23
 │   ├── numpy v2.0.2
 │   ├── packaging v24.2
 │   ├── protobuf v5.29.2
@@ -52,7 +44,7 @@ whisper-subtitles v0.1.0
 │   ├── torch v2.4.1
 │   │   ├── filelock v3.16.1
 │   │   ├── fsspec v2024.12.0
-│   │   ├── jinja2 v3.1.4
+│   │   ├── jinja2 v3.1.5
 │   │   │   └── markupsafe v3.0.2
 │   │   ├── networkx v3.4.2
 │   │   ├── setuptools v75.6.0
@@ -72,7 +64,7 @@ whisper-subtitles v0.1.0
 ├── spacy v3.8.3
 │   ├── catalogue v2.0.10
 │   ├── cymem v2.0.10
-│   ├── jinja2 v3.1.4 (*)
+│   ├── jinja2 v3.1.5 (*)
 │   ├── langcodes v3.5.0
 │   │   └── language-data v1.3.0
 │   │       └── marisa-trie v1.2.1
@@ -113,7 +105,7 @@ whisper-subtitles v0.1.0
 │   │       └── colorama v0.4.6
 │   ├── tqdm v4.67.1 (*)
 │   ├── typer v0.15.1
-│   │   ├── click v8.1.7
+│   │   ├── click v8.1.8
 │   │   │   └── colorama v0.4.6
 │   │   ├── rich v13.9.4
 │   │   │   ├── markdown-it-py v3.0.0
@@ -140,7 +132,6 @@ whisper-subtitles v0.1.0
 │   │   └── torch v2.4.1 (*)
 │   └── torch v2.4.1 (*)
 ├── spylls v0.1.7
-├── tbb v2022.0.0 (*)
 ├── tokenizers v0.21.0
 │   └── huggingface-hub v0.27.0 (*)
 ├── torch v2.4.1 (*)

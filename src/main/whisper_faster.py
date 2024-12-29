@@ -184,19 +184,9 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
     duration = time.time() - start_time
 
     result = {
-        "created": "",
         "version": {
             "python": sys.version,
             "faster-whisper": faster_whisper.__version__,
-        },
-        "cpu": {
-            "system": platform.system(),
-            "processor": platform.processor(),
-            "threads": Prefs.get("whisper.faster_whisper.cpu_threads"),
-            "timeMedia": round(duration, 2),
-            "timeLoadModel": 0,
-            "timeInitTranscribe": 0,
-            "timeTranscribe": 0,
         },
         "settings": {
             "model": model_name,
@@ -207,6 +197,15 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
             "no_speech_threshold": None,
             "max_initial_timestamp": 0,
         },
+        "cpu": {
+            "system": platform.system(),
+            "processor": platform.processor(),
+            "threads": Prefs.get("whisper.faster_whisper.cpu_threads"),
+            "timeMedia": round(duration, 2),
+            "timeLoadModel": 0,
+            "timeInitTranscribe": 0,
+            "timeTranscribe": 0,
+        },
         "media": {
             "md5": file_info["md5"],
             "name": media_name,
@@ -215,6 +214,7 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
             "duration": round(media_info["duration"], 3),
             "details": {},
         },
+        "created": "",
         "language": "",
         "text": "",
         "segments": []

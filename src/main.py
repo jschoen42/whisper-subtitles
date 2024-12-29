@@ -47,7 +47,7 @@ data_path = BASE_PATH / "../data"
 # ("07", "large-v3•turbo-de")
 # ("07", "large-v3•turbo")
 
-models: list[ Tuple[str, str] ] = [("01", "tiny")] # [("06", "large-v2")] # [("07", "large-v3")]
+models: list[ Tuple[str, str] ] = [("07", "large-v3"), ("06", "large-v2")] # [("06", "large-v2")] # [("07", "large-v3")]
 
 beams: list = [5] # [1, 3, 5, 7, 9] -> keinen signifikater Unterschied zw. 3 ... 9
 
