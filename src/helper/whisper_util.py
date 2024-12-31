@@ -78,7 +78,7 @@ def prompt_main_normalize(text: str) -> str:
         if i == 0:
             prompt = line.strip()
         else:
-            prompt += "; " + line.strip()
+            prompt += ", " + line.strip() ### no ";" !!!
 
     for source, dest in prompt_replace.items():
         prompt = prompt.replace(source, dest)
@@ -100,7 +100,7 @@ def prompt_normalize(text: str) -> str:
             prompt += re.sub(r"^[\d\.]+\s", "", line.strip())
 
         if prompt[-1] not in ".:,;!?…":
-            prompt += ";"  # ; "," / "." macht Probleme beim ersten Satz im Video
+            prompt += "," ### no ";" and "."!!!
 
         prompt += " "
 
@@ -281,7 +281,7 @@ def init_special_text( language ):
 
     language = language[:2]
 
-    silence_text   = Prefs.get(f"silence_text.{language}")
+    silence_text   = Prefs.get(f"silence_hallucination.{language}")
     split_words    = Prefs.get(f"split_words.{language}")
     dont_split     = Prefs.get(f"dont_split.{language}")
     dont_split_two = Prefs.get(f"dont_split_two.{language}")

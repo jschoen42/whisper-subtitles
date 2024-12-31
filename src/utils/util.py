@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 21.12.2024
+    © Jürgen Schoenemeyer, 31.12.2024
 
     PUBLIC:
      - format_subtitle( start_time: float, end_time: float, text: str, color=True ) -> str
@@ -117,7 +117,7 @@ def export_text(folderpath: Path | str, filename: str, text: str, timestamp: int
         text = text.replace("\n", "\r\n")
 
     try:
-        with codecs.open(str(filepath), "r", encoding) as file:
+        with codecs.open(filepath, "r", encoding) as file:
             text_old = file.read()
     except OSError:
         text_old = ""
@@ -130,7 +130,7 @@ def export_text(folderpath: Path | str, filename: str, text: str, timestamp: int
         create_folder(folderpath)
 
     try:
-        with codecs.open(str(filepath), "w", encoding) as file:
+        with codecs.open(filepath, "w", encoding) as file:
             file.write(text)
 
         if timestamp and timestamp != 0:

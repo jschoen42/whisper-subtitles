@@ -27,7 +27,7 @@ from faster_whisper import WhisperModel
 from utils.globals  import BASE_PATH
 from utils.prefs    import Prefs
 from utils.trace    import Trace
-from utils.file     import get_file_infos #, set_modification_timestamp
+from utils.file     import get_file_infos, get_modification_timestamp, set_modification_timestamp
 from utils.util     import import_json_timestamp, export_json, export_text, format_subtitle, CacheJSON
 from utils.metadata import get_media_info
 
@@ -243,19 +243,47 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
         #   min_silence_duration_ms: In the end of each speech chunk wait for min_silence_duration_ms
         #     before separating it
         #   speech_pad_ms: Final speech chunks are padded by speech_pad_ms each side
+        #
+        # default:
+        #  - threshold               = 0.5
+        #  - neg_threshold           = threshold - 0.15
+        #  - min_speech_duration_ms  = 0
+        #  - max_speech_duration_s   = float("inf")
+        #  - min_silence_duration_ms = 2000
+        #  - speech_pad_ms           = 400
 
         vad_parameter = dict(
-            min_speech_duration_ms  = 250,          # default: 250
-            max_speech_duration_s   = float("inf"),
-            min_silence_duration_ms = 2000,         # default: 2000 -> 1000 is to short
-            speech_pad_ms           = (600, 50),   # 600 more compatible with prompts, 200 -> less hallicinations at the last chunk
+            min_speech_duration_ms = 250,
+            speech_pad_ms          = (600, 100),
         )
 
     cached, timestamp = import_json_timestamp(path_json, filename_two + ".json", show_error=False)
 
     if cached:
         md5 = None
-        if "media" in cached and "md5" in cached["media"]: #v2
+        if "md5" in cached:  # header v1
+            md5 = cached["md5"]
+
+            if md5 == media_md5: # migrate from v1 -> v2 (b)
+
+                file_name = filename_two + ".json"
+                file_path = Path( path_json, file_name )
+
+                file_info = get_file_infos( path_json, file_name, "json" )
+                if file_info is None:
+                    Trace.fatal( file_path )
+
+                timestamp = get_modification_timestamp(file_path)
+
+                result["created"]  = file_info["date"]
+                result["language"] = cached["language"].split("-")[0]
+                result["text"]     = cached["text"]
+                result["segments"] = cached["segments"]
+
+                export_json(path_json, file_name, result)
+                set_modification_timestamp(file_path, timestamp)
+
+        if "media" in cached and "md5" in cached["media"]: # headerv2
             md5 = cached["media"]["md5"]
 
         if md5 is None:

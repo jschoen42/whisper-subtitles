@@ -47,7 +47,7 @@ data_path = BASE_PATH / "../data"
 # ("07", "large-v3•turbo-de")
 # ("07", "large-v3•turbo")
 
-models: list[ Tuple[str, str] ] = [("07", "large-v3•turbo"), ("06", "large-v2")]
+models: list[ Tuple[str, str] ] = [("07", "large-v3")]
 
 beams: list = [5] # [1, 3, 5, 7, 9] -> keinen signifikater Unterschied zw. 3 ... 9
 
@@ -62,8 +62,10 @@ def main():
     Prefs.init("settings")
     Prefs.load("base.yaml")
     Prefs.load("whisper.yaml")
+    Prefs.load("hallucination.yaml")
     Prefs.load("spacy.yaml")
     Prefs.load("hunspell.yaml")
+    Prefs.load("format_sentence.yaml")
     Prefs.load(PROJECTS)
 
     whisper_type = Prefs.get("whisper.whisper_type")
@@ -245,7 +247,7 @@ def main():
                             file_prompt = prompt_main
 
                         if file_prompt != "":
-                            file_prompt += ";"
+                            file_prompt += " -" # no ";" !!!
 
                         tmp = media_file.split(".")
                         tmp.pop()

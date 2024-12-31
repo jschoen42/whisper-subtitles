@@ -1,0 +1,62 @@
+%YAML 1.1
+---
+
+# used in src/helper/whisper_util.py
+
+# rules for splitting long sentences
+# toDo: use NLP
+
+split_words:
+  de:
+    - " und"
+    - " oder"
+    - " sowie"
+
+  en:
+    - " and"
+    - " or"
+
+dont_split:
+  de:
+
+    # ... und ...
+
+    - " Arbeitnehmer"      # Arbeitnehmer und Angestellten
+    - " Arbeitnehmerinnen" # Arbeitnehmerinnen und Arbeitnehmer
+    - " Beratung"          # Beratung und Schulung
+    - " Damen"             # Damen und Herren
+    - " G"                 # G und V
+    - " Lieferungen"       # Lieferungen und Leistungen
+    - " Lohn"              # Lohn und Gehalt
+    - " Lohn"              # Lohn und Gehalt
+    - " Löhne"             # Löhne und Gehälter
+    - " Löhnen"            # den Löhnen und Gehältern
+    - " SKR03"             # SKR03 und SKR04
+    - " Sinn"              # Sinn und Zweck"
+    - " Soll"              # Soll und Haben
+    - " Stein"             # Stein und Bein
+    - " einzig"            # einzig und alleine
+    - " hin"               # hin und wieder
+    - " schlicht"          # schlicht und ergreifend
+
+    - "-"                  # aaa- und ... (no space at start)
+    - " Kranken-"          # Kranken- und Rentenversicherung
+    - " Lohn-"             # Lohn- und Gehaltszahlung
+    - " Renten-"           # Renten- und Arbeitslosenversicherung
+    - " Steuer-"           # Steuer- und Beitragsfrei
+    - " steuer-"           # steuer- und sozialversicherungsfrei
+
+    # ... oder ...
+
+    - " ein"               # ein oder andere
+    - " eine"              # eine oder mehrere
+    - " einen"             # einen oder anderen Stelle
+    - " mehr"              # mehr oder weniger
+    - " mit"               # mit oder ohne
+    - " so"                # so oder so
+    - " wollen"            # wollen oder müssen
+
+dont_split_two:
+  de:
+    - " heißt,"       # das heißt
+    - " heißt"

@@ -1639,7 +1639,8 @@ class WhisperModel:
                 # prompt.extend(hotwords_tokens)
             if previous_tokens:
                 # prompt.extend(previous_tokens[-(self.max_length // 2 - 1) :])
-                tmp = previous_tokens[-218:] # JS
+                # tmp = previous_tokens[-218:] # JS ###
+                tmp = previous_tokens[-83:] # JS - 154 ### - fail 96 fail, 46 ok, 56 ok, 66 ok, 76 (80) ok, 86 (90) fail, 81 (85) ok, 83 (87) ok, 84 (88) fail
 
             # JS remove incomplete word from the start (not working for chinese, japanese, ...)
             shorten = False

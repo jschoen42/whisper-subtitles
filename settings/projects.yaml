@@ -4,24 +4,27 @@
 projects:
    # Kurzbeiträge
 
-#   - '_Kurzbeitrag/OSR_2409_KB'                                          # Gunther Schwanke, Markus Burgenmeister
-#   - '_Kurzbeitrag/OSR_2105_KB'                                          # Gunther Schwanke, Markus Burgenmeister
-#   - '_Kurzbeitrag/OSR_2107_KB'                                          # Christian Beck, Markus Burgenmeister
-#   - '_Kurzbeitrag/OSR_2111_KB'                                          # Christian Beck, Markus Burgenmeister
-#   - '_Kurzbeitrag/OSR_2201_KB'                                          # Christian Beck, Markus Burgenmeister
-#   - '_Kurzbeitrag/OSR_2203_KB'                                          # Gunther Schwanke, Markus Burgenmeister
-#   - '_Kurzbeitrag/OSR_2206_KB'                                          # Christian Beck, Klaus Herrmann
-#   - '_Kurzbeitrag/OSR_2209_KB'                                          # Gunther Schwanke, Klaus Herrmann
-#   - '_Kurzbeitrag/OSR_2211_KB'                                          # Gunther Schwanke, Klaus Herrmann
-#   - '_Kurzbeitrag/OSR_2212_KB'                                          # Christian Beck, Markus Burgenmeister
-#   - '_Kurzbeitrag/OSR_2302_KB'                                          # Christian Beck, Markus Burgenmeister
-#   - '_Kurzbeitrag/OSR_2304_KB'                                          # Christian Beck, Klaus Herrmann
-#   - '_Kurzbeitrag/OSR_2305_KB'                                          # Gunther Schwanke, Klaus Herrmann
-#   - '_Kurzbeitrag/OSR_2308_KB'                                          # Christian Beck, Klaus Herrmann
-#   - '_Kurzbeitrag/OSR_2310_KB'                                          # Christian Beck, Markus Burgenmeister
-#   - '_Kurzbeitrag/OSR_2312_KB'                                          # Christian Beck, Klaus Herrmann
-#   - '_Kurzbeitrag/OSR_2403_KB'                                          # Gunther Schwanke, Markus Burgenmeister
-#   - '_Kurzbeitrag/OSR_2404_KB'                                          # Christian Beck, Klaus Herrmann
-#   - '_Kurzbeitrag/OSR_2405_KB'                                          # Gunther Schwanke, Markus Burgenmeister
-#   - '_Kurzbeitrag/OSR_2407_KB'                                          # Gunther Schwanke, Markus Burgenmeister
-  - '_Kurzbeitrag/OSR_2409_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+   # - '_Kurzbeitrag/OSR_2409_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+   # - '_Kurzbeitrag/OSR_2105_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+   # - '_Kurzbeitrag/OSR_2107_KB'                                          # Christian Beck, Markus Burgenmeister
+   # - '_Kurzbeitrag/OSR_2111_KB'                                          # Christian Beck, Markus Burgenmeister
+   # - '_Kurzbeitrag/OSR_2201_KB'                                          # Christian Beck, Markus Burgenmeister
+   # - '_Kurzbeitrag/OSR_2203_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+   # - '_Kurzbeitrag/OSR_2206_KB'                                          # Christian Beck, Klaus Herrmann
+   # - '_Kurzbeitrag/OSR_2209_KB'                                          # Gunther Schwanke, Klaus Herrmann
+   # - '_Kurzbeitrag/OSR_2211_KB'                                          # Gunther Schwanke, Klaus Herrmann
+   # - '_Kurzbeitrag/OSR_2212_KB'                                          # Christian Beck, Markus Burgenmeister
+   # - '_Kurzbeitrag/OSR_2302_KB'                                          # Christian Beck, Markus Burgenmeister
+   # - '_Kurzbeitrag/OSR_2304_KB'                                          # Christian Beck, Klaus Herrmann
+   # - '_Kurzbeitrag/OSR_2305_KB'                                          # Gunther Schwanke, Klaus Herrmann
+   # - '_Kurzbeitrag/OSR_2308_KB'                                          # Christian Beck, Klaus Herrmann
+   # - '_Kurzbeitrag/OSR_2310_KB'                                          # Christian Beck, Markus Burgenmeister
+   # - '_Kurzbeitrag/OSR_2312_KB'                                          # Christian Beck, Klaus Herrmann
+   # - '_Kurzbeitrag/OSR_2403_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+   # - '_Kurzbeitrag/OSR_2404_KB'                                          # Christian Beck, Klaus Herrmann
+   # - '_Kurzbeitrag/OSR_2405_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+   # - '_Kurzbeitrag/OSR_2407_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+   # - '_Kurzbeitrag/OSR_2409_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+
+   - 'Chancen Digitalisierung Rechnungswesen'
+
