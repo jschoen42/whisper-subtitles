@@ -1,0 +1,129 @@
+23:31:33.887  >>>  [main.py:353] Python version 3.12.8 (main, Dec  6 2024, 18:10:20) [MSC v.1942 64 bit (AMD64)]
+VAD PATCH (29.12.2024)
+FASTER-WHISPER PATCH (29.12.2024)
+23:31:33.932  >>>  [main.py:081 Â» main] Whisper type 'faster-whisper' ==> 'projects.yaml' (de-DE)
+23:31:33.957 ----- [main.py:126 Â» main] check media file exist 'Chancen Digitalisierung Rechnungswesen'
+23:31:45.567  ==>  [helper/excel.py:500 Â» import_dictionary_excel] Dictionary-DATEV.xlsx: 3154 entries
+23:31:45.573  â€¢â€¢â€¢  [Duration] Custom text replacements loaded: 11.608 sec
+23:31:52.745  ==>  [helper/spelling.py:039 Â» hunspell_dictionary_init] '_hunspell\de-DE\de-DE' loaded
+23:31:52.854  ==>  [helper/excel.py:712 Â» import_hunspell_PreCheck_excel] 393 single, 65 multiple, abbreviations_with_dot 23
+23:31:52.855  â€¢â€¢â€¢  [Duration] Hunspell dictionary loaded: 7.282 sec
+23:31:52.856 ----- [main.py:149 Â» main] 
+23:31:52.857 ----- [main.py:196 Â» main] Chancen Digitalisierung Rechnungswesen
+23:31:52.858 ----- [main.py:197 Â» main] 
+23:31:52.974 ----- [main/whisper_faster.py:110 Â» model_loaded_faster_whisper] load '..\models\faster-whisper\Systran--faster-whisper-large-v3'
+23:32:16.587 ----- [main/whisper_faster.py:123 Â» model_loaded_faster_whisper] large-v3 loaded: 22.85 sec
+23:32:20.305 ----- [utils/util.py:126 Â» export_text] not changed '..\data\Chancen Digitalisierung Rechnungswesen\04_settings\[faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5)\78802_V4_Kap_00 - [faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5).json'
+23:52:03.641 ----- [main/whisper_faster.py:377 Â» transcribe_fasterwhisper] 78802_V4_Kap_00 - 1183.33 sec
+[1m[35m[00:12.533 --> 00:18.600][22m Herzlich Willkommen zum Seminar »Chancen der Digitalisierung im Rechnungswesen nutzen«.[0m
+[1m[35m[00:19.533 --> 00:25.500][22m Liebe Kolleginnen und Kollegen, ich darf mich kurz vorstellen. Mein Name ist Peter Hoffert,[0m
+[1m[35m[00:25.664 --> 00:32.164][22m ich bin Steuerberater und Landwirtschaftliche Buchstelle aus Girod im Westerwald. Wir betreiben[0m
+[1m[35m[00:32.164 --> 00:37.700][22m hier eine Kanzlei mit 25 Köpfen und drei Steuerberatern und Sie werden sich jetzt[0m
+[1m[35m[00:37.700 --> 00:43.300][22m sicher fragen, warum begrüße ich Sie mit liebe Kolleginnen und Kollegen. Möchte ich[0m
+[1m[35m[00:43.300 --> 00:51.764][22m nur Steuerberater erreichen? Genau das ist nicht der Fall. Ich habe 1986 mein Arbeitsleben begonnen[0m
+[1m[35m[00:51.764 --> 00:57.600][22m mit der Ausbildung zum Steuerfachangestellten und habe dann alle Stufen, die dieser Beruf bietet,[0m
+[1m[35m[00:57.633 --> 01:03.931][22m durchlaufen vom Steuerfachangestellten über den Bilanzbuchhalter. Heute würde ich mit Sicherheit[0m
+[1m[35m[01:03.931 --> 01:07.564][22m den Steuerfachwert als Fortbildungsprüfung wählen und[0m
+[1m[35m[01:07.564 --> 01:13.333][22m dann bis hin zum Steuerberater. Genau wie ich alle Stufen der Ausbildung durchlaufen habe,[0m
+[1m[35m[01:13.464 --> 01:20.102][22m so habe ich auch die Buchführung vom manuellen Journal bis hin zu den aktuellen digitalen[0m
+[1m[35m[01:20.102 --> 01:27.700][22m Gegebenheiten erlebt und selbst aktiv begleitet und nutze das Ganze auch immer noch selbst aktiv,[0m
+[1m[35m[01:28.064 --> 01:32.733][22m so dass es also sicherlich für Sie wie für mich ein sehr spannendes Seminar und sehr[0m
+[1m[35m[01:32.733 --> 01:37.500][22m spannendes Video wird. Ich möchte Ihnen nun einen kleinen Überblick geben über[0m
+[1m[35m[01:37.500 --> 01:42.833][22m das, was Sie in diesem Seminar erwartet. Im Kapitel 1 möchte ich Ihnen ganz gerne ein[0m
+[1m[35m[01:42.833 --> 01:48.733][22m paar grundlegende Hinweise geben, wie Sie die Digitalisierung ins Rennen bringen. Im Kapitel[0m
+[1m[35m[01:48.733 --> 01:54.904][22m 2 befassen wir uns mit elektronischen Bankauszügen und den verschiedenen Varianten, wie wir an die[0m
+[1m[35m[01:54.904 --> 02:01.864][22m Daten, die so oder so elektronisch bei der Bank vorhanden sind, optimal verarbeiten können. Das[0m
+[1m[35m[02:01.864 --> 02:07.464][22m Kapitel 3 betrifft die Lerndatei. Dieses Kapitel ist insbesondere für die Profis[0m
+[1m[35m[02:07.464 --> 02:14.931][22m unter Ihnen sicherlich ein spannendes Kapitel, weil ich Ihnen dort ein paar Hinweise geben[0m
+[1m[35m[02:14.931 --> 02:22.533][22m möchte, wie Sie die Lerndatei zum Lernen bringen können. Im Kapitel 4 geht es um die digitalen[0m
+[1m[35m[02:22.533 --> 02:30.364][22m Belege. Wie entstehen sie? Wie können wir sie optimal weiterverarbeiten? Das Kapitel 5 betrifft[0m
+[1m[35m[02:30.364 --> 02:37.364][22m Dativ-Unternehmen online, sicherlich den meisten von Ihnen bekannt. Die Plattform, mit dem wir[0m
+[1m[35m[02:37.364 --> 02:45.102][22m mit dem Mandant optimal kommunizieren. Im Kapitel 6 geht es um den Abschluss dessen, was wir in den[0m
+[1m[35m[02:45.102 --> 02:51.300][22m ersten fünf Kapiteln erarbeitet und bearbeitet haben, um den Jahresabschluss. Dort möchte ich[0m
+[1m[35m[02:51.300 --> 02:58.464][22m Ihnen kurz ein paar Hinweise geben, wie Sie optimal das, was Sie vorher sich erarbeitet haben,[0m
+[1m[35m[02:58.533 --> 03:04.233][22m nutzenbringend umsetzen können. Das Kapitel 7 habe ich mit der Überschrift versehen Betriebsprüfung[0m
+[1m[35m[03:04.233 --> 03:06.904][22m Banken etc. Hier geht es schlicht darum,[0m
+[1m[35m[03:07.364 --> 03:12.864][22m die externen Leser, die wir haben und auch das Finanzamt ist insofern bei der Betriebsprüfung[0m
+[1m[35m[03:12.864 --> 03:19.300][22m ein externer Leser, wie wir die optimal in den gesamten Prozess mit einbeziehen können und daran[0m
+[1m[35m[03:19.931 --> 03:25.064][22m anschließend möchte ich Ihnen auch ein paar Hinweise geben auf das, was uns in Zukunft vielleicht erwartet.[0m
+23:52:03.661 +++++ [utils/util.py:141 Â» export_text] created '..\data\Chancen Digitalisierung Rechnungswesen\05_json\[faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5)\78802_V4_Kap_00 - [faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5).json'
+23:52:10.462 ----- [main/spacy.py:055 Â» init_spacy] spaCy model 'de_dep_news_trf-3.7.2'
+23:52:10.466  â€¢â€¢â€¢  [Duration] spacy - loading model: 6.803 sec
+23:52:13.515  ==>  [main/spacy.py:132 Â» analyse_sentences_spacy] result: 24 sentences
+23:52:13.522  â€¢â€¢â€¢  [Duration] spacy - analyse sentences: 9.860 sec
+23:52:13.611 +++++ [utils/file.py:193 Â» create_folder] makedir: ..\data\Chancen Digitalisierung Rechnungswesen\05_json\[faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5)\tmp\de_dep_news_trf-3.7.2
+23:52:13.620 +++++ [utils/util.py:141 Â» export_text] created '..\data\Chancen Digitalisierung Rechnungswesen\05_json\[faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5)\tmp\de_dep_news_trf-3.7.2\78802_V4_Kap_00 - [faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5).json'
+23:52:13.703 âœ¶âœ¶âœ¶âœ¶âœ¶ [helper/whisper_util.py:815 Â» split_to_lines] corrected count: {'[erzlich Willkommen] => [erzlich willkommen]': {'count': 1, 'worksheet': 'allgemein', 'row': 2593}, '[ drei ] => [ 3 ]': {'count': 1, 'worksheet': 'normalize', 'row': 81}, '[ so dass] => [ sodass]': {'count': 1, 'worksheet': 'allgemein', 'row': 2018}, '[ Dativ] => [ DATEV]': {'count': 1, 'worksheet': 'allgemein', 'row': 28}, '[ DATEV-] => [ DATEV ]': {'count': 1, 'worksheet': 'allgemein', 'row': 157}, '[ fÃ¼nf ] => [ 5 ]': {'count': 1, 'worksheet': 'normalize', 'row': 83}}
+23:52:13.761 ##### [helper/spelling.py:126 Â» spellcheck] failed: 'Hoffert'
+23:52:14.186 +++++ [utils/file.py:193 Â» create_folder] makedir: ..\data\Chancen Digitalisierung Rechnungswesen\06_text\[faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5) [de_dep_news_trf-3.7.2]
+23:52:14.191 +++++ [utils/util.py:141 Â» export_text] created '..\data\Chancen Digitalisierung Rechnungswesen\06_text\[faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5) [de_dep_news_trf-3.7.2]\78802_V4_Kap_00 - [faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5).txt'
+23:52:14.196 +++++ [utils/file.py:193 Â» create_folder] makedir: ..\data\Chancen Digitalisierung Rechnungswesen\09_srt\[faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5) [de_dep_news_trf-3.7.2]
+23:52:14.203 +++++ [utils/util.py:141 Â» export_text] created '..\data\Chancen Digitalisierung Rechnungswesen\09_srt\[faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5) [de_dep_news_trf-3.7.2]\78802_V4_Kap_00.srt'
+23:52:14.209 +++++ [utils/util.py:141 Â» export_text] created '..\data\Chancen Digitalisierung Rechnungswesen\08_vtt\[faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5) [de_dep_news_trf-3.7.2]\78802_V4_Kap_00.vtt'
+23:52:14.337  ==>  [helper/excel.py:341 Â» export_TextToSpeech_excel] '..\data\Chancen Digitalisierung Rechnungswesen\10_excelExport\[faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5) [de_dep_news_trf-3.7.2]\78802_V4_Kap_00.xlsx'
+23:52:14.340 ----- [main.py:294 Â» main] 
+23:52:14.691  ==>  [main/whisper_faster.py:308 Â» transcribe_fasterwhisper] large-v3 cached
+23:52:28.190 ----- [utils/util.py:126 Â» export_text] not changed '..\data\Chancen Digitalisierung Rechnungswesen\04_settings\[faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5)\78802_V4_Kap_01 - [faster-whisper] [07 large-v3] (VAD on, inner-prompt on, beam-5).json'
+[1m[35m[00:00.264 --> 00:06.264][22m Lassen Sie uns nun in das Seminar einsteigen und schauen wir uns erstmal das Ziel dieses Seminars an.[0m
+[1m[35m[00:06.564 --> 00:14.533][22m Für viele ist dieses Seminar sicherlich auch ein Seminar, das zur Erreichung der Qualifikation[0m
+[1m[35m[00:14.533 --> 00:22.031][22m Experte für Rechnungswesen dient. Das Ziel dieses Seminars für mich ist Ihnen erstmal einen Einstieg[0m
+[1m[35m[00:22.031 --> 00:28.764][22m in die Digitalisierung zu geben, sofern noch nicht vorhanden. Es ist mir wichtig, dass Sie[0m
+[1m[35m[00:28.764 --> 00:35.533][22m schnelle Ergebnisse erzielen bei dem, was Sie hier von mir vermittelt bekommen und vor allen Dingen,[0m
+[1m[35m[00:35.533 --> 00:41.964][22m dass Sie Erfolgserlebnisse haben. Für die Profis und dahin möchte ich Ihnen gerne Anregungen geben,[0m
+[1m[35m[00:42.633 --> 00:50.733][22m Bekanntes einfach mal anders zu betrachten, Neues auszuprobieren und zu schauen, ob das eine oder[0m
+[1m[35m[00:50.733 --> 00:57.133][22m andere oder die eine oder andere Idee vielleicht für Sie nutzendbringend ist. Erfolgreiche[0m
+[1m[35m[00:57.133 --> 00:58.764][22m Steuerberatung genau wie in der Begründung.[0m
+[1m[35m[00:58.764 --> 01:04.864][22m Begründung beginnt mit einer Standortbestimmung. Wir wissen wo wir stehen und wo wir herkommen,[0m
+[1m[35m[01:04.931 --> 01:10.864][22m wissen auch wo wir hingehen können. Das was wir tagtäglich machen, die Buchführung in dieser Form[0m
+[1m[35m[01:10.864 --> 01:20.333][22m gibt es schon seit über 500 Jahren. 1494 zum ersten Mal strukturiert festgehalten. Nur mal[0m
+[1m[35m[01:20.333 --> 01:28.002][22m so als kleine Einschätzung des Zeitfensters. 1492, also zwei Jahre vorher, hat Columbus Amerika[0m
+[1m[35m[01:28.002 --> 01:28.664][22m entdeckt.[0m
+[1m[35m[01:29.664 --> 01:35.664][22m Die DATEV Buchführung in der Form wie wir sie aktuell betreiben, mit der Funktion des[0m
+[1m[35m[01:35.664 --> 01:42.864][22m Rechenzentrums, gibt es schon seit 1966. Die Buchführung am PC, das was ihnen sehr nahe ist,[0m
+[1m[35m[01:42.964 --> 01:51.564][22m gibt es erst seit Mitte der 1990er. Die Möglichkeit elektronisch Kontoauszugsdaten,[0m
+[1m[35m[01:51.633 --> 01:57.433][22m die so oder so elektronisch vorhanden sind, in die DATEV einzuspielen, gibt es seit 1996.[0m
+[1m[35m[01:57.433 --> 02:05.802][22m Die Zukunft, wo geht es in der Zukunft hin? In aller Munde ist die KI, künstliche Intelligenz.[0m
+[1m[35m[02:06.233 --> 02:13.500][22m Das wird definitiv unseren Arbeitsalltag erreichen, egal ob im Schriftwechsel oder in der Buchführung.[0m
+[1m[35m[02:13.633 --> 02:19.664][22m Damit werden wir uns auseinandersetzen müssen. Ja und wo geht es konkret in der Buchhaltung hin?[0m
+[1m[35m[02:20.102 --> 02:27.931][22m Sehr dicht sind wir jetzt schon bei dem Thema Plattform und das was die Zukunft bringen wird,[0m
+[1m[35m[02:28.102 --> 02:28.764][22m das ist die Zukunft. Das ist die Zukunft der Buchhaltung. Das ist die Zukunft der Buchhaltung.[0m
+[1m[35m[02:28.764 --> 02:35.333][22m Das ist die Cloud und die Cloud ist für mich nichts anderes als das, was im Jahr 1966 gestartet hat,[0m
+[1m[35m[02:35.464 --> 02:42.233][22m dass Daten in einem Rechenzentrum gespeichert und verarbeitet werden und da müssen wir sehen,[0m
+[1m[35m[02:42.300 --> 02:48.264][22m dass wir dort den Anschluss nicht verpassen und dass wir da das Thema aktiv begleiten.[0m
+[1m[35m[02:49.400 --> 02:52.833][22m Ja und was uns letztlich die Zukunft ganz konkret bringt,[0m
+[1m[35m[02:53.064 --> 02:58.733][22m ich habe es mit drei Fragezeichen versehen. Ich habe mal eine kleine Grafik mit[0m
+[1m[35m[02:58.733 --> 03:03.202][22m gebracht, weil für mich, wie gesagt, die Standortbestimmung immer eine wichtige Sache[0m
+[1m[35m[03:03.202 --> 03:07.664][22m ist, um nach vorne zu kommen. In der Buchhaltung machen wir auch nichts anderes, wenn wir[0m
+[1m[35m[03:07.664 --> 03:13.664][22m Soll-Ist-Vergleiche oder Vorjahresvergleiche in der BWA uns ansehen. Ich habe es mal grafisch[0m
+[1m[35m[03:13.664 --> 03:20.064][22m aufbereitet. Ich sagte ja schon, die doppelte Buchführung gibt es seit 1494, DATEV-Buchführung[0m
+[1m[35m[03:20.064 --> 03:25.464][22m seit 1966, elektronische Bankauszüge seit 1996.[0m
+[1m[35m[03:27.764 --> 03:28.664][22m Die Pfeile[0m
+[1m[35m[03:28.733 --> 03:35.664][22m sind annähernd maßstabsgerecht, damit man mal ein Gefühl dafür bekommt, wo wir uns aktuell bewegen.[0m
+[1m[35m[03:36.202 --> 03:42.464][22m Und für das, was für viele eine Selbstverständlichkeit ist, das Smartphone, das iPhone, das gibt es seit[0m
+[1m[35m[03:42.464 --> 03:50.264][22m 2007, also 16 Jahre. Und wenn wir in dem obigen Maßstab bleiben, bleibt von dem Pfeil nur noch[0m
+[1m[35m[03:50.264 --> 03:57.564][22m ein Dreieck übrig. Ganz konkret ist mir ganz wichtig und es wird vielfach verkannt, dass die[0m
+[1m[35m[03:57.564 --> 04:04.700][22m Digitalisierung, und die Klammern sind bewusst gesetzt, nicht nur im Rechnungswesen kein reines[0m
+[1m[35m[04:04.700 --> 04:11.031][22m Technik-Thema sind, sondern ein Management- und vor allen Dingen auch ein Prozess-Thema. Und das[0m
+[1m[35m[04:11.031 --> 04:18.700][22m muss Ihnen, genau wie Ihren Chefs, sofern Sie als Mitarbeiter zuhören, durchaus bewusst sein. Und[0m
+[1m[35m[04:18.700 --> 04:25.931][22m das müssen Sie auch genau so sehen und angehen. Was sollte nun letztlich das Ziel der Digitalisierung[0m
+[1m[35m[04:25.931 --> 04:29.164][22m sein? Warum machen wir das Ganze? Warum streben wir das Ganze an?[0m
+[1m[35m[04:29.164 --> 04:35.364][22m Ja, natürlich soll es in erster Linie ein Mehrwert für die Kanzlei sein. Und mit der[0m
+[1m[35m[04:35.364 --> 04:40.864][22m Kanzlei sind Sie als Mitarbeiter gemeint, nicht die Kanzleileitung. Dann natürlich[0m
+[1m[35m[04:41.564 --> 04:47.864][22m sollte es unbedingt auch einen Mehrwert für den Mandanten bieten, weil der Mandant nur dann[0m
+[1m[35m[04:48.564 --> 04:55.904][22m mitarbeitet an dem Thema, wenn er für sich einen eigenen Nutzen sieht. Letztlich soll die[0m
+[1m[35m[04:55.904 --> 04:59.164][22m Buchführung in den Gesamtprozess des Mandanten[0m
+[1m[35m[04:59.164 --> 05:07.233][22m mit einbezogen werden, statt einfach ein lästiges Übel zu sein. Daraus ergeben sich logischerweise[0m
+[1m[35m[05:07.233 --> 05:14.233][22m durchgängige Prozesse, die es zu schaffen gilt und für Sie sollte es letztlich auch dazu dienen,[0m
+[1m[35m[05:15.133 --> 05:21.664][22m dass wir Freiräume schaffen für Neues, um die drei Fragezeichen, die ich in den Folien davor[0m
+[1m[35m[05:21.664 --> 05:30.400][22m gezeigt habe, vielleicht mit Leben zu füllen. Die Digitalisierung startet aber viel früher,[0m
+[1m[35m[05:30.464 --> 05:31.202][22m als dort.[0m
+[1m[35m[05:31.364 --> 05:38.633][22m Wo wir sie vielfach sehen. Um eine erfolgreiche Digitalisierung zu schaffen, müssen Sie sich die[0m
+[1m[35m[05:39.433 --> 05:45.333][22m Produktionsprozesse des Mandanten ansehen und hinterfragen. Und mit diesen Produktionsprozessen[0m
+[1m[35m[05:45.333 --> 05:52.904][22m meine ich eingehende Prozesse wie auch ausgehende Prozesse. Als Beispiel ist hier genannt das[0m
+[1m[35m[05:52.904 --> 06:00.664][22m Angebot, das der Mandant erstellt, das dann in der Auftragsannahme mündet. Letztlich bei[0m
+[1m[35m[06:00.664 --> 06:01.333][22m erfolgreichen Prozessen, die man dann in der Auftragsannahme mündet, kann man sich[0m
+[1m[35m[06:01.333 --> 06:06.633][22m im Auftrag zu einem Lieferschein mit oder ohne Anführungszeichen und letztlich schreibt der[0m
+[1m[35m[06:06.633 --> 06:13.400][22m Mandant eine Rechnung. Die Rechnung müssen wir verbuchen und dann kommt die Zahlung und den[0m
+[1m[35m[06:13.400 --> 06:20.333][22m Zahlungseingang, den verbuchen wir dann und dort gilt es einen einheitlichen, durchgängigen, in[0m
+[1m[35m[06:20.333 --> 06:27.002][22m sich abgestimmten Prozess zu finden. Das gilt wie schon anfangs gesagt sowohl für die eingehenden[0m
+[1m[35m[06:27.002 --> 06:31.233][22m Prozesse beim Mandant, sprich den Warenfluss.[0m

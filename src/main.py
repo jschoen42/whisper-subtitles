@@ -167,7 +167,7 @@ def main():
             files    = []
             speakers = []
 
-            prompt_main = prompt_main_normalize(data_project["prompt"])
+            prompt_main = prompt_main_normalize(data_project["prompt"]).strip()
 
             for parts in data_project["parts"]:
                 files.append(parts["files"])
@@ -240,14 +240,15 @@ def main():
 
                         media_file = file_info["file"]
                         if len(file_info["prompt"]) > 0:
-                            prompt = prompt_normalize(file_info["prompt"])
+                            prompt = prompt_normalize(file_info["prompt"]).strip()
 
                             file_prompt = prompt + " " + prompt_main
                         else:
                             file_prompt = prompt_main
 
                         if file_prompt != "":
-                            file_prompt += " -" # no ";" !!!
+                            if file_prompt[-1] not in ".,;:?!":
+                                file_prompt += "."
 
                         tmp = media_file.split(".")
                         tmp.pop()
@@ -291,7 +292,9 @@ def main():
                         )
                         log_dictionary.add(result["corrected"], result["spelling"])
                         time.sleep(0)
-                        Trace.info()
+                        # Trace.info()
+                        print()
+                        print()
 
                 nlp.flush()
 

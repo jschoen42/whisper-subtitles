@@ -157,6 +157,9 @@ git add .
 git commit -m "..."
 git push -u origin main
 
+Unstaged files
+git reset
+
 git log --oneline origin/main
 git log --graph --oneline --decorate
 
@@ -192,8 +195,8 @@ git branche -d feature/... (delete)
 git push origin main feature/...
 
 --- reflog
-git reflog --date=iso > __reflog.txt
 
+git reflog --date=iso > __reflog.txt
 
 --- stash
 
