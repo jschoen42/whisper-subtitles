@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 23.12.2024
+    © Jürgen Schoenemeyer, 03.01.2025
 
     PUBLIC:
      - get_modification_timestamp(filename: Path | str) -> float
@@ -17,6 +17,7 @@
      - delete_folder_tree(dest_path: str, relax: bool = False) -> bool
      - create_folder( folderpath: Path | str ) -> bool
      - make_dir(in_path)
+     - delete_file(in_path: Path | str, filename: str) -> None
      - beautify_path( path: Path | str ) -> str
     #
      - get_trace_path(filepath: Path | str) -> str
@@ -202,6 +203,15 @@ def create_folder( folderpath: Path | str ) -> bool:
 def make_dir(in_path):
     path = Path(in_path)
     path.mkdir(parents=True, exist_ok=True)
+
+def delete_file(in_path: Path | str, filename: str) -> None:
+    path = Path(in_path) / filename
+    if path.is_file():
+        try:
+            path.unlink()
+            Trace.update(f"file '{path}/{filename}' deleted")
+        except OSError as err:
+            Trace.error(f"{err}")
 
 def beautify_path( path: Path | str ) -> str:
     return str( path ).replace("\\\\", "/")
@@ -458,5 +468,5 @@ def convert_datetime(time_string: str) -> int:
 
     my_timestamp = int(datetime.datetime.timestamp(my_time_string))
 
-    #print( "convert_datetime:", time_string, "->", my_time_string, " / ", my_time_string2, "=> epoch:", my_timestamp )
+    Trace.debug( f"convert_datetime: {time_string} -> {my_time_string} => epoch: {my_timestamp}" )
     return my_timestamp

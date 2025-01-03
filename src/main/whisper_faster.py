@@ -325,8 +325,8 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
 
             word_timestamps = True,
 
-            # temperature = [0.0, 0.1, 0.2, 0.4, 0.6, 0.8, 1],  # new 0.1 => delete prompt
-            temperature = [0.0, 0.2, 0.4, 0.6, 0.8, 1],
+            temperature = [0.0, 0.1, 0.2, 0.4, 0.6, 0.8, 1],  # new 0.1 => delete prompt
+            # temperature = [0.0, 0.2, 0.4, 0.6, 0.8, 1],
 
             prompt_reset_on_temperature = 0.3,
 
