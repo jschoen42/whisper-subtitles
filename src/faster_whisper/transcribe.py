@@ -8,7 +8,7 @@ import time # JS
 from dataclasses import asdict, dataclass
 from inspect import signature
 from math import ceil
-from typing import BinaryIO, Iterable, List, Optional, Tuple, Union
+from typing import Any, BinaryIO, Iterable, List, Optional, Tuple, Union
 from warnings import warn
 
 import ctranslate2
@@ -29,7 +29,7 @@ from faster_whisper.vad import (
     merge_segments,
 )
 
-print("FASTER-WHISPER PATCH (29.12.2024)")
+print("FASTER-WHISPER PATCH (01.01.2025)")
 
 @dataclass
 class Word:
@@ -88,11 +88,11 @@ class TranscriptionOptions:
     compression_ratio_threshold: Optional[float]
     condition_on_previous_text: bool
     prompt_reset_on_temperature: float
-    temperatures: List[float]
+    temperatures: Union[List[float], Tuple[float, ...]]
     initial_prompt: Optional[Union[str, Iterable[int]]]
     prefix: Optional[str]
     suppress_blank: bool
-    suppress_tokens: Optional[List[int]]
+    suppress_tokens: Union[List[int], Tuple[int, ...]]
     without_timestamps: bool
     max_initial_timestamp: float
     word_timestamps: bool
@@ -113,7 +113,7 @@ class TranscriptionInfo:
     duration_after_vad: float
     all_language_probs: Optional[List[Tuple[str, float]]]
     transcription_options: TranscriptionOptions
-    vad_options: VadOptions
+    vad_options: Optional[VadOptions]
 
 
 class BatchedInferencePipeline:
@@ -137,8 +137,8 @@ class BatchedInferencePipeline:
             segment_sizes.append(segment_size)
             (
                 subsegments,
-                seek,
-                single_timestamp_ending,
+                _seek,
+                _single_timestamp_ending,
             ) = self.model._split_segments_by_timestamps(
                 tokenizer=tokenizer,
                 tokens=output["tokens"],
@@ -302,7 +302,7 @@ class BatchedInferencePipeline:
         hallucination_silence_threshold: Optional[float] = None,
         batch_size: int = 8,
         hotwords: Optional[str] = None,
-        language_detection_threshold: Optional[float] = 0.5,
+        language_detection_threshold: float = 0.5,
         language_detection_segments: int = 1,
     ) -> Tuple[Iterable[Segment], TranscriptionInfo]:
         """transcribe audio in chunks in batched fashion and return with language info.
@@ -395,6 +395,10 @@ class BatchedInferencePipeline:
             audio = decode_audio(audio, sampling_rate=sampling_rate)
         duration = audio.shape[0] / sampling_rate
 
+        self.model.logger.info(
+            "[BatchedInferencePipeline] Processing audio with duration %s", format_timestamp(duration) # JS
+        )
+
         chunk_length = chunk_length or self.model.feature_extractor.chunk_length
         # if no segment split is provided, use vad_model and generate segments
         if not clip_timestamps:
@@ -426,6 +430,11 @@ class BatchedInferencePipeline:
         duration_after_vad = (
             sum((segment["end"] - segment["start"]) for segment in clip_timestamps)
             / sampling_rate
+        )
+
+        self.model.logger.info(
+            "[BatchedInferencePipeline] VAD filter removed %s of audio",                                # JS
+            format_timestamp(duration - duration_after_vad),
         )
 
         audio_chunks, chunks_metadata = collect_chunks(audio, clip_timestamps)
@@ -502,7 +511,11 @@ class BatchedInferencePipeline:
             initial_prompt=initial_prompt,
             prefix=prefix,
             suppress_blank=suppress_blank,
-            suppress_tokens=get_suppressed_tokens(tokenizer, suppress_tokens),
+            suppress_tokens=(
+                get_suppressed_tokens(tokenizer, suppress_tokens)
+                if suppress_tokens
+                else suppress_tokens
+            ),
             prepend_punctuations=prepend_punctuations,
             append_punctuations=append_punctuations,
             max_new_tokens=max_new_tokens,
@@ -589,7 +602,7 @@ class WhisperModel:
         num_workers: int = 1,
         download_root: Optional[str] = None,
         local_files_only: bool = False,
-        files: dict = None,
+        files: Optional[dict] = None,
         **model_kwargs,
     ):
         """Initializes the Whisper model.
@@ -741,7 +754,7 @@ class WhisperModel:
         clip_timestamps: Union[str, List[float]] = "0",
         hallucination_silence_threshold: Optional[float] = None,
         hotwords: Optional[str] = None,
-        language_detection_threshold: Optional[float] = 0.5,
+        language_detection_threshold: float = 0.5,
         language_detection_segments: int = 1,
     ) -> Tuple[Iterable[Segment], TranscriptionInfo]:
         """Transcribes an input file.
@@ -843,7 +856,7 @@ class WhisperModel:
             elif isinstance(vad_parameters, dict):
                 vad_parameters = VadOptions(**vad_parameters)
             speech_chunks = get_speech_timestamps(audio, vad_parameters)
-            audio_chunks, chunks_metadata = collect_chunks(audio, speech_chunks)
+            audio_chunks, _chunks_metadata = collect_chunks(audio, speech_chunks)
             audio = np.concatenate(audio_chunks, axis=0)
             duration_after_vad = audio.shape[0] / sampling_rate
 
@@ -935,7 +948,7 @@ class WhisperModel:
             condition_on_previous_text=condition_on_previous_text,
             prompt_reset_on_temperature=prompt_reset_on_temperature,
             temperatures=(
-                temperature if isinstance(temperature, (list, tuple)) else [temperature]
+                temperature if isinstance(temperature, (List, Tuple)) else [temperature]
             ),
             initial_prompt=initial_prompt,
             prefix=prefix,
@@ -980,7 +993,7 @@ class WhisperModel:
         segment_size: int,
         segment_duration: float,
         seek: int,
-    ) -> List[List[int]]:
+    ) -> Tuple[List[Any], int, bool]:
         current_segments = []
         single_timestamp_ending = (
             len(tokens) >= 2 and tokens[-2] < tokenizer.timestamp_begin <= tokens[-1]
@@ -1634,13 +1647,12 @@ class WhisperModel:
             if hotwords and not prefix:
                 hotwords_tokens = tokenizer.encode(" " + hotwords.strip())
                 # tmp = hotwords_tokens[: self.max_length // 2 - 1]
-                tmp = hotwords_tokens[:218] # JS
+                tmp = hotwords_tokens[:220] # JS (224 - 4)
 
                 # prompt.extend(hotwords_tokens)
             if previous_tokens:
                 # prompt.extend(previous_tokens[-(self.max_length // 2 - 1) :])
-                # tmp = previous_tokens[-218:] # JS ###
-                tmp = previous_tokens[-220:] # JS - 154 ### - fail 96 fail, 46 ok, 56 ok, 66 ok, 76 (80) ok, 86 (90) fail, 81 (85) ok, 83 (87) ok, 84 (88) fail
+                tmp = previous_tokens[-220:] # JS (224 - 4)
 
             # JS remove incomplete word from the start (not working for chinese, japanese, ...)
             shorten = False
@@ -1685,8 +1697,8 @@ class WhisperModel:
         num_frames: int,
         prepend_punctuations: str,
         append_punctuations: str,
-        last_speech_timestamp: float,
-    ) -> float:
+        last_speech_timestamp: Union[float, None],
+    ) -> Optional[float]:
         if len(segments) == 0:
             return
 
@@ -1887,7 +1899,7 @@ class WhisperModel:
         audio: Optional[np.ndarray] = None,
         features: Optional[np.ndarray] = None,
         vad_filter: bool = False,
-        vad_parameters: Union[dict, VadOptions] = None,
+        vad_parameters: Optional[Union[dict, VadOptions]] = None,
         language_detection_segments: int = 1,
         language_detection_threshold: float = 0.5,
     ) -> Tuple[str, float, List[Tuple[str, float]]]:
@@ -2001,7 +2013,7 @@ def get_compression_ratio(text: str) -> float:
 def get_suppressed_tokens(
     tokenizer: Tokenizer,
     suppress_tokens: Tuple[int],
-) -> Optional[List[int]]:
+) -> Tuple[int, ...]:
     if -1 in suppress_tokens:
         suppress_tokens = [t for t in suppress_tokens if t >= 0]
         suppress_tokens.extend(tokenizer.non_speech_tokens)
