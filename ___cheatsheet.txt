@@ -82,9 +82,9 @@ uv run
 uv lock
 
 uv pip list
-uv pip list --outdated
+uv pip list --outdated > __outdated.txt
 
-uv pip tree
+uv pip tree > __tree.txt
 
 ------------------ upgrade Python -------------------
 
@@ -157,7 +157,7 @@ git add .
 git commit -m "..."
 git push -u origin main
 
-Unstaged files
+unstage files:
 git reset
 
 git log --oneline origin/main

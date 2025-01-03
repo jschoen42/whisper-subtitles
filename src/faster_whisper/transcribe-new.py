@@ -1480,7 +1480,7 @@ class WhisperModel:
                     }
                 else:
                     kwargs = {
-                        "beam_size": 1,
+                        "beam_size": 3,                                                       # JS
                         "num_hypotheses": options.best_of,
                         "sampling_topk": 0,
                         "sampling_temperature": temperature,

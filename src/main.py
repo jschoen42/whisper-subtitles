@@ -5,7 +5,6 @@ import sys
 import json
 import time
 
-from typing import Tuple
 from pathlib import Path
 
 from utils.globals import BASE_PATH
@@ -39,22 +38,21 @@ data_path = BASE_PATH / "../data"
 # ("05", "large-v1")
 
 # ("06", "large-v2")
-# ("06", "large-v2•distil")
+# ("06", "large-v2-de")
+# ("06", "large-v2•distil-en")
 
 # ("07", "large-v3")
 # ("07", "large-v3•crisper")
-# ("07", "large-v3•distil")
-# ("07", "large-v3•turbo-de")
 # ("07", "large-v3•turbo")
+# ("07", "large-v3•turbo-de") # fast ohne 'ß'
+# ("07", "large-v3•distil-en")
 
-models: list[ Tuple[str, str] ] = [("07", "large-v3")]
+models = [("07", "large-v3•turbo")]
 
-beams: list = [5] # [1, 3, 5, 7, 9] -> keinen signifikater Unterschied zw. 3 ... 9
+beams = [5] # [1, 3, 5, 7, 9] -> keinen signifikater Unterschied zw. 3 ... 9
 
 trace_file_default = ["info", "update", "proof", "warning", "error"]
 trace_file_reduced = ["warning"]
-
-force_condition_on_previous_text: bool = False  # default v3: False, otherwise True
 
 reset_cache_spacy: bool = False
 
@@ -202,7 +200,7 @@ def main():
                     "modelName":     model[1],
                     "language":      language,
                     "noPrompt":      no_prompt,
-                    "innerPrompt":   are_inner_prompts_possible(model[1]) or force_condition_on_previous_text,
+                    "innerPrompt":   are_inner_prompts_possible(model[1]),
 
                     "beam":          beam,
                     "VAD":           Prefs.get("whisper.faster_whisper.use_vad"),

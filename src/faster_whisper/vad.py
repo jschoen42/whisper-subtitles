@@ -3,13 +3,13 @@ import functools
 import os
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
 from faster_whisper.utils import get_assets_path
 
-print("VAD PATCH (29.12.2024)")
+print("VAD PATCH (01.01.2025)")
 
 # The code below is adapted from https://github.com/snakers4/silero-vad.
 @dataclass
@@ -36,7 +36,7 @@ class VadOptions:
     """
 
     threshold: float = 0.5
-    neg_threshold: float = threshold - 0.15
+    neg_threshold: float = None
     min_speech_duration_ms: int = 0
     max_speech_duration_s: float = float("inf")
     min_silence_duration_ms: int = 2000
@@ -45,7 +45,7 @@ class VadOptions:
 
 def get_speech_timestamps(
     audio: np.ndarray,
-    vad_options: Optional[VadOptions] = None,
+    vad_options: Optional[Union[dict, VadOptions]] = None,
     sampling_rate: int = 16000,
     **kwargs,
 ) -> List[dict]:
@@ -64,6 +64,7 @@ def get_speech_timestamps(
         vad_options = VadOptions(**kwargs)
 
     threshold = vad_options.threshold
+    neg_threshold = vad_options.neg_threshold
     min_speech_duration_ms = vad_options.min_speech_duration_ms
     max_speech_duration_s = vad_options.max_speech_duration_s
     min_silence_duration_ms = vad_options.min_silence_duration_ms
@@ -95,7 +96,8 @@ def get_speech_timestamps(
     triggered = False
     speeches = []
     current_speech = {}
-    neg_threshold = vad_options.neg_threshold
+    if neg_threshold is None:
+        neg_threshold = max(threshold - 0.15, 0.01)
 
     # to save potential segment end (and tolerate some silence)
     temp_end = 0
