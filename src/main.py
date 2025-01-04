@@ -147,7 +147,7 @@ def main() -> None:
     Trace.info()
 
     for model in models:
-        log_dictionary = DictionaryLog(names_dictionary_sheet)
+        log_dictionary = DictionaryLog( names_dictionary_sheet )
 
         project_all    = 0
         file_count_all = 0
@@ -264,7 +264,6 @@ def main() -> None:
                         if whisper_type == "faster-whisper":
                             result = transcribe_fasterwhisper(whisper_params, media_params, nlp)
 
-
                         elif whisper_type == "whisper":
                             result = transcribe_whisper(whisper_params, media_params, nlp)
 
@@ -288,7 +287,10 @@ def main() -> None:
                             result["pauseError"],
                             result["spelling"],
                         )
-                        log_dictionary.add(result["corrected"], result["spelling"])
+                        log_dictionary.add(
+                            result["corrected"],
+                            result["spelling"]
+                        )
                         time.sleep(0)
                         # Trace.info()
                         print()

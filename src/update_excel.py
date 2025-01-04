@@ -9,7 +9,7 @@ from utils.util  import import_json
 
 from helper.excel import update_dictionary_excel
 
-def main():
+def main() -> None:
     Prefs.init("settings")
     Prefs.load("base.yaml")
 

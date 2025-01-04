@@ -2,10 +2,10 @@
     © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
-     - get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, list]:
+     - get_settings_transcribe_faster(info: Dict, media_type: str, media_info: Dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, list]:
 """
 
-from typing import Tuple
+from typing import Dict, Tuple
 
 from utils.trace import Trace
 from utils.util  import format_timestamp
@@ -53,12 +53,12 @@ TranscriptionInfo(
 )
 """
 
-def get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, list]:
-    settings: dict = {}
+def get_settings_transcribe_faster(info: Dict, media_type: str, media_info: Dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, list]:
+    settings: Dict = {}
 
     try:
         props = ["language", "language_probability", "duration", "duration_after_vad", "all_language_probs"]  # , "transcription_options", "vad_options" ]
-        settings = {p: getattr(info, p) for p in props}  # dict([(p,getattr(info,p)) for p in props])
+        settings = {p: getattr(info, p) for p in props}  # Dict([(p,getattr(info,p)) for p in props])
     except Exception as error:
         settings["duration"] = -1
         Trace.error(f"{error}")

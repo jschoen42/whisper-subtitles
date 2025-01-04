@@ -2,19 +2,20 @@
     © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
-     - get_media_info(filepath: str | BytesIO) -> None | dict
+     - get_media_info(filepath: str | BytesIO) -> None | Dict
      - get_audio_duration(filepath: str) -> float
-     - get_media_trackinfo(filepath: str) -> None | dict
-     - get_video_metadata_mediainfo(filepath: str) -> None | dict
+     - get_media_trackinfo(filepath: str) -> None | Dict
+     - get_video_metadata_mediainfo(filepath: str) -> None | Dict
 """
 
 from io import BytesIO
+from typing import Any, Dict
 
 from pymediainfo import MediaInfo
 
 from utils.trace import Trace
 
-def get_media_info(filepath: str | BytesIO) -> None | dict:
+def get_media_info(filepath: str | BytesIO) -> None | Dict:
     """
     {
         "track_type": "Audio",
@@ -75,7 +76,7 @@ def get_media_info(filepath: str | BytesIO) -> None | dict:
         Trace.error(f"MediaInfo: {error}")
         return None
 
-def get_audio_duration(filepath: str) -> float:
+def get_audio_duration(filepath: str | BytesIO) -> float:
     duration = -1
 
     media_info = MediaInfo.parse(filepath)
@@ -85,7 +86,7 @@ def get_audio_duration(filepath: str) -> float:
 
     return duration
 
-def get_media_trackinfo(filepath: str) -> None | dict:
+def get_media_trackinfo(filepath: str | BytesIO) -> None | Dict:
     ret = None
 
     media_info = MediaInfo.parse(filepath)
@@ -95,9 +96,9 @@ def get_media_trackinfo(filepath: str) -> None | dict:
 
     return ret
 
-def get_video_metadata_mediainfo(filepath: str) -> None |dict:
+def get_video_metadata_mediainfo(filepath: str | BytesIO) -> None | Dict:
 
-    info = {
+    info: Dict[str, Any] = {
         "width":    "",
         "height":   "",
         "duration": "",

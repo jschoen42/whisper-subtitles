@@ -4,7 +4,7 @@
 
     PUBLIC:
      - load_model_whisper(model_name: str) -> Any
-     - transcribe_whisper_timestamped(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict
+     - transcribe_whisper_timestamped(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> str | Dict
 """
 
 import io
@@ -12,8 +12,8 @@ import time
 import hashlib
 import warnings
 
+from typing import Any, Dict
 from pathlib import Path
-from typing import Any
 
 import whisper_timestamped as whisper
 
@@ -63,7 +63,7 @@ def load_model_whisper(model_name: str) -> Any:
     else:
         return None
 
-def transcribe_whisper_timestamped(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict:
+def transcribe_whisper_timestamped(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> str | Dict:
     global current_model
 
     # inModelID     = project_params["modelNumber"]
@@ -136,7 +136,7 @@ def transcribe_whisper_timestamped(project_params: dict, media_params: dict, cac
             media_md5 = hashlib.md5(file).hexdigest()
             media_info = get_media_info(io.BytesIO(file))
 
-    settings: dict = {}
+    settings: Dict = {}
     settings["language"] = language
     settings["duration"] = media_info["duration"]
     settings["transcription_options"] = param
@@ -218,7 +218,7 @@ def transcribe_whisper_timestamped(project_params: dict, media_params: dict, cac
     (  cc,
         text,
         text_combined,
-        scorrected_details,
+        corrected_details,
         spelling_result
    ) = split_to_lines(words, dictionary_data)
 
@@ -242,9 +242,9 @@ def transcribe_whisper_timestamped(project_params: dict, media_params: dict, cac
         "chars":           len(text_combined.replace(" ", "")),
         "words":           len(text_combined.split(" ")),
         "sentences":       sentences,
-        "duration":        result["duration"],
+        "duration":        media_info["duration"],
         "spelling":        spelling_result,
-        "corrected":       scorrected_details,
+        "corrected":       corrected_details,
         "lastSegment":     last_segment_text,
         "repetitionError": repetition_error,
         "pauseError":      pause_error,

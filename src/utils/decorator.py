@@ -7,7 +7,7 @@
      - @retry_exception(text: str="", exception=Exception, delay: int|float=1, retries: int=5)
 
     PRIVAT:
-      - def get_args_values( func: Callable, *args: Any, **kwargs: Any ) -> Tuple[list, dict]:
+      - def get_args_values( func: Callable, *args: Any, **kwargs: Any ) -> Tuple[list, Dict]:
       - def replace_arguments(match: Match, func_name: str, *args: Any, **kwargs: Any) -> str:
 
 """
@@ -18,7 +18,7 @@ import re
 import functools
 import inspect
 
-from typing import Any, Tuple, Generator, Match
+from typing import Any, Dict, Generator, Match, Tuple
 from collections.abc import Callable
 
 from utils.trace import Trace, Color
@@ -89,7 +89,7 @@ def my_decorator(function=None, *, ... ) -> Callable:
 # @duration("{__name__} 1: {0|name} {1|number} {2|type}", rounds=1)
 # @duration(text="{__name__} 0: {0} {1} {2}", rounds=1)
 
-def duration(special: Callable[..., Any] | str = None, *, text: str | None = None, rounds: int=1) -> Callable:
+def duration(special: Callable[..., Any] | str | None = None, *, text: str | None = None, rounds: int=1) -> Callable:
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -238,7 +238,7 @@ def retry_exception(text: str | None = None, exception: type = Exception, delay:
 
 # get args and kwargs values -> default values are considered
 
-def get_args_values( func: Callable, *args: Any, **kwargs: Any ) -> Tuple[list, dict]:
+def get_args_values( func: Callable, *args: Any, **kwargs: Any ) -> Tuple[list, Dict]:
     sig = inspect.signature(func)
     bound_args = sig.bind_partial(*args, **kwargs)
     bound_args.apply_defaults()
@@ -254,7 +254,7 @@ def get_args_values( func: Callable, *args: Any, **kwargs: Any ) -> Tuple[list, 
 # @duration("{__name__} 1: {0|name} {1|number} {2|type}"
 # args_values: ['Max', 99, False], kwargs_values: {'name': 'Max', 'number': 99, 'type': False}
 
-def replace_argument_values(match: Match, func_name: str, args_values: list, kwargs_values: dict) -> str:
+def replace_argument_values(match: Match, func_name: str, args_values: list, kwargs_values: Dict) -> str:
     arguments = match.group(1)
 
     if arguments == "__name__":

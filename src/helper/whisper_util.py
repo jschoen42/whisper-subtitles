@@ -2,11 +2,11 @@
     © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
-     - prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: dict, media_filename: str) -> Tuple[list, int, float, float, str, list, list]:
-     - split_to_lines(words: list, dictionary: list) -> Tuple[dict, str, str, dict, dict, list]:
-     - split_to_sentences(words: dict, dictionary: dict) -> list:
+     - prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: Dict, media_filename: str) -> Tuple[list, int, float, float, str, list, list]:
+     - split_to_lines(words: list, Dictionary: list) -> Tuple[dict, str, str, Dict, Dict, list]:
+     - split_to_sentences(words: Dict, Dictionary: Dict) -> list:
 
-     - get_filename_parameter(params: dict) -> str:
+     - get_filename_parameter(params: Dict) -> str:
      - are_prompts_allowed(model_name) -> bool:
      - are_inner_prompts_possible(model_name) -> bool:
      - prompt_main_normalize(text: str) -> str:
@@ -19,7 +19,7 @@ import re
 import hashlib
 
 import numpy
-from typing import Tuple
+from typing import Dict, Tuple
 
 from main.spacy import analyse_sentences_spacy
 
@@ -38,16 +38,16 @@ from helper.spelling import spellcheck
 #
 #   format_euro(text: str, thousand_separator: str = ".", float_separator: str = ",", euro: str = "€") -> str:
 #
-#   def get_filename_parameter(params: dict) -> str:
+#   def get_filename_parameter(params: Dict) -> str:
 #
 #   PASS 1
-#   def prepare_words(data: dict[dict], is_faster_whisper: bool, is_intro: bool, type_v3: bool, language: str,
-#                      cache_md5: dict, media_filename: str) -> Tuple[list[dict], int, float, float, str, list[dict]]:
+#   def prepare_words(data: Dict[dict], is_faster_whisper: bool, is_intro: bool, type_v3: bool, language: str,
+#                      cache_md5: Dict, media_filename: str) -> Tuple[list[dict], int, float, float, str, list[dict]]:
 #   PASS 2
-#   def split_to_lines(words: list[dict], dictionary: list[list]) -> Tuple[dict, str, str, dict, dict, list]:
+#   def split_to_lines(words: list[dict], Dictionary: list[list]) -> Tuple[dict, str, str, Dict, Dict, list]:
 #
 #   export in sentences -> TextToSpeech
-#   def split_to_sentences(words: dict, dictionary: dict) -> list:
+#   def split_to_sentences(words: Dict, Dictionary: Dict) -> list:
 #
 #################################################################################################################
 
@@ -59,7 +59,7 @@ def are_prompts_allowed(model_name: str) -> bool: # ->
 
 SPLIT_DEBUG: bool = False
 
-prompt_replace: dict = {
+prompt_replace: Dict = {
     '"': "'",
 
     # "„": "»",
@@ -291,7 +291,7 @@ def init_special_text( language: str ):
     dont_split_two = Prefs.get(f"dont_split_two.{language}")
 
 
-def get_filename_parameter(params: dict) -> str:
+def get_filename_parameter(params: Dict) -> str:
     engine      = params["whisper"]
     model_id    = params["modelNumber"]
     model_name  = params["modelName"]
@@ -335,7 +335,7 @@ def get_filename_parameter(params: dict) -> str:
 #   Pass 1
 ######################
 
-def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: CacheJSON, media_filename: str) -> Tuple[list, int, float, float, str, list, list]:
+def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: CacheJSON, media_filename: str) -> Tuple[list, int, float, float, str, list, list]:
     words: list = []
     probability: list = []
 
@@ -369,9 +369,9 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
     last_segment_end  = 0
     last_segment_text = ""
 
-    corrected = set()
+    corrected: set = set()
     repetition_error = []
-    pause_error: dict = {
+    pause_error: Dict = {
         "introStart":  [],
         "normalStart": [],
         "innerPause":  [],
@@ -481,7 +481,7 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
 
             curr_word = ""
             if is_faster_whisper:
-                if isinstance(word_info_original, dict):
+                if isinstance(word_info_original, Dict):
 
                     # faster-whisper 1.1.x
 
@@ -646,7 +646,7 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
 #
 ####################################################
 
-def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list, dict]:
+def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list, Dict]:
     line  = ""
     lines = ""
 
@@ -654,7 +654,7 @@ def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list,
     end   = 0
     count = 0
 
-    corrected_details: dict = {}
+    corrected_details: Dict = {}
 
     captions = []
     section = 0
@@ -825,7 +825,7 @@ def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list,
 
 # export in sentences -> TextToSpeech
 
-def split_to_sentences(words: dict, dictionary: dict) -> list:
+def split_to_sentences(words: Dict, dictionary: Dict) -> list:
 
     result:list = []
     text = ""

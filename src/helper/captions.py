@@ -14,7 +14,7 @@
 """
 
 from pathlib import Path
-from typing  import Any, Tuple
+from typing  import Any, Dict, Tuple
 
 import webvtt
 
@@ -103,7 +103,7 @@ def import_caption(dirname: Path|str, basename: str) -> None | Tuple[dict, int, 
             else:
                 line_type[0] += 1
 
-            segment: dict[str, Any] = {}
+            segment: Dict[str, Any] = {}
             segment["section"] = i+1
             segment["start"]   = start
             segment["end"]     = end

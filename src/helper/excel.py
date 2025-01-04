@@ -2,12 +2,12 @@
     © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
-     - import_project_excel(pathname: str, filename: str, inType: str) -> dict:
+     - import_project_excel(pathname: str, filename: str, inType: str) -> Dict:
      - set_print_settings(ws: Any):
      - import_captions_excel(pathname: str, filename: str) -> list:
-     - import_dictionary_excel(pathname: str, filename: str) -> Tuple[ dict[str,list[str|int]], list[str], float ]:
-     - update_dictionary_excel(pathname: str, filename: str, filename_update: str, column_name: str, data: dict) -> None | bool:
-     - import_ssml_rules_excel(pathname: str, filename: str) -> dict:
+     - import_dictionary_excel(pathname: str, filename: str) -> Tuple[ Dict[str,list[str|int]], list[str], float ]:
+     - update_dictionary_excel(pathname: str, filename: str, filename_update: str, column_name: str, data: Dict) -> None | bool:
+     - import_ssml_rules_excel(pathname: str, filename: str) -> Dict:
      - import_hunspell_PreCheck_excel(pathname: str, filename: str) -> Tuple[list[str], list[str], list[list]]:
 
 """
@@ -16,7 +16,7 @@ import os
 import re
 import unicodedata
 
-from typing import Any, Tuple
+from typing import Any, Dict, Tuple
 from pathlib import Path
 
 import openpyxl
@@ -76,7 +76,7 @@ def get_cell_value(cell: Any) -> bool | str:
 
 ######################################################################################
 #
-#   import_project_excel(pathname: str, filename: str, inType: str) -> dict:
+#   import_project_excel(pathname: str, filename: str, inType: str) -> Dict:
 #
 #   ./data/[project]/[project].xlsx
 #
@@ -108,8 +108,9 @@ def get_cell_value(cell: Any) -> bool | str:
 #
 ######################################################################################
 
-def import_project_excel(pathname: Path | str, filename: str) -> bool | dict:
-    filepath = Path(pathname, filename)
+def import_project_excel(pathname: Path | str, filename: str) -> bool | Dict:
+    pathname = Path(pathname)
+    filepath = pathname / filename
 
     if not check_excel_file_exists(filepath):
         Trace.error(f"file not found: {filepath}")
@@ -117,14 +118,14 @@ def import_project_excel(pathname: Path | str, filename: str) -> bool | dict:
 
     try:
         wb = load_workbook(filename=filepath)
-    except OSError as error:
-        Trace.error(f"importExcel: {str(error)}")
+    except OSError as err:
+        Trace.error(f"importExcel: {err}")
         return False
 
     try:
         sheet = wb.worksheets[0]  # wb["mediaList"]
-    except KeyError as error:
-        Trace.error(f"importExcel: {error}")
+    except KeyError as err:
+        Trace.error(f"importExcel: {err}")
         return False
 
     filename = ""
@@ -175,8 +176,8 @@ def import_project_excel(pathname: Path | str, filename: str) -> bool | dict:
     data["prompt"] = main_prompt
     data["parts"]  = []
 
-    for speaker, speaker_info in part.items():
-        data["parts"].append(speaker_info)
+    for _key, value in part.items():
+        data["parts"].append(value)
 
     return data
 
@@ -187,7 +188,7 @@ def import_project_excel(pathname: Path | str, filename: str) -> bool | dict:
 #
 ######################################################################################
 
-excel_column_format: dict = {
+excel_column_format: Dict = {
     "source":  [40],
     "dest":    [40],
     "comment": [50],
@@ -236,7 +237,7 @@ def set_print_settings(ws: Any) -> None:
 #
 ######################################################################################
 
-excel_column_format_cc: dict = {
+excel_column_format_cc: Dict = {
     "start": [ 15, "head", "start", "time"],
     "end":   [ 15, "head", "end",   "time"],
     "X":     [  5, "head", "",      "mark"],
@@ -246,10 +247,12 @@ excel_column_format_cc: dict = {
 }
 
 def export_TextToSpeech_excel(data: list, pathname: Path | str, filename: str) -> bool:
-    def patch_width(width) -> float:
+    pathname = Path(pathname)
+
+    def patch_width(width: int) -> float:
         return width + 91 / 128
 
-    def set_styles(wb) -> None:
+    def set_styles(wb: Any) -> None:
         style = NamedStyle(name="head")
         style.font = Font(name="Open Sans Bold", color="00ffffff", size=10)
         style.fill = PatternFill(fgColor="004f81bd", fill_type="solid")
@@ -283,7 +286,7 @@ def export_TextToSpeech_excel(data: list, pathname: Path | str, filename: str) -
 
     set_print_settings(ws)
 
-    def append_row(line_number: int, styles, values) -> None:
+    def append_row(line_number: int, styles: list, values: list) -> None:
         for i, value in enumerate(values):
             ws.cell(line_number, i + 1).style = styles[i]
             ws.cell(line_number, i + 1).value = value
@@ -331,8 +334,8 @@ def export_TextToSpeech_excel(data: list, pathname: Path | str, filename: str) -
         try:
             os.makedirs(pathname)
             Trace.update(f"makedir: {pathname}")
-        except OSError as error:
-            error_msg = str(error).split(":")[0]
+        except OSError as err:
+            error_msg = str(err).split(":")[0]
             Trace.error(f"{error_msg}: {pathname}")
 
     dest_path = Path(pathname, filename)
@@ -340,8 +343,8 @@ def export_TextToSpeech_excel(data: list, pathname: Path | str, filename: str) -
         wb.save(filename=dest_path)
         Trace.result(f"'{dest_path}'")
         return True
-    except OSError as error:
-        Trace.error(f"{error}")
+    except OSError as err:
+        Trace.error(f"{err}")
         return False
 
 ######################################################################################
@@ -365,7 +368,8 @@ def export_TextToSpeech_excel(data: list, pathname: Path | str, filename: str) -
 ######################################################################################
 
 def import_captions_excel(pathname: Path | str, filename: str) -> None | list:
-    filepath = Path(pathname, filename)
+    pathname = Path(pathname)
+    filepath = pathname / filename
 
     if not check_excel_file_exists(filepath):
         Trace.error(f"[import_captions_excel] file not found: {filepath}")
@@ -373,14 +377,14 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | list:
 
     try:
         wb = load_workbook(filename=filepath)
-    except OSError as error:
-        Trace.error(f"[import_captions_excel] importExcel: {str(error)}")
+    except OSError as err:
+        Trace.error(f"[import_captions_excel] importExcel: {err}")
         return None
 
     try:
         ws = wb.worksheets[0]  # wb["mediaList"]
-    except KeyError as error:
-        Trace.error(f"[import_captions_excel] importExcel: {error}")
+    except KeyError as err:
+        Trace.error(f"[import_captions_excel] importExcel: {err}")
         return None
 
     result = []
@@ -388,7 +392,7 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | list:
     curr_end   = ""
 
     text = ""
-    curr_text = []
+    curr_text: list = []
     for i in range(2, ws.max_row + 1):
         row = ws[i]
 
@@ -427,7 +431,7 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | list:
 
 ######################################################################################
 #
-#   import_dictionary_excel(pathname: str, filename: str) -> dict:
+#   import_dictionary_excel(pathname: str, filename: str) -> Dict:
 #
 #   ./data/_dictionary/Dictionary.xlsx
 #
@@ -453,9 +457,9 @@ def check_quotes(wb_name: str, word: str, line_number: int, function_name: str) 
         return True, ""
 
 @duration("Custom text replacements loaded")
-def import_dictionary_excel(pathname: str, filename: str) -> None | Tuple[ dict[str,list[str|int]], list[str], float ]:
-
-    filepath = Path(pathname, filename)
+def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple[ Dict[str,list[str|int]], list[str], float ]:
+    pathname = Path(pathname)
+    filepath = pathname / filename
 
     if not check_excel_file_exists(filepath):
         Trace.error(f"file not found: {filepath}")
@@ -463,12 +467,12 @@ def import_dictionary_excel(pathname: str, filename: str) -> None | Tuple[ dict[
 
     try:
         wb = load_workbook(filename=filepath)
-    except OSError as error:
-        Trace.error(f"importExcel: {str(error)}")
+    except OSError as err:
+        Trace.error(f"importExcel: {err}")
         return None
 
     sheet_names: list = []
-    result: dict = {}
+    result: Dict = {}
     for wb_name in wb.sheetnames:
         if wb_name[:1] == "-":
             continue
@@ -504,30 +508,32 @@ def import_dictionary_excel(pathname: str, filename: str) -> None | Tuple[ dict[
 
 ######################################################################################
 #
-#   update_dictionary_excel(pathname: str, filename: str, data: dict):
+#   update_dictionary_excel(pathname: str, filename: str, data: Dict):
 #
 #   ./data/_dictionary/Dictionary.xlsx
 
-def update_dictionary_excel(pathname: Path | str, filename: str, filename_update: str, column_name: str, data: dict) -> None | bool:
-    def set_styles(wb):
+def update_dictionary_excel(pathname: Path | str, filename: str, filename_update: str, column_name: str, data: Dict) -> None | bool:
+    pathname = Path(pathname)
+    source = pathname / filename
+
+    def set_styles(wb: Any) -> None:
         style = NamedStyle(name="used")
         style.font = Font(name="Consolas", color="00000000", size=10)
         style.alignment = Alignment(vertical="top", horizontal="center")
 
         try:
             wb.add_named_style(style)
-        except Exception as error:
-            Trace.error(f"{error}")
+        except Exception as err:
+            Trace.error(f"{err}")
 
-    source = Path(pathname, filename)
     if not check_excel_file_exists(source):
         Trace.error(f"file not found: {source}")
         return None
 
     try:
         wb = load_workbook(filename=source)
-    except OSError as error:
-        Trace.error(f"importExcel: {str(error)}")
+    except OSError as err:
+        Trace.error(f"importExcel: {err}")
         return None
 
     set_styles(wb)
@@ -569,18 +575,18 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
                 if get_cell_value(row_cells[1]) != "":
                     ws.cell(i, row + 1).style = "used"
 
-    dest_path = Path(pathname, filename_update)
+    dest_path = pathname / filename_update
     try:
         wb.save(filename=dest_path)
         Trace.result(f"'{dest_path}'")
         return True
-    except OSError as error:
-        Trace.error(f"{error}")
+    except OSError as err:
+        Trace.error(f"{err}")
         return False
 
 ######################################################################################
 #
-#   import_ssml_rules_excel(pathname: str, filename: str) -> dict:
+#   import_ssml_rules_excel(pathname: str, filename: str) -> Dict:
 #
 #   ./data/_polly/AmazonPolly.xlsx
 #     jedes Sheet für ein Template zustängig
@@ -603,8 +609,9 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
 #
 #####################################################################################
 
-def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | dict[str, dict[str, list]]:
-    filepath = Path(pathname, filename)
+def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[str, Dict[str, list]]:
+    pathname = Path(pathname)
+    filepath = pathname / filename
 
     if not check_excel_file_exists(filepath):
         Trace.error(f"file not found: {filepath}")
@@ -612,12 +619,12 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | dict[
 
     try:
         wb = load_workbook(filename=filepath)
-    except OSError as error:
-        Trace.error(f"importExcel: {str(error)}")
+    except OSError as err:
+        Trace.error(f"importExcel: {err}")
         return None
 
-    def parse_ws(wb_name, ws):
-        rules = []
+    def parse_ws(wb_name: str, ws: Any) -> Tuple[str, list]:
+        rules: list = []
 
         _error, template = check_quotes(wb_name, ws["e1"].value, 1, "import_ssml_rules_excel")
         if template == "":
@@ -674,7 +681,8 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | dict[
 #####################################################################################
 
 def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None | Tuple[list[str], list[str], list[list]]:
-    filepath: Path = Path(pathname, filename)
+    pathname = Path(pathname)
+    filepath = pathname / filename
 
     if not check_excel_file_exists(filepath):
         Trace.error(f"file not found: {filepath}")
@@ -682,8 +690,8 @@ def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None 
 
     try:
         wb = load_workbook(filename=filepath)
-    except OSError as error:
-        Trace.error(f"importExcel: {str(error)}")
+    except OSError as err:
+        Trace.error(f"importExcel: {err}")
         return None
 
     abbreviations_with_dot = []

@@ -13,7 +13,7 @@ from helper.captions import import_caption, writefile_srt
 
 data_path = BASE_PATH / "../data"
 
-def main():
+def main() -> None:
     Prefs.init("settings")
     Prefs.load("projects_combine.yaml")
 

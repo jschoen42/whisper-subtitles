@@ -7,15 +7,15 @@
 
      - import_text(folderpath: Path | str, filename: Path|str, encoding: str="utf-8", show_error: bool=True) -> str | None:
      - import_json_timestamp(folderpath: Path | str, filename: str, show_error: bool=True) -> Tuple[dict | None, float | None]
-     - import_json(folderpath: Path | str, filename: str, show_error: bool=True) -> dict | None
+     - import_json(folderpath: Path | str, filename: str, show_error: bool=True) -> Dict | None
 
      - export_text(folderpath: Path | str, filename: str, text: str, encoding: str = "utf-8", timestamp: float=0, ret_lf: bool=False, create_new_folder: bool=True, show_message: bool=True) -> str | None
-     - export_json(folderpath: Path | str, filename: str, data: dict | list, timestamp = None) -> str | None
+     - export_json(folderpath: Path | str, filename: str, data: Dict | list, timestamp = None) -> str | None
 
     class CacheJSON:
       - def __init__(self, path: Path | str, name: str, model: str, reset: bool)
-      - def get(self, value_hash: str) -> dict | None
-      - def add(self, value_hash: str, value: dict) -> None
+      - def get(self, value_hash: str) -> Dict | None
+      - def add(self, value_hash: str, value: Dict) -> None
       - def flush(self) -> None:
 
     class ProcessLog (array cache)
@@ -26,7 +26,7 @@
 
 import json
 
-from typing import Tuple
+from typing import Dict, Tuple
 from pathlib import Path
 
 from utils.trace import Trace, Color
@@ -106,7 +106,7 @@ def import_json_timestamp(folderpath: Path | str, filename: str, show_error: boo
     else:
         return None, None
 
-def import_json(folderpath: Path | str, filename: str, show_error: bool=True) -> dict | None:
+def import_json(folderpath: Path | str, filename: str, show_error: bool=True) -> Dict | None:
     result = import_text(folderpath, filename, show_error=show_error)
     if result:
         return json.loads(result)
@@ -153,13 +153,13 @@ def export_text(folderpath: Path | str, filename: str, text: str, encoding: str=
         Trace.error(f"{error_msg} - {filepath}")
         return None
 
-def export_json(folderpath: Path | str, filename: str, data: dict | list, timestamp: float | None = None) -> str | None:
+def export_json(folderpath: Path | str, filename: str, data: Dict | list, timestamp: float | None = None) -> str | None:
     text = json.dumps(data, ensure_ascii=False, indent=2)
 
     return export_text(folderpath, filename, text, encoding = "utf-8", timestamp = timestamp)
 
 class CacheJSON:
-    cache: dict = {}
+    cache: Dict = {}
     path: Path = Path()
     name: str = ""
 
@@ -175,13 +175,13 @@ class CacheJSON:
         else:
             create_folder(self.path)
 
-    def get(self, value_hash: str) -> dict | None:
+    def get(self, value_hash: str) -> Dict | None:
         if value_hash in self.cache:
             return self.cache[value_hash]
         else:
             return None
 
-    def add(self, value_hash: str, value: dict) -> None:
+    def add(self, value_hash: str, value: Dict) -> None:
         self.cache[value_hash] = value
 
     def flush(self) -> None:

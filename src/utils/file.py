@@ -31,7 +31,7 @@
      - find_matching_file(path_name: str) -> bool | str
      - find_matching_file_path(dirname: Path, filename: str) -> Path | bool
      - get_valid_filename(name: str) -> str
-     - get_file_infos(path: Path | str, filename: str, _in_type: str) -> None | dict
+     - get_file_infos(path: Path | str, filename: str, _in_type: str) -> None | Dict
     #
      - copy_my_file(source: str, dest: str, _show_updated: bool) -> bool
     #
@@ -46,6 +46,7 @@ import hashlib
 import datetime
 import filecmp
 
+from typing import Dict
 from os.path import isfile, isdir, join
 from pathlib import Path
 
@@ -420,7 +421,7 @@ def get_valid_filename(name: str) -> str:
     #    raise SuspiciousFileOperation("Could not derive file name from '%s'" % name)
     return s
 
-def get_file_infos(path: Path | str, filename: str, _in_type: str) -> None | dict:
+def get_file_infos(path: Path | str, filename: str, _in_type: str) -> None | Dict:
     filepath = Path(path, filename)
 
     if os.path.isfile(filepath):

@@ -7,12 +7,12 @@
      - log_get_data() -> Tuple[str, str]
     #
     class DictionaryLog:
-     - add(self, data: dict, data_spelling: dict) -> None
-     - get(self) -> Tuple[dict, dict, dict]
+     - add(self, data: Dict, data_spelling: Dict) -> None
+     - get(self) -> Tuple[dict, Dict, Dict]
 
 """
 
-from typing import Tuple, Any
+from typing import Any, Dict, Tuple
 
 global_complete_text: str = ""
 global_complete_text_corr: str = ""
@@ -26,11 +26,11 @@ def log_clear() -> None:
 def log_add(
     mediafile:         str,
     text:              str,
-    corrected_details: dict[Any, Any],
+    corrected_details: Dict[Any, Any],
     last_segment_text: str,
-    repetition_error:  dict[Any, Any],
-    pause_error:       dict[Any, Any],
-    spelling_failed:   dict[Any, Any]
+    repetition_error:  Dict[Any, Any],
+    pause_error:       Dict[Any, Any],
+    spelling_failed:   Dict[Any, Any]
 ) -> None:
 
     global global_complete_text, global_complete_text_corr
@@ -120,15 +120,15 @@ def log_get_data() -> Tuple[str, str]:
 #######################################################################################
 
 class DictionaryLog:
-    def __init__(self, data: dict) -> None:
-        self.spelling: dict[str, int]      = {}
-        self.word_replaced: dict[str, int] = {}
-        self.excel_used: dict[str, dict]   = {}
+    def __init__(self, data: Dict) -> None:
+        self.spelling: Dict[str, int]      = {}
+        self.word_replaced: Dict[str, int] = {}
+        self.excel_used: Dict[str, Dict]   = {}
 
         for value in data:
             self.excel_used[value] = {}
 
-    def add(self, data: dict, data_spelling: dict) -> None:
+    def add(self, data: Dict, data_spelling: Dict) -> None:
 
         for key, value in data.items():
 
@@ -159,5 +159,5 @@ class DictionaryLog:
             else:
                 self.spelling[key] = value
 
-    def get(self) -> Tuple[dict, dict, dict]:
-        return (self.excel_used, self.word_replaced, self.spelling)
+    def get(self) -> Tuple[dict, Dict, Dict]:
+        return self.excel_used, self.word_replaced, self.spelling

@@ -230,3 +230,7 @@ git effort
 
 Remove the latest 3 commits
 git undo 3
+
+###################### mypy ########################
+
+mypy --disallow-untyped-calls --disallow-untyped-defs --disallow-incomplete-defs main.py > ../__mypy-result-1.txt

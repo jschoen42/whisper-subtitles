@@ -25,7 +25,7 @@ PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
 
 data_path = BASE_PATH / "../data"
 
-def main():
+def main() -> None:
     Prefs.init("settings")
     Prefs.load("base.yaml")
     Prefs.load(PROJECTS)
