@@ -654,7 +654,7 @@ def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list,
     end   = 0
     count = 0
 
-    corrected_details = {}
+    corrected_details: dict = {}
 
     captions = []
     section = 0
@@ -827,7 +827,7 @@ def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list,
 
 def split_to_sentences(words: dict, dictionary: dict) -> list:
 
-    result = []
+    result:list = []
     text = ""
     start = 0
 

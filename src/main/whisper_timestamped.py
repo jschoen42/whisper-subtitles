@@ -136,7 +136,7 @@ def transcribe_whisper_timestamped(project_params: dict, media_params: dict, cac
             media_md5 = hashlib.md5(file).hexdigest()
             media_info = get_media_info(io.BytesIO(file))
 
-    settings; dict = {}
+    settings: dict = {}
     settings["language"] = language
     settings["duration"] = media_info["duration"]
     settings["transcription_options"] = param

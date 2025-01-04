@@ -271,7 +271,7 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
 
                 file_info = get_file_infos( path_json, file_name, "json" )
                 if file_info is None:
-                    Trace.fatal( file_path )
+                    Trace.fatal( f"{file_path}" )
 
                 timestamp = get_modification_timestamp(file_path)
 

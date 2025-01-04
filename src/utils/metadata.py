@@ -2,17 +2,19 @@
     © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
-     - get_media_info(filepath: str) -> None | dict
+     - get_media_info(filepath: str | BytesIO) -> None | dict
      - get_audio_duration(filepath: str) -> float
      - get_media_trackinfo(filepath: str) -> None | dict
      - get_video_metadata_mediainfo(filepath: str) -> None | dict
 """
 
+from io import BytesIO
+
 from pymediainfo import MediaInfo
 
 from utils.trace import Trace
 
-def get_media_info(filepath: str) -> None | dict:
+def get_media_info(filepath: str | BytesIO) -> None | dict:
     """
     {
         "track_type": "Audio",
