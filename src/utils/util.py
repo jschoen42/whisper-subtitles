@@ -6,11 +6,11 @@
      - format_timestamp(seconds: float, always_include_hours: bool=False, decimal_marker: str=".", fps: float = 30) -> str
 
      - import_text(folderpath: Path | str, filename: Path|str, encoding: str="utf-8", show_error: bool=True) -> str | None:
-     - import_json_timestamp(folderpath: Path | str, filename: str, show_error: bool=True) -> Tuple[dict | None, float | None]
+     - import_json_timestamp(folderpath: Path | str, filename: str, show_error: bool=True) -> Tuple[Dict | None, float | None]
      - import_json(folderpath: Path | str, filename: str, show_error: bool=True) -> Dict | None
 
      - export_text(folderpath: Path | str, filename: str, text: str, encoding: str = "utf-8", timestamp: float=0, ret_lf: bool=False, create_new_folder: bool=True, show_message: bool=True) -> str | None
-     - export_json(folderpath: Path | str, filename: str, data: Dict | list, timestamp = None) -> str | None
+     - export_json(folderpath: Path | str, filename: str, data: Dict | List, timestamp = None) -> str | None
 
     class CacheJSON:
       - def __init__(self, path: Path | str, name: str, model: str, reset: bool)
@@ -26,7 +26,7 @@
 
 import json
 
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 from pathlib import Path
 
 from utils.trace import Trace, Color
@@ -99,7 +99,7 @@ def import_text(folderpath: Path | str, filename: Path | str, encoding: str="utf
             Trace.error(f"file not exist {filepath}")
         return None
 
-def import_json_timestamp(folderpath: Path | str, filename: str, show_error: bool=True) -> Tuple[dict | None, float | None]:
+def import_json_timestamp(folderpath: Path | str, filename: str, show_error: bool=True) -> Tuple[Dict | None, float | None]:
     ret = import_json(folderpath, filename, show_error=show_error)
     if ret:
         return ret, get_modification_timestamp(Path(folderpath, filename))
@@ -153,7 +153,7 @@ def export_text(folderpath: Path | str, filename: str, text: str, encoding: str=
         Trace.error(f"{error_msg} - {filepath}")
         return None
 
-def export_json(folderpath: Path | str, filename: str, data: Dict | list, timestamp: float | None = None) -> str | None:
+def export_json(folderpath: Path | str, filename: str, data: Dict | List, timestamp: float | None = None) -> str | None:
     text = json.dumps(data, ensure_ascii=False, indent=2)
 
     return export_text(folderpath, filename, text, encoding = "utf-8", timestamp = timestamp)
@@ -189,10 +189,10 @@ class CacheJSON:
 
 class ProcessLog:
     def __init__(self) -> None:
-        self.log: list[str] = []
+        self.log: List[str] = []
 
     def add(self, info: str) -> None:
         self.log.append(info)
 
-    def get(self) -> list:
+    def get(self) -> List:
         return self.log

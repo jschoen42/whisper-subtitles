@@ -40,7 +40,7 @@ import re
 import inspect
 import importlib.util
 
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, List
 from enum import StrEnum
 from pathlib import Path
 from datetime import datetime
@@ -188,7 +188,7 @@ class Trace:
         cls.output = output
 
     @classmethod
-    def file_init(cls, pattern_list: None | list = None, csv: bool = False) -> None:
+    def file_init(cls, pattern_list: None | List = None, csv: bool = False) -> None:
         if pattern_list is None:
             cls.pattern = []
         else:

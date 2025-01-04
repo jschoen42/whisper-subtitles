@@ -6,15 +6,15 @@
      - seconds_to_timecode_vtt(x: float, fps: float) -> str
      - seconds_to_timecode_excel(x: float) -> str
      - parse_timecode(text: str) -> float
-     - export_srt(captions: list[dict], fps: float = 30) -> str
-     - export_vtt(captions: list[dict],  fps: float = 30) -> str
-     - import_caption(dirname: Path|str, basename: str) -> None | Tuple[dict, int, list]
-     - writefile_srt(data_captions: list, dirname: Path | str, basename: str)
-     - writefile_vtt(data_captions: list, dirname: Path | str, basename: str)
+     - export_srt(captions: List[Dict], fps: float = 30) -> str
+     - export_vtt(captions: List[Dict],  fps: float = 30) -> str
+     - import_caption(dirname: Path|str, basename: str) -> None | Tuple[dict, int, List]
+     - writefile_srt(data_captions: List, dirname: Path | str, basename: str)
+     - writefile_vtt(data_captions: List, dirname: Path | str, basename: str)
 """
 
 from pathlib import Path
-from typing  import Any, Dict, Tuple
+from typing  import Any, Dict, List, Tuple
 
 import webvtt
 
@@ -42,7 +42,7 @@ def parse_timecode(text: str) -> float:
 
     return h * 3600 + m * 60 + s
 
-def export_srt(captions: list[dict], fps: float = 30) -> str:
+def export_srt(captions: List[Dict], fps: float = 30) -> str:
     text = ""
 
     for caption in captions:
@@ -56,7 +56,7 @@ def export_srt(captions: list[dict], fps: float = 30) -> str:
 
     return text
 
-def export_vtt(captions: list[dict], fps: float = 30) -> str:
+def export_vtt(captions: List[Dict], fps: float = 30) -> str:
     text = "WEBVTT\n\n"
 
     for caption in captions:
@@ -69,7 +69,7 @@ def export_vtt(captions: list[dict], fps: float = 30) -> str:
 
     return text
 
-def import_caption(dirname: Path|str, basename: str) -> None | Tuple[dict, int, list]:
+def import_caption(dirname: Path|str, basename: str) -> None | Tuple[dict, int, List]:
     filepath = Path(dirname, basename)
 
     extention = filepath.suffix
@@ -85,9 +85,9 @@ def import_caption(dirname: Path|str, basename: str) -> None | Tuple[dict, int, 
         Trace.error(f"unknown extention '{extention}'")
         ret = None
 
-    segments:  list[dict] = []
+    segments:  List[Dict] = []
     words:     int = 0
-    line_type: list = [0, 0]
+    line_type: List = [0, 0]
 
     if ret:
         for i, caption in enumerate(ret):
@@ -113,8 +113,8 @@ def import_caption(dirname: Path|str, basename: str) -> None | Tuple[dict, int, 
 
     return segments, words, line_type
 
-def writefile_srt(data_captions: list, dirname: Path | str, basename: str) -> None:
+def writefile_srt(data_captions: List, dirname: Path | str, basename: str) -> None:
     export_text(dirname, basename, export_srt(data_captions, 30), ret_lf = True)
 
-def writefile_vtt(data_captions: list, dirname: Path | str, basename: str) -> None:
+def writefile_vtt(data_captions: List, dirname: Path | str, basename: str) -> None:
     export_text(dirname, basename, export_vtt(data_captions, 30 ), ret_lf = True)

@@ -3,7 +3,7 @@
 
     PUBLIC:
      - log_clear()
-     - log_add(mediafile: str, text: str, corrected_details: list[dict], last_segment_text: str, repetition_error: list[dict], pause_error: list[dict], spelling_failed: list[dict] ):
+     - log_add(mediafile: str, text: str, corrected_details: List[Dict], last_segment_text: str, repetition_error: List[Dict], pause_error: List[Dict], spelling_failed: List[Dict] ) -> None:
      - log_get_data() -> Tuple[str, str]
     #
     class DictionaryLog:

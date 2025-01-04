@@ -3,7 +3,7 @@
     © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
-     - precheck_models(models: list) -> bool
+     - precheck_models(models: List) -> bool
      - search_model_path(model_name: str) -> str
      - model_loaded_faster_whisper(model_name: str) -> None | WhisperModel
      - transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> str | Dict
@@ -16,7 +16,7 @@ import hashlib
 import logging
 import platform
 
-from typing import Any, Dict
+from typing import Any, Dict, List
 from pathlib import Path
 
 import arrow
@@ -45,7 +45,7 @@ current_model: Any = None
 logging.basicConfig()
 logging.getLogger("faster_whisper").setLevel(logging.DEBUG)
 
-def precheck_models(models: list) -> bool:
+def precheck_models(models: List) -> bool:
     error = False
     for model in models:
         if search_model_path( model[1] ) is None:
@@ -252,7 +252,7 @@ def transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp
         #  - min_silence_duration_ms = 2000
         #  - speech_pad_ms           = 400
 
-        vad_parameter = Dict(
+        vad_parameter = dict(
             min_speech_duration_ms = 250,
             speech_pad_ms          = (600, 100),
         )

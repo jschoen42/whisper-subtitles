@@ -4,11 +4,13 @@
     PUBLIC:
      - DRIVE: Path
      - BASE_PATH: Path
-     - SYSTEM_ENV_PATHS: list
+     - SYSTEM_ENV_PATHS: List
 """
 
 import os
 import sys
+
+from typing import List
 from pathlib import Path
 
 DRIVE: Path     = Path(Path(__file__).drive)
@@ -21,4 +23,4 @@ if system_paths is None:
 if system_paths[-1:] == ";":
     system_paths = system_paths[:-1]
 
-SYSTEM_ENV_PATHS: list = system_paths.split(";")
+SYSTEM_ENV_PATHS: List = system_paths.split(";")

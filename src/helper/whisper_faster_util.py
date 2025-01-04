@@ -2,10 +2,10 @@
     © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
-     - get_settings_transcribe_faster(info: Dict, media_type: str, media_info: Dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, list]:
+     - get_settings_transcribe_faster(info: Dict, media_type: str, media_info: Dict, vad_sampling_rate: int, speech_chunks: List) -> Tuple[dict, List]:
 """
 
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 
 from utils.trace import Trace
 from utils.util  import format_timestamp
@@ -53,7 +53,7 @@ TranscriptionInfo(
 )
 """
 
-def get_settings_transcribe_faster(info: Dict, media_type: str, media_info: Dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, list]:
+def get_settings_transcribe_faster(info: Dict, media_type: str, media_info: Dict, vad_sampling_rate: int, speech_chunks: List) -> Tuple[dict, List]:
     settings: Dict = {}
 
     try:

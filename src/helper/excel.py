@@ -4,11 +4,11 @@
     PUBLIC:
      - import_project_excel(pathname: str, filename: str, inType: str) -> Dict:
      - set_print_settings(ws: Any):
-     - import_captions_excel(pathname: str, filename: str) -> list:
-     - import_dictionary_excel(pathname: str, filename: str) -> Tuple[ Dict[str,list[str|int]], list[str], float ]:
+     - import_captions_excel(pathname: str, filename: str) -> List:
+     - import_dictionary_excel(pathname: str, filename: str) -> Tuple[ Dict[str,list[str|int]], List[str], float ]:
      - update_dictionary_excel(pathname: str, filename: str, filename_update: str, column_name: str, data: Dict) -> None | bool:
      - import_ssml_rules_excel(pathname: str, filename: str) -> Dict:
-     - import_hunspell_PreCheck_excel(pathname: str, filename: str) -> Tuple[list[str], list[str], list[list]]:
+     - import_hunspell_PreCheck_excel(pathname: str, filename: str) -> Tuple[list[str], List[str], List[List]]:
 
 """
 
@@ -16,7 +16,7 @@ import os
 import re
 import unicodedata
 
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Tuple
 from pathlib import Path
 
 import openpyxl
@@ -226,7 +226,7 @@ def set_print_settings(ws: Any) -> None:
 
 ######################################################################################
 #
-#   export_TextToSpeech_excel(pathname: str, filename: str, data: list) -> int:
+#   export_TextToSpeech_excel(pathname: str, filename: str, data: List) -> int:
 #
 #   data [
 #       {'start': 6.08, 'end': 20.52, 'text': "Ich begrüße Sie ..."},
@@ -246,7 +246,7 @@ excel_column_format_cc: Dict = {
     "pause": [ 10, "head", "pause", "mark"],
 }
 
-def export_TextToSpeech_excel(data: list, pathname: Path | str, filename: str) -> bool:
+def export_TextToSpeech_excel(data: List, pathname: Path | str, filename: str) -> bool:
     pathname = Path(pathname)
 
     def patch_width(width: int) -> float:
@@ -286,7 +286,7 @@ def export_TextToSpeech_excel(data: list, pathname: Path | str, filename: str) -
 
     set_print_settings(ws)
 
-    def append_row(line_number: int, styles: list, values: list) -> None:
+    def append_row(line_number: int, styles: List, values: List) -> None:
         for i, value in enumerate(values):
             ws.cell(line_number, i + 1).style = styles[i]
             ws.cell(line_number, i + 1).value = value
@@ -349,7 +349,7 @@ def export_TextToSpeech_excel(data: list, pathname: Path | str, filename: str) -
 
 ######################################################################################
 #
-#   import_captions_excel(pathname: str, filename: str) -> list:
+#   import_captions_excel(pathname: str, filename: str) -> List:
 #
 #   ./data/[project]/11_excelPolly/[video].xlsx
 #
@@ -367,7 +367,7 @@ def export_TextToSpeech_excel(data: list, pathname: Path | str, filename: str) -
 #
 ######################################################################################
 
-def import_captions_excel(pathname: Path | str, filename: str) -> None | list:
+def import_captions_excel(pathname: Path | str, filename: str) -> None | List:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -392,7 +392,7 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | list:
     curr_end   = ""
 
     text = ""
-    curr_text: list = []
+    curr_text: List = []
     for i in range(2, ws.max_row + 1):
         row = ws[i]
 
@@ -457,7 +457,7 @@ def check_quotes(wb_name: str, word: str, line_number: int, function_name: str) 
         return True, ""
 
 @duration("Custom text replacements loaded")
-def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple[ Dict[str,list[str|int]], list[str], float ]:
+def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple[ Dict[str,list[str|int]], List[str], float ]:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -471,7 +471,7 @@ def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple
         Trace.error(f"importExcel: {err}")
         return None
 
-    sheet_names: list = []
+    sheet_names: List = []
     result: Dict = {}
     for wb_name in wb.sheetnames:
         if wb_name[:1] == "-":
@@ -609,7 +609,7 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
 #
 #####################################################################################
 
-def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[str, Dict[str, list]]:
+def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[str, Dict[str, List]]:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -623,8 +623,8 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[
         Trace.error(f"importExcel: {err}")
         return None
 
-    def parse_ws(wb_name: str, ws: Any) -> Tuple[str, list]:
-        rules: list = []
+    def parse_ws(wb_name: str, ws: Any) -> Tuple[str, List]:
+        rules: List = []
 
         _error, template = check_quotes(wb_name, ws["e1"].value, 1, "import_ssml_rules_excel")
         if template == "":
@@ -665,7 +665,7 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[
 
 ######################################################################################
 #
-#   import_hunspell_PreCheck_excel(pathname: str, filename: str) -> list:
+#   import_hunspell_PreCheck_excel(pathname: str, filename: str) -> List:
 #
 #   ./data/_hunspell/PreCheck.xlsx
 #
@@ -680,7 +680,7 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[
 #
 #####################################################################################
 
-def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None | Tuple[list[str], list[str], list[list]]:
+def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None | Tuple[list[str], List[str], List[List]]:
     pathname = Path(pathname)
     filepath = pathname / filename
 

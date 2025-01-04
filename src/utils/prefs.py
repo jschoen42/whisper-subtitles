@@ -8,7 +8,7 @@
       - get(cls, key_path: str) -> Any
 
     merge_dicts(a: Dict, b: Dict) -> Dict
-    build_tree(tree: list, in_key: str, value: str) -> Dict
+    build_tree(tree: List, in_key: str, value: str) -> Dict
 """
 
 import json
@@ -16,7 +16,7 @@ import re
 
 from json    import JSONDecodeError
 from pathlib import Path
-from typing  import Any, Dict, Tuple
+from typing  import Any, Dict, List, Tuple
 
 import yaml
 
@@ -159,7 +159,7 @@ def merge_dicts(a: Dict, b: Dict) -> Any:
 
 # https://stackoverflow.com/questions/7204805/deep-merge-dictionaries-of-dictionaries-in-python?page=1&tab=scoredesc#answer-7205107
 
-def merge(a: Dict, b: Dict, path: list[str] = []) -> Any:
+def merge(a: Dict, b: Dict, path: List[str] = []) -> Any:
     for key in b:
         if key in a:
             if isinstance(a[key], Dict) and isinstance(b[key], Dict):
@@ -170,7 +170,7 @@ def merge(a: Dict, b: Dict, path: list[str] = []) -> Any:
             a[key] = b[key]
     return a
 
-def build_tree(tree: list, in_key: str, value: str) -> Dict:
+def build_tree(tree: List, in_key: str, value: str) -> Dict:
     if tree:
         return {tree[0]: build_tree(tree[1:], in_key, value)}
 

@@ -3,12 +3,12 @@
 
     PUBLIC:
      - hunspell_dictionary_init(path: str, filename: str, language: str = "de-DE") -> None:
-     - spellcheck(words: list, debug: bool = False) -> Dict:
+     - spellcheck(words: List, debug: bool = False) -> Dict:
 """
 
 import re
 
-from typing import Dict
+from typing import Dict, List
 from pathlib import Path
 
 from spylls.hunspell import Dictionary
@@ -23,9 +23,9 @@ from helper.excel import import_hunspell_PreCheck_excel
 
 global_dictionary_data: None | Dict = None
 
-global_special_dot_words:       None | list = None   # 'Abs.', 'bspw.', 'bzw.', 'Bzw.', ...
-global_precheck_single_words:   None | list = None   # 'AAG', 'AfA', 'AG' ... 'www.datev.de' ... 'und/oder' ...
-global_precheck_multiple_words: None | list = None   # ['Corporate', 'Design'], ['summa', 'summarum'], ['Stock', 'Appreciation', 'Rights'], ... (ws 'multiple')
+global_special_dot_words:       None | List = None   # 'Abs.', 'bspw.', 'bzw.', 'Bzw.', ...
+global_precheck_single_words:   None | List = None   # 'AAG', 'AfA', 'AG' ... 'www.datev.de' ... 'und/oder' ...
+global_precheck_multiple_words: None | List = None   # ['Corporate', 'Design'], ['summa', 'summarum'], ['Stock', 'Appreciation', 'Rights'], ... (ws 'multiple')
 
 @duration("Hunspell Dictionary loaded")
 def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "de-DE") -> None:
@@ -58,7 +58,7 @@ def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "d
         else:
             Trace.fatal(f"unsupported language '{language}'")
 
-def spellcheck(words: list, debug: bool=False) -> Dict[str, int]:
+def spellcheck(words: List, debug: bool=False) -> Dict[str, int]:
 
     def check_multiple_words(word: str, index: int) -> int:
         found = False

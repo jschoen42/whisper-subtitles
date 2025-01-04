@@ -3,14 +3,14 @@
 
     PUBLIC:
      - analyse_results(model_id: str, model_name: str, media_type: str, media_name: str, media_path: str, json_path: str, _info_path: str, _analyse_path: str, beam_size: int) -> None | Dict:
-     - show_parts_results(project: str, results: list[dict]) -> Tuple[int, int]:
+     - show_parts_results(project: str, results: List[Dict]) -> Tuple[int, int]:
      - show_complete_results(project: str, duration: float, words: int) -> None
      - get_video_length(path: Path | str, filename: str) -> None | float
 """
 
 import io
 
-from typing import Dict
+from typing import Dict, List
 from pathlib import Path
 from typing import Tuple
 
@@ -66,7 +66,7 @@ def analyse_results(model_id: str, model_name: str, media_type: str, media_name:
         "words_per_minute": words_per_minute,
     }
 
-def show_parts_results(project: str, results: list[dict]) -> Tuple[int, int]:
+def show_parts_results(project: str, results: List[Dict]) -> Tuple[int, int]:
     words_per_minute = []
 
     duration = 0

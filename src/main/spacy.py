@@ -4,13 +4,13 @@
     PUBLIC:
      - init_spacy(language: str) -> None
      - get_modelname_spacy(language: str) -> str
-     - analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[list, list]:
+     - analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[List, List]:
 """
 
 import re
 import warnings
 
-from typing import Any, Tuple
+from typing import Any, List, Tuple
 from pathlib import Path
 from importlib.metadata import version
 
@@ -69,7 +69,7 @@ def get_modelname_spacy(language: str) -> str:
 ###########################################################################
 
 @duration("spacy - analyse sentences")
-def analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[list, list]:
+def analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[List, List]:
     # global nlp
 
     if text == "":
@@ -189,7 +189,7 @@ def analyse_noun_nlp(text: str, language: str = "de-DE") -> dict:
     return warn_list
 
 
-def analyse_nlp(_string_id: str, text: str, language: str = "de-DE") -> list:
+def analyse_nlp(_string_id: str, text: str, language: str = "de-DE") -> List:
     # global nlp
 
     if not nlp:

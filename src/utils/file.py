@@ -9,9 +9,9 @@
      - check_file_exists(filepath: str, filename: str) -> bool
      - check_excel_file_exists(filename: str) -> bool
     #
-     - list_files(path: str, extensions: list) -> list
-     - list_directories(path: str) -> list
-     - listdir_match_extention(folder_path: Path | str, extensions: list=None) -> list
+     - List_files(path: str, extensions: List) -> List
+     - List_directories(path: str) -> List
+     - Listdir_match_extention(folder_path: Path | str, extensions: List=None) -> List
     #
      - clear_folder(path: str) -> None
      - delete_folder_tree(dest_path: str, relax: bool = False) -> bool
@@ -21,8 +21,8 @@
      - beautify_path( path: Path | str ) -> str
     #
      - get_trace_path(filepath: Path | str) -> str
-     - get_files_in_folder( path: Path ) -> list
-     - get_folders_in_folder( path: Path ) -> list
+     - get_files_in_folder( path: Path ) -> List
+     - get_folders_in_folder( path: Path ) -> List
      - get_save_filename( path, stem, suffix ) -> str
      - export_binary_file(filepath: Path | str, filename: str, data: bytes, _timestamp: float=0, create_folder: bool=False) -> None
      - export_file(filepath: Path|str, filename: str, text: str, in_type: str = None, timestamp: float=0, create_folder: bool=False, encoding: str ="utf-8", overwrite: bool=True) -> str
@@ -46,7 +46,7 @@ import hashlib
 import datetime
 import filecmp
 
-from typing import Dict
+from typing import Dict, List, Tuple
 from os.path import isfile, isdir, join
 from pathlib import Path
 
@@ -109,10 +109,10 @@ def check_excel_file_exists(filename: Path|str) -> bool:
 
     return filename.is_file()
 
-# dir listing
+# dir Listing
 
-def list_files(path: str, extensions: list) -> tuple[list, list]:
-    files: list = []
+def List_files(path: str, extensions: List) -> Tuple[List, List]:
+    files: List = []
     dirs = []
     try:
         for filename in os.listdir(path):
@@ -131,8 +131,8 @@ def list_files(path: str, extensions: list) -> tuple[list, list]:
 
     return files, dirs
 
-def list_directories(path: str) -> list:
-    ret: list = []
+def List_directories(path: str) -> List:
+    ret: List = []
 
     try:
         for file in os.listdir(path):
@@ -143,7 +143,7 @@ def list_directories(path: str) -> list:
 
     return ret
 
-def listdir_match_extention(folder_path: Path | str, extensions: list | None = None) -> list:
+def Listdir_match_extention(folder_path: Path | str, extensions: List | None = None) -> List:
 
     #  extensions: [".zip", ".story", ".xlsx", ".docx"], None => all
 
@@ -252,10 +252,10 @@ def _increment_filename(filename_stem: str) -> str:
 
     return filename_stem
 
-def get_files_in_folder( path: Path ) -> list:
+def get_files_in_folder( path: Path ) -> List:
     return [f for f in os.listdir(path) if isfile(join(path, f))]
 
-def get_folders_in_folder( path: Path ) -> list:
+def get_folders_in_folder( path: Path ) -> List:
     return [f for f in os.listdir(path) if isdir(join(path, f))]
 
 def get_save_filename( path: Path, stem: str, suffix: str ) -> str:

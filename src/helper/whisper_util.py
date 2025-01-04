@@ -2,9 +2,9 @@
     © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
-     - prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: Dict, media_filename: str) -> Tuple[list, int, float, float, str, list, list]:
-     - split_to_lines(words: list, Dictionary: list) -> Tuple[dict, str, str, Dict, Dict, list]:
-     - split_to_sentences(words: Dict, Dictionary: Dict) -> list:
+     - prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: Dict, media_filename: str) -> Tuple[list, int, float, float, str, List, List]:
+     - split_to_lines(words: List, Dictionary: List) -> Tuple[dict, str, str, Dict, Dict, List]:
+     - split_to_sentences(words: Dict, Dictionary: Dict) -> List:
 
      - get_filename_parameter(params: Dict) -> str:
      - are_prompts_allowed(model_name) -> bool:
@@ -19,7 +19,7 @@ import re
 import hashlib
 
 import numpy
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 
 from main.spacy import analyse_sentences_spacy
 
@@ -41,13 +41,13 @@ from helper.spelling import spellcheck
 #   def get_filename_parameter(params: Dict) -> str:
 #
 #   PASS 1
-#   def prepare_words(data: Dict[dict], is_faster_whisper: bool, is_intro: bool, type_v3: bool, language: str,
-#                      cache_md5: Dict, media_filename: str) -> Tuple[list[dict], int, float, float, str, list[dict]]:
+#   def prepare_words(data: Dict[Dict], is_faster_whisper: bool, is_intro: bool, type_v3: bool, language: str,
+#                      cache_md5: Dict, media_filename: str) -> Tuple[list[Dict], int, float, float, str, List[Dict]]:
 #   PASS 2
-#   def split_to_lines(words: list[dict], Dictionary: list[list]) -> Tuple[dict, str, str, Dict, Dict, list]:
+#   def split_to_lines(words: List[Dict], Dictionary: List[list]) -> Tuple[dict, str, str, Dict, Dict, List]:
 #
 #   export in sentences -> TextToSpeech
-#   def split_to_sentences(words: Dict, Dictionary: Dict) -> list:
+#   def split_to_sentences(words: Dict, Dictionary: Dict) -> List:
 #
 #################################################################################################################
 
@@ -177,13 +177,13 @@ def format_euro(text: str, thousand_separator: str = ".", float_separator: str =
     return ret
 
 """
-split_words: list = [
+split_words: List = [
     " und",
     " oder",
     " sowie",
 ]
 
-dont_split: list = [
+dont_split: List = [
     "-",         # xxx- und xxxyyy
 
     # und
@@ -217,7 +217,7 @@ dont_split: list = [
     " so",         # so oder so
 ]
 
-dont_split_two: list = [
+dont_split_two: List = [
     " heißt,", # das heißt
     " heißt",
 ]
@@ -231,7 +231,7 @@ dont_split_two: list = [
 # not used anymore -> last segment: no_speech_prob>0.9
 
 """
-silence_text: list = [
+silence_text: List = [
     " Mehr Informationen auf www.sas-medien.de",
     " Mehr Informationen auf www.bundestag.de",
 
@@ -335,11 +335,11 @@ def get_filename_parameter(params: Dict) -> str:
 #   Pass 1
 ######################
 
-def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: CacheJSON, media_filename: str) -> Tuple[list, int, float, float, str, list, list]:
-    words: list = []
-    probability: list = []
+def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: CacheJSON, media_filename: str) -> Tuple[list, int, float, float, str, List, List]:
+    words: List = []
+    probability: List = []
 
-    words_new: list = []
+    words_new: List = []
 
     segments = data["segments"]
 
@@ -646,7 +646,7 @@ def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_nam
 #
 ####################################################
 
-def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list, Dict]:
+def split_to_lines(words: List, dictionary: List) -> Tuple[list, str, str, List, Dict]:
     line  = ""
     lines = ""
 
@@ -665,7 +665,7 @@ def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list,
     def check_comma(word: str) -> bool:
         return word[-1] in ","
 
-    def predict(words: list, index: int, limit: int) -> bool:
+    def predict(words: List, index: int, limit: int) -> bool:
         split = False
         for j in range(index + 1, len(words)):
             # print(j, words[j]["word"], "sentence_end", words[j]["sentence_end"])
@@ -825,7 +825,7 @@ def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list,
 
 # export in sentences -> TextToSpeech
 
-def split_to_sentences(words: Dict, dictionary: Dict) -> list:
+def split_to_sentences(words: Dict, dictionary: Dict) -> List:
 
     result:list = []
     text = ""
