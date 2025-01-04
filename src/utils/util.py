@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 03.01.2025
+    © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
      - format_subtitle( start_time: float, end_time: float, text: str, color=True ) -> str
@@ -9,7 +9,7 @@
      - import_json_timestamp(folderpath: Path | str, filename: str, show_error: bool=True) -> Tuple[dict | None, float | None]
      - import_json(folderpath: Path | str, filename: str, show_error: bool=True) -> dict | None
 
-     - export_text(folderpath: Path | str, filename: str, text: str, encoding: str = "utf-8", timestamp: int=0, ret_lf: bool=False, create_new_folder: bool=True, show_message: bool=True) -> str | None
+     - export_text(folderpath: Path | str, filename: str, text: str, encoding: str = "utf-8", timestamp: float=0, ret_lf: bool=False, create_new_folder: bool=True, show_message: bool=True) -> str | None
      - export_json(folderpath: Path | str, filename: str, data: dict | list, timestamp = None) -> str | None
 
     class CacheJSON:
@@ -24,7 +24,6 @@
 
 """
 
-import codecs
 import json
 
 from typing import Tuple
@@ -33,7 +32,7 @@ from pathlib import Path
 from utils.trace import Trace, Color
 from utils.file  import create_folder, get_modification_timestamp, set_modification_timestamp
 
-def format_subtitle( start_time: float, end_time: float, text: str, color=True ) -> str:
+def format_subtitle( start_time: float, end_time: float, text: str, color: bool=True ) -> str:
     start = format_timestamp(start_time)
     end   = format_timestamp(end_time)
 
@@ -114,7 +113,7 @@ def import_json(folderpath: Path | str, filename: str, show_error: bool=True) ->
     else:
         return None
 
-def export_text(folderpath: Path | str, filename: str, text: str, encoding: str = "utf-8", timestamp: int=0, ret_lf: bool=False, create_new_folder: bool=True, show_message: bool=True) -> str | None:
+def export_text(folderpath: Path | str, filename: str, text: str, encoding: str="utf-8", timestamp: None | float=0, ret_lf: bool=False, create_new_folder: bool=True, show_message: bool=True) -> str | None:
     folderpath = Path(folderpath)
     filepath   = Path(folderpath, filename)
 
@@ -122,7 +121,7 @@ def export_text(folderpath: Path | str, filename: str, text: str, encoding: str 
         text = text.replace("\n", "\r\n")
 
     try:
-        with codecs.open(filepath, "r", encoding) as file:
+        with open(filepath, "r", encoding=encoding) as file:
             text_old = file.read()
     except OSError:
         text_old = ""
@@ -135,7 +134,7 @@ def export_text(folderpath: Path | str, filename: str, text: str, encoding: str 
         create_folder(folderpath)
 
     try:
-        with codecs.open(filepath, "w", encoding) as file:
+        with open(filepath, "w", encoding=encoding) as file:
             file.write(text)
 
         if timestamp and timestamp != 0:
@@ -154,14 +153,14 @@ def export_text(folderpath: Path | str, filename: str, text: str, encoding: str 
         Trace.error(f"{error_msg} - {filepath}")
         return None
 
-def export_json(folderpath: Path | str, filename: str, data: dict | list, timestamp = None) -> str | None:
+def export_json(folderpath: Path | str, filename: str, data: dict | list, timestamp: float | None = None) -> str | None:
     text = json.dumps(data, ensure_ascii=False, indent=2)
 
     return export_text(folderpath, filename, text, encoding = "utf-8", timestamp = timestamp)
 
 class CacheJSON:
     cache: dict = {}
-    path: Path = None
+    path: Path = Path()
     name: str = ""
 
     def __init__(self, path: Path | str, name: str, model: str, reset: bool):
@@ -189,11 +188,11 @@ class CacheJSON:
         export_json(self.path, self.name, self.cache)
 
 class ProcessLog:
-    def __init__(self):
-        self.log = []
+    def __init__(self) -> None:
+        self.log: list[str] = []
 
-    def add(self, info):
+    def add(self, info: str) -> None:
         self.log.append(info)
 
-    def get(self):
+    def get(self) -> list:
         return self.log

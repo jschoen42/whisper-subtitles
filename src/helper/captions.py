@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
      - second_to_timecode_srt(x: float, fps: float) -> str
@@ -8,12 +8,13 @@
      - parse_timecode(text: str) -> float
      - export_srt(captions: list[dict], fps: float = 30) -> str
      - export_vtt(captions: list[dict],  fps: float = 30) -> str
-     - import_caption(dirname: Path|str, basename: str) -> None | tuple[dict, int, list]
+     - import_caption(dirname: Path|str, basename: str) -> None | Tuple[dict, int, list]
      - writefile_srt(data_captions: list, dirname: Path | str, basename: str)
      - writefile_vtt(data_captions: list, dirname: Path | str, basename: str)
 """
 
 from pathlib import Path
+from typing  import Any, Tuple
 
 import webvtt
 
@@ -55,7 +56,7 @@ def export_srt(captions: list[dict], fps: float = 30) -> str:
 
     return text
 
-def export_vtt(captions: list[dict],  fps: float = 30) -> str:
+def export_vtt(captions: list[dict], fps: float = 30) -> str:
     text = "WEBVTT\n\n"
 
     for caption in captions:
@@ -68,7 +69,7 @@ def export_vtt(captions: list[dict],  fps: float = 30) -> str:
 
     return text
 
-def import_caption(dirname: Path|str, basename: str) -> None | tuple[dict, int, list]:
+def import_caption(dirname: Path|str, basename: str) -> None | Tuple[dict, int, list]:
     filepath = Path(dirname, basename)
 
     extention = filepath.suffix
@@ -102,17 +103,18 @@ def import_caption(dirname: Path|str, basename: str) -> None | tuple[dict, int, 
             else:
                 line_type[0] += 1
 
-            segment = {}
+            segment: dict[str, Any] = {}
             segment["section"] = i+1
             segment["start"]   = start
             segment["end"]     = end
             segment["text"]    = text
+
             segments.append(segment)
 
     return segments, words, line_type
 
-def writefile_srt(data_captions: list, dirname: Path | str, basename: str):
+def writefile_srt(data_captions: list, dirname: Path | str, basename: str) -> None:
     export_text(dirname, basename, export_srt(data_captions, 30), ret_lf = True)
 
-def writefile_vtt(data_captions: list, dirname: Path | str, basename: str):
+def writefile_vtt(data_captions: list, dirname: Path | str, basename: str) -> None:
     export_text(dirname, basename, export_vtt(data_captions, 30 ), ret_lf = True)

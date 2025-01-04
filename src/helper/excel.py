@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
      - import_project_excel(pathname: str, filename: str, inType: str) -> dict:
@@ -193,10 +193,10 @@ excel_column_format: dict = {
     "comment": [50],
 }
 
-def set_print_settings(ws: Any):
+def set_print_settings(ws: Any) -> None:
     # https://openpyxl.readthedocs.io/en/stable/print_settings.html
 
-    def inch_to_mm(inch: float):
+    def inch_to_mm(inch: float) -> float:
         return inch / 2.54
 
     ws.page_setup.orientation = ws.ORIENTATION_LANDSCAPE
@@ -246,10 +246,10 @@ excel_column_format_cc: dict = {
 }
 
 def export_TextToSpeech_excel(data: list, pathname: Path | str, filename: str) -> bool:
-    def patch_width(width):
+    def patch_width(width) -> float:
         return width + 91 / 128
 
-    def set_styles(wb):
+    def set_styles(wb) -> None:
         style = NamedStyle(name="head")
         style.font = Font(name="Open Sans Bold", color="00ffffff", size=10)
         style.fill = PatternFill(fgColor="004f81bd", fill_type="solid")
@@ -283,7 +283,7 @@ def export_TextToSpeech_excel(data: list, pathname: Path | str, filename: str) -
 
     set_print_settings(ws)
 
-    def append_row(line_number, styles, values):
+    def append_row(line_number: int, styles, values) -> None:
         for i, value in enumerate(values):
             ws.cell(line_number, i + 1).style = styles[i]
             ws.cell(line_number, i + 1).value = value
@@ -454,6 +454,7 @@ def check_quotes(wb_name: str, word: str, line_number: int, function_name: str) 
 
 @duration("Custom text replacements loaded")
 def import_dictionary_excel(pathname: str, filename: str) -> None | Tuple[ dict[str,list[str|int]], list[str], float ]:
+
     filepath = Path(pathname, filename)
 
     if not check_excel_file_exists(filepath):

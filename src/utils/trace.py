@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 24.12.2024
+    © Jürgen Schoenemeyer, 04.01.2025
 
     class Trace:
       - Trace.set(debug_mode=True)
@@ -56,53 +56,56 @@ else:
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 
+def ansi_code(code: int, modifier: int = 0) -> str:
+    return f"\033[{modifier};{code}m"
+
 class Color(StrEnum):
-    RESET            = "\033[0m"
-    BOLD             = "\033[1m"
-    DISABLE          = "\033[2m"
-    ITALIC           = "\033[3m"
-    UNDERLINE        = "\033[4m"
-    INVERSE          = "\033[7m"
-    INVISIBLE        = "\033[8m"
-    STRIKETHROUGH    = "\033[9m"
-    NORMAL           = "\033[22m"
+    RESET            = ansi_code(0)
+    BOLD             = ansi_code(1)
+    DISABLE          = ansi_code(2)
+    ITALIC           = ansi_code(3)
+    UNDERLINE        = ansi_code(4)
+    INVERSE          = ansi_code(7)
+    INVISIBLE        = ansi_code(8)
+    STRIKETHROUGH    = ansi_code(9)
+    NORMAL           = ansi_code(22)
 
-    BLACK            = "\033[30m" # light/dark mode: #666666 / #666666
-    RED              = "\033[31m" # light/dark mode: #CD3131 / #F14C4C
-    GREEN            = "\033[32m" # light/dark mode: #14CE14 / #23D18B
-    YELLOW           = "\033[33m" # light/dark mode: #B5BA00 / #F5F543
-    BLUE             = "\033[34m" # light/dark mode: #0451A5 / #3B8EEA
-    MAGENTA          = "\033[35m" # light/dark mode: #BC05BC / #D670D6
-    CYAN             = "\033[36m" # light/dark mode: #0598BC / #29B8DB
-    LIGHT_GRAY       = "\033[37m" # light/dark mode: #A5A5A5 / #E5E5E5
+    BLACK            = ansi_code(30)  # light/dark mode: #666666 / #666666
+    RED              = ansi_code(31)  # light/dark mode: #CD3131 / #F14C4C
+    GREEN            = ansi_code(32)  # light/dark mode: #14CE14 / #23D18B
+    YELLOW           = ansi_code(33)  # light/dark mode: #B5BA00 / #F5F543
+    BLUE             = ansi_code(34)  # light/dark mode: #0451A5 / #3B8EEA
+    MAGENTA          = ansi_code(35)  # light/dark mode: #BC05BC / #D670D6
+    CYAN             = ansi_code(36)  # light/dark mode: #0598BC / #29B8DB
+    LIGHT_GRAY       = ansi_code(37)  # light/dark mode: #A5A5A5 / #E5E5E5
 
-    # LIGHT_GRAY       = "\033[37m"
-    # DARK_GRAY        = "\033[90m"
-    # LIGHT_RED        = "\033[91m"
-    # LIGHT_GREEN      = "\033[92m"
-    # LIGHT_YELLOW     = "\033[93m"
-    # LIGHT_BLUE       = "\033[94m"
-    # LIGHT_MAGENTA    = "\033[95m"
-    # LIGHT_CYAN       = "\033[96m"
-    # WHITE            = "\033[97m"
+    # LIGHT_GRAY       = ansi_code(37)
+    # DARK_GRAY        = ansi_code(90)
+    # LIGHT_RED        = ansi_code(91)
+    # LIGHT_GREEN      = ansi_code(92)
+    # LIGHT_YELLOW     = ansi_code(93)
+    # LIGHT_BLUE       = ansi_code(94)
+    # LIGHT_MAGENTA    = ansi_code(95)
+    # LIGHT_CYAN       = ansi_code(96)
+    # WHITE            = ansi_code(97)
 
-    BLACK_BG         = "\033[40m"
-    RED_BG           = "\033[41m"
-    GREEN_BG         = "\033[42m"
-    YELLOW_BG        = "\033[43m"
-    BLUE_BG          = "\033[44m"
-    MAGENTA_BG       = "\033[45m"
-    CYAN_BG          = "\033[46m"
-    LIGHT_GRAY_BG    = "\033[47m"
+    BLACK_BG         = ansi_code(40)
+    RED_BG           = ansi_code(41)
+    GREEN_BG         = ansi_code(42)
+    YELLOW_BG        = ansi_code(43)
+    BLUE_BG          = ansi_code(44)
+    MAGENTA_BG       = ansi_code(45)
+    CYAN_BG          = ansi_code(46)
+    LIGHT_GRAY_BG    = ansi_code(47)
 
-    # DARK_GRAY_BG     = "\033[100m"
-    # LIGHT_RED_BG     = "\033[101m"
-    # LIGHT_GREEN_BG   = "\033[102m"
-    # LIGHT_YELLOW_BG  = "\033[103m"
-    # LIGHT_BLUE_BG    = "\033[104m"
-    # LIGHT_MAGENTA_BG = "\033[105m"
-    # LIGHT_CYAN_BG    = "\033[106m"
-    # WHITE_BG         = "\033[107m"
+    # DARK_GRAY_BG     = ansi_code(100)
+    # LIGHT_RED_BG     = ansi_code(101)
+    # LIGHT_GREEN_BG   = ansi_code(102)
+    # LIGHT_YELLOW_BG  = ansi_code(103)
+    # LIGHT_BLUE_BG    = ansi_code(104)
+    # LIGHT_MAGENTA_BG = ansi_code(105)
+    # LIGHT_CYAN_BG    = ansi_code(106)
+    # WHITE_BG         = ansi_code(107)
 
     @staticmethod
     def clear(text: str) -> str:
@@ -136,7 +139,7 @@ class Trace:
     default_base = BASE_PATH.resolve()
     default_base_folder = str(default_base).replace("\\", "/")
 
-    settings = {
+    settings: dict = {
         "appl_folder":    default_base_folder + "/",
 
         "color":          True,
@@ -149,13 +152,13 @@ class Trace:
         "show_caller":    True,
     }
 
-    pattern:list[str]  = []
-    messages:list[str] = []
-    csv = False
-    output = None
+    pattern:list  = []
+    messages:list = []
+    csv: bool     = False
+    output: Callable | None = None
 
     @classmethod
-    def set(cls, **kwargs) -> None:
+    def set(cls, **kwargs: Any) -> None:
         for key, value in kwargs.items():
             if key in cls.settings:
                 cls.settings[key] = value
@@ -233,7 +236,7 @@ class Trace:
         cls.__show_message(cls.__check_file_output(), pre, message, *optional)
 
     @classmethod
-    def custom(cls, message: str = "", *optional: Any, path = "custom") -> None:
+    def custom(cls, message: str = "", *optional: Any, path: str = "custom") -> None:
         pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_custom_caller(path)}"
         cls.__show_message(cls.__check_file_output(), pre, message, *optional)
 
@@ -260,7 +263,7 @@ class Trace:
     @classmethod
     def important(cls, message: str = "", *optional: Any) -> None:
         pre = f"{cls.__get_time()}{Color.MAGENTA}{cls.__get_pattern()}{cls.__get_caller()}"
-        cls.__show_message(cls.__check_file_output(), pre, f"{Color.MAGENTAr.BOLD}{message}{Color.RESET}", *optional)
+        cls.__show_message(cls.__check_file_output(), pre, f"{Color.MAGENTA.BOLD}{message}{Color.RESET}", *optional)
 
     # warning, error, exception, fatal => RED
 
@@ -382,7 +385,7 @@ class Trace:
             return f"\t{Color.BLUE}[{path}:{lineno} » {caller}]{Color.RESET}\t"
 
     @classmethod
-    def __get_custom_caller(cls, text) -> str:
+    def __get_custom_caller(cls, text: str) -> str:
         if cls.settings["show_caller"] is False:
             return f"{Color.RESET} "
 

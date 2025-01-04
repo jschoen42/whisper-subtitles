@@ -56,7 +56,7 @@ trace_file_reduced = ["warning"]
 
 reset_cache_spacy: bool = False
 
-def main():
+def main() -> None:
     Prefs.init("settings")
     Prefs.load("base.yaml")
     Prefs.load("whisper.yaml")

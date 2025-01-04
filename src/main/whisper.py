@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
      - search_model_path(model_name: str) -> None | str
@@ -137,12 +137,12 @@ def transcribe_whisper(project_params: dict, media_params: dict, cache_nlp: Cach
         Trace.error(f"media not found '{media_pathname}'")
         return f"{filename_two} - not found"
     else:
-        with open(media_pathname, "rb") as file:
-            file = file.read()
+        with open(media_pathname, "rb") as f:
+            file = f.read()
             media_md5 = hashlib.md5(file).hexdigest()
             media_info = get_media_info(io.BytesIO(file))
 
-    settings = {}
+    settings: dict = {}
     settings["language"] = language
     settings["duration"] = media_info["duration"]
     settings["transcription_options"] = param

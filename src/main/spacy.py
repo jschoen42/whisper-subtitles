@@ -1,16 +1,16 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
      - init_spacy(language: str) -> None
      - get_modelname_spacy(language: str) -> str
-     - analyse_sentences_spacy(text: str, language: str = "de-DE") -> tuple[list, list]:
+     - analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[list, list]:
 """
 
 import re
 import warnings
 
-from typing import Any
+from typing import Any, Tuple
 from pathlib import Path
 from importlib.metadata import version
 
@@ -69,7 +69,7 @@ def get_modelname_spacy(language: str) -> str:
 ###########################################################################
 
 @duration("spacy - analyse sentences")
-def analyse_sentences_spacy(text: str, language: str = "de-DE") -> list:
+def analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[list, list]:
     # global nlp
 
     if text == "":

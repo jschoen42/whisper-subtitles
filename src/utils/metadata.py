@@ -1,18 +1,18 @@
 """
-    © Jürgen Schoenemeyer, 28.12.2024
+    © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
-     - get_media_info(filepath: str) -> dict | None
+     - get_media_info(filepath: str) -> None | dict
      - get_audio_duration(filepath: str) -> float
-     - get_media_trackinfo(filepath: str) -> dict | None
-     - get_video_metadata_mediainfo(filepath: str) -> dict
+     - get_media_trackinfo(filepath: str) -> None | dict
+     - get_video_metadata_mediainfo(filepath: str) -> None | dict
 """
 
 from pymediainfo import MediaInfo
 
 from utils.trace import Trace
 
-def get_media_info(filepath: str) -> dict | None:
+def get_media_info(filepath: str) -> None | dict:
     """
     {
         "track_type": "Audio",
@@ -83,7 +83,7 @@ def get_audio_duration(filepath: str) -> float:
 
     return duration
 
-def get_media_trackinfo(filepath: str) -> dict | None:
+def get_media_trackinfo(filepath: str) -> None | dict:
     ret = None
 
     media_info = MediaInfo.parse(filepath)
@@ -93,7 +93,7 @@ def get_media_trackinfo(filepath: str) -> dict | None:
 
     return ret
 
-def get_video_metadata_mediainfo(filepath: str) -> dict:
+def get_video_metadata_mediainfo(filepath: str) -> None |dict:
 
     info = {
         "width":    "",

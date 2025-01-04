@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 28.12.2024
+    © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
      - prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: dict, media_filename: str) -> Tuple[list, int, float, float, str, list, list]:
@@ -51,18 +51,22 @@ from helper.spelling import spellcheck
 #
 #################################################################################################################
 
-def are_inner_prompts_possible(model_name) -> bool: # -> check repetitions
+def are_inner_prompts_possible(model_name: str) -> bool: # -> check repetitions
     return model_name not in Prefs.get("whisper.faster_whisper.models.no_condition_on_previous_text")
 
-def are_prompts_allowed(model_name) -> bool: # ->
+def are_prompts_allowed(model_name: str) -> bool: # ->
     return model_name != "large-v3-de"
 
 SPLIT_DEBUG: bool = False
 
 prompt_replace: dict = {
     '"': "'",
-    "„": "»",
-    "“": "«",
+
+    # "„": "»",
+    # "“": "«",
+
+    "»": "„",
+    "«": "“",
 
     "..": ".",
 }
@@ -276,7 +280,7 @@ split_words    = []
 dont_split     = []
 dont_split_two = []
 
-def init_special_text( language ):
+def init_special_text( language: str ):
     global silence_text, split_words, dont_split, dont_split_two
 
     language = language[:2]
@@ -658,7 +662,7 @@ def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list,
     def check_any_runctuation(word: str) -> bool:
         return word[-1] in ".:,;?!"
 
-    def check_comma(word):
+    def check_comma(word: str) -> bool:
         return word[-1] in ","
 
     def predict(words: list, index: int, limit: int) -> bool:

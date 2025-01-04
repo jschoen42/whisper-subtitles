@@ -1,6 +1,6 @@
 
 """
-    © Jürgen Schoenemeyer, 28.12.2024
+    © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
      - precheck_models(models: list) -> bool
@@ -56,7 +56,7 @@ def precheck_models(models: list) -> bool:
     else:
         return True
 
-def search_model_path(model_name: str) -> str:
+def search_model_path(model_name: str) -> None | str:
     model_path_all = Prefs.get("whisper.faster_whisper.models.path")
     if model_name not in model_path_all:
         Trace.error(f"'{model_name}' not in defined in 'model_path_all'" )
@@ -176,8 +176,8 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
     else:
         file_info = get_file_infos( path_media, media_name + "." + media_type,  media_type )
 
-        with open(media_pathname, "rb") as file:
-            file = file.read()
+        with open(media_pathname, "rb") as f:
+            file = f.read()
             media_md5 = hashlib.md5(file).hexdigest()
             media_info = get_media_info(io.BytesIO(file))
 

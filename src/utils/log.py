@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
      - log_clear()
@@ -12,26 +12,26 @@
 
 """
 
-from typing import Tuple
+from typing import Tuple, Any
 
 global_complete_text: str = ""
 global_complete_text_corr: str = ""
 
-def log_clear():
+def log_clear() -> None:
     global global_complete_text, global_complete_text_corr
 
     global_complete_text = ""
     global_complete_text_corr = ""
 
 def log_add(
-    mediafile: str,
-    text: str,
-    corrected_details: list[dict],
+    mediafile:         str,
+    text:              str,
+    corrected_details: dict[Any, Any],
     last_segment_text: str,
-    repetition_error: list[dict],
-    pause_error: list[dict],
-    spelling_failed: list[dict]
-):
+    repetition_error:  dict[Any, Any],
+    pause_error:       dict[Any, Any],
+    spelling_failed:   dict[Any, Any]
+) -> None:
 
     global global_complete_text, global_complete_text_corr
 
@@ -120,10 +120,10 @@ def log_get_data() -> Tuple[str, str]:
 #######################################################################################
 
 class DictionaryLog:
-    def __init__(self, data: dict):
-        self.spelling      = {}
-        self.word_replaced = {}
-        self.excel_used    = {}
+    def __init__(self, data: dict) -> None:
+        self.spelling: dict[str, int]      = {}
+        self.word_replaced: dict[str, int] = {}
+        self.excel_used: dict[str, dict]   = {}
 
         for value in data:
             self.excel_used[value] = {}

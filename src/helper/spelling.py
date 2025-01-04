@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
      - hunspell_dictionary_init(path: str, filename: str, language: str = "de-DE") -> None:
@@ -33,6 +33,8 @@ def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "d
     global global_precheck_single_words
     global global_precheck_multiple_words
 
+    path = Path(path)
+
     if global_dictionary_data is None:
         try:
             global_dictionary_data = Dictionary.from_files(str(path / filename))
@@ -55,7 +57,7 @@ def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "d
         else:
             Trace.fatal(f"unsupported language '{language}'")
 
-def spellcheck(words: list, debug: bool=False) -> dict:
+def spellcheck(words: list, debug: bool=False) -> dict[str, int]:
 
     def check_multiple_words(word: str, index: int) -> int:
         found = False
@@ -90,7 +92,7 @@ def spellcheck(words: list, debug: bool=False) -> dict:
     pattern_paragraph = re.compile(r"\s?§+\d*[a-z]*.?")  # ' §34a', ' §12', ' §§95", ...
     pattern_number = re.compile(r"[\d%,.–€$|&]*")        # '1.001,58', '2,1%', ... , '–', '€', '|', '&'
 
-    result = {}
+    result: dict[str, int] = {}
     i = 0
 
     while i < len(words):
