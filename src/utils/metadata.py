@@ -11,7 +11,7 @@
 from io import BytesIO
 from typing import Any, Dict
 
-from pymediainfo import MediaInfo
+from pymediainfo import MediaInfo # type: ignore # mypy
 
 from utils.trace import Trace
 

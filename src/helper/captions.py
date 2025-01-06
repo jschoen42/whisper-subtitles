@@ -8,15 +8,15 @@
      - parse_timecode(text: str) -> float
      - export_srt(captions: List[Dict], fps: float = 30) -> str
      - export_vtt(captions: List[Dict],  fps: float = 30) -> str
-     - import_caption(dirname: Path|str, basename: str) -> None | Tuple[dict, int, List]
+     - import_caption(dirname: Path|str, basename: str) -> None | Tuple[Dict, int, List]
      - writefile_srt(data_captions: List, dirname: Path | str, basename: str)
      - writefile_vtt(data_captions: List, dirname: Path | str, basename: str)
 """
 
-from pathlib import Path
 from typing  import Any, Dict, List, Tuple
+from pathlib import Path
 
-import webvtt
+import webvtt # type: ignore # mypy
 
 from utils.trace import Trace
 from utils.util import export_text, format_timestamp
@@ -69,7 +69,7 @@ def export_vtt(captions: List[Dict], fps: float = 30) -> str:
 
     return text
 
-def import_caption(dirname: Path|str, basename: str) -> None | Tuple[dict, int, List]:
+def import_caption(dirname: Path|str, basename: str) -> None | Tuple[Dict, int, List]:
     filepath = Path(dirname, basename)
 
     extention = filepath.suffix

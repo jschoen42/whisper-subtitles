@@ -15,6 +15,7 @@ __mypy*.txt
 
 __pycache__/
 .venv*/
+.mypy_cache
 
 ### Windows
 

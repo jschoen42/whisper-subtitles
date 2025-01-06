@@ -36,3 +36,14 @@ dev = [
     "types-pyyaml>=6.0.12.20241230",
     "types-requests>=2.32.0.20241016",
 ]
+
+[tool.mypy]
+python_version = "3.13"
+mypy_path = "src"
+explicit_package_bases = true
+namespace_packages = true
+
+[[tool.mypy.overrides]]
+module = "faster_whisper.*"
+ignore_errors = true
+ignore_missing_imports = true

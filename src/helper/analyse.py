@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 28.12.2024
+    © Jürgen Schoenemeyer, 04.01.2025
 
     PUBLIC:
      - analyse_results(model_id: str, model_name: str, media_type: str, media_name: str, media_path: str, json_path: str, _info_path: str, _analyse_path: str, beam_size: int) -> None | Dict:
@@ -34,14 +34,18 @@ def analyse_results(model_id: str, model_name: str, media_type: str, media_name:
     try:
         with open(media_pathname, "rb") as media_file:
             media_data = media_file.read()
+
             if media_type == "mp4":
                 media_details = get_video_metadata_mediainfo(io.BytesIO(media_data))
                 media_duration = media_details["duration"]
+
             elif media_type == "mp3":
                 media_details = get_audio_metadata_mediainfo(io.BytesIO(media_data))
                 media_duration = media_details["duration"]
+
             elif media_type == "wav":
                 media_duration = get_audio_duration(io.BytesIO(media_data))
+
             else:
                 Trace.fatal(f"unsupport extention {media_type}")
 

@@ -3,7 +3,7 @@
 
     PUBLIC:
      - prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: Dict, media_filename: str) -> Tuple[list, int, float, float, str, List, List]:
-     - split_to_lines(words: List, Dictionary: List) -> Tuple[dict, str, str, Dict, Dict, List]:
+     - split_to_lines(words: List, Dictionary: List) -> Tuple[Dict, str, str, Dict, Dict, List]:
      - split_to_sentences(words: Dict, Dictionary: Dict) -> List:
 
      - get_filename_parameter(params: Dict) -> str:
@@ -18,14 +18,15 @@
 import re
 import hashlib
 
-import numpy
 from typing import Dict, List, Tuple
+import numpy
 
 from main.spacy import analyse_sentences_spacy
 
 from utils.trace import Trace
 from utils.prefs import Prefs
 from utils.util  import format_timestamp, CacheJSON
+
 from helper.spelling import spellcheck
 
 #################################################################################################################
@@ -44,7 +45,7 @@ from helper.spelling import spellcheck
 #   def prepare_words(data: Dict[Dict], is_faster_whisper: bool, is_intro: bool, type_v3: bool, language: str,
 #                      cache_md5: Dict, media_filename: str) -> Tuple[list[Dict], int, float, float, str, List[Dict]]:
 #   PASS 2
-#   def split_to_lines(words: List[Dict], Dictionary: List[list]) -> Tuple[dict, str, str, Dict, Dict, List]:
+#   def split_to_lines(words: List[Dict], Dictionary: List[list]) -> Tuple[Dict, str, str, Dict, Dict, List]:
 #
 #   export in sentences -> TextToSpeech
 #   def split_to_sentences(words: Dict, Dictionary: Dict) -> List:

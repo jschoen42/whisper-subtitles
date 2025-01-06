@@ -37,7 +37,7 @@ def format_subtitle( start_time: float, end_time: float, text: str, color: bool=
     end   = format_timestamp(end_time)
 
     if color:
-        return f"{Color.BOLD.value}{Color.MAGENTA.value}[{start} --> {end}]{Color.NORMAL.value}{text}{Color.RESET.value}"
+        return f"{Color.BOLD}{Color.MAGENTA}[{start} --> {end}]{Color.NORMAL}{text}{Color.RESET}"
     else:
         return f"[{start} --> {end}]{text}"
 
@@ -170,8 +170,10 @@ class CacheJSON:
 
         if Path(self.path, self.name).is_file():
             if not reset:
-                self.cache = import_json(self.path, self.name)
-                Trace.info(f"{self.path}")
+                json = import_json(self.path, self.name)
+                if json:
+                    self.cache = json
+                    Trace.info(f"{self.path}")
         else:
             create_folder(self.path)
 

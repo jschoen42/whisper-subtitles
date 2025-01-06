@@ -11,7 +11,7 @@ base_path = BASE_PATH / "../data"
 
 replace = ["-fast#", "-faster#"]
 
-def main():
+def main() -> None:
 
     def check_dirs( path: Path ):
         for mypath in path.iterdir():

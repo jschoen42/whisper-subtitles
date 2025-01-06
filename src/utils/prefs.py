@@ -27,7 +27,7 @@ from utils.file    import beautify_path
 class Prefs:
     pref_path: Path = BASE_PATH / "prefs"
     pref_prefix: str = ""
-    data: Dict = {}
+    data: dict = {}
 
     @classmethod
     def init(cls, pref_path: Path | str | None = None, pref_prefix: str | None = None ) -> None:
@@ -93,7 +93,7 @@ class Prefs:
         #
         # -> filepaths = ['..\result\data.xlsx']
 
-        # Dict -> text -> replace -> Dict
+        # dict -> text -> replace -> dict
 
         tmp = json.dumps(result)
 
@@ -145,11 +145,11 @@ def read_pref( pref_path: Path, pref_name: str ) -> Tuple[bool, Dict]:
 def merge_dicts(a: Dict, b: Dict) -> Any:
     for k in set(a.keys()).union(b.keys()):
         if k in a and k in b:
-            if isinstance(a[k], Dict) and isinstance(b[k], Dict):
-                yield (k, Dict(merge_dicts(a[k], b[k])))
+            if isinstance(a[k], dict) and isinstance(b[k], Dict):
+                yield (k, dict(merge_dicts(a[k], b[k])))
             else:
-                # If one of the values is not a Dict, you can't continue merging it.
-                # Value from second Dict overrides one in first and we move on.
+                # If one of the values is not a dict, you can't continue merging it.
+                # Value from second dict overrides one in first and we move on.
                 yield (k, b[k])
                 # Alternatively, replace this with exception raiser to alert you of value conflicts
         elif k in a:
@@ -162,7 +162,7 @@ def merge_dicts(a: Dict, b: Dict) -> Any:
 def merge(a: Dict, b: Dict, path: List[str] = []) -> Any:
     for key in b:
         if key in a:
-            if isinstance(a[key], Dict) and isinstance(b[key], Dict):
+            if isinstance(a[key], dict) and isinstance(b[key], Dict):
                 merge(a[key], b[key], path + [str(key)])
             elif a[key] != b[key]:
                 raise Exception("Conflict at " + ".".join(path + [str(key)]))

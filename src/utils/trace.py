@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 06.01.2025
 
     class Trace:
       - Trace.set(debug_mode=True)
@@ -263,7 +263,7 @@ class Trace:
     @classmethod
     def important(cls, message: str = "", *optional: Any) -> None:
         pre = f"{cls.__get_time()}{Color.MAGENTA}{cls.__get_pattern()}{cls.__get_caller()}"
-        cls.__show_message(cls.__check_file_output(), pre, f"{Color.MAGENTA.BOLD}{message}{Color.RESET}", *optional)
+        cls.__show_message(cls.__check_file_output(), pre, f"{Color.MAGENTA}{Color.BOLD}{message}{Color.RESET}", *optional)
 
     # warning, error, exception, fatal => RED
 

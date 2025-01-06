@@ -18,7 +18,7 @@ import re
 import functools
 import inspect
 
-from typing import Any, Dict, Generator, Match, Tuple
+from typing import Any, Dict, Generator, Match, Tuple, Union
 from collections.abc import Callable
 
 from utils.trace import Trace, Color
@@ -201,7 +201,7 @@ def deprecated(message: str="") -> Callable:
 # @retry_exception("error limit '{0}'", exception=ValueError)
 # @retry_exception("ttx => font '{0}'", exception=ValueError, delay=2.5, retries=10)
 
-def retry_exception(text: str | None = None, exception: type = Exception, delay: int|float=1, retries: int=5) -> Callable:
+def retry_exception(text: Union[str, None] = None, exception: type[BaseException] = Exception, delay: int|float = 1, retries: int = 5) -> Callable:
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:

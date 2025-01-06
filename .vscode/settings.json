@@ -51,42 +51,19 @@
       "other": "on"
     }
   },
+  "python.analysis.exclude": [
+    "data/**",
+    "result/**",
+    ".git/**",
+    ".venv/**",
+    ".mypy_cache/**",
+    "**/__pycache__/**",
+    "dist/**",
+    "build/**",
+  ],
   "_errorLens.codeLensEnabled": true,
   "errorLens.delay": 2000,
   "errorLens.followCursor": "activeLine",
-
-  "pylint.args": [
-    // Convention
-    "--disable=C0103", // invalid-name
-    "--disable=C0114", // missing-module-docstring
-    "--disable=C0115", // missing-class-docstring
-    "--disable=C0116", // missing-function-docstring
-    "--disable=C0200", // consider-using-enumerate
-    "--disable=C0206", // consider-using-dict-items
-    "--disable=C0207", // use-maxsplit-arg
-    "--disable=C0301", // line-too-long
-    "--disable=C0302", // too-many-lines
-    "--disable=C0305", // trailing-newlines
-    // Refactor
-    "--disable=R0901", // too-many-ancestors
-    "--disable=R0902", // too-many-instance attributes
-    "--disable=R0903", // too-few-public-methods
-    "--disable=R0904", // too-many-public methods
-    "--disable=R0911", // too-many-return statements
-    "--disable=R0912", // too-many-branches
-    "--disable=R0913", // too-many-arguments
-    "--disable=R0914", // too-many-local variables
-    "--disable=R0915", // too-many-statements
-    "--disable=R1705", // no-else-return
-    // Warning
-    "--disable=W0105", // pointless-string-statement
-    "--disable=W0511", // fixme (TODO)
-    "--disable=W0603", // global-statement
-    "--disable=W0611", // unused-import
-    "--disable=W0613", // unused-argument
-    "--disable=W0621", // redefined-outer-name
-    "--disable=W0622", // redefined-builtin
-  ],
   "markdownlint.config": {
     "MD041": false
   }
