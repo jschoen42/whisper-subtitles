@@ -273,26 +273,27 @@ def main() -> None:
                         else:
                             Trace.fatal(f"unknown whisper type >{whisper_type}<")
 
-                        duration  += result["duration"]
-                        chars     += result["chars"]
-                        words     += result["words"]
-                        sentences += result["sentences"]
+                        if result:
+                            duration  += result["duration"]
+                            chars     += result["chars"]
+                            words     += result["words"]
+                            sentences += result["sentences"]
 
-                        log_add(
-                            media_file,
-                            result["text"],
-                            result["corrected"],
-                            result["lastSegment"],
-                            result["repetitionError"],
-                            result["pauseError"],
-                            result["spelling"],
-                        )
-                        log_dictionary.add(
-                            result["corrected"],
-                            result["spelling"]
-                        )
-                        time.sleep(0)
-                        # Trace.info()
+                            log_add(
+                                media_file,
+                                result["text"],
+                                result["corrected"],
+                                result["lastSegment"],
+                                result["repetitionError"],
+                                result["pauseError"],
+                                result["spelling"],
+                            )
+                            log_dictionary.add(
+                                result["corrected"],
+                                result["spelling"]
+                            )
+                            time.sleep(0)
+                            # Trace.info()
                         print()
                         print()
 
@@ -310,7 +311,7 @@ def main() -> None:
                 sentences_all  += sentences
 
                 Trace.info()
-                Trace.info(f"'{project}' files: {file_count}, duration: {seconds_to_timecode_vtt(duration, None)}, chars: {chars}, words: {words}, sentences: {sentences}")
+                Trace.info(f"'{project}' files: {file_count}, duration: {seconds_to_timecode_vtt(duration)}, chars: {chars}, words: {words}, sentences: {sentences}")
 
                 Trace.file_save(path_trace, project_name)
                 Trace.set(show_timestamp=True, show_caller=True)
@@ -348,7 +349,7 @@ def main() -> None:
 
         d = time.perf_counter() - start
 
-        Trace.result(f"projects: {project_all}, filesAll: {file_count_all}, durationAll: {seconds_to_timecode_vtt(duration_all, None)}, charsAll: {chars_all}, wordsAll: {words_all}, sentencesAll: {sentences_all} ({d:,.2f} sec)")
+        Trace.result(f"projects: {project_all}, filesAll: {file_count_all}, durationAll: {seconds_to_timecode_vtt(duration_all)}, charsAll: {chars_all}, wordsAll: {words_all}, sentencesAll: {sentences_all} ({d:,.2f} sec)")
 
 
 if __name__ == "__main__":

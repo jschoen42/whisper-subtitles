@@ -15,7 +15,7 @@ import warnings
 from typing import Any, Dict
 from pathlib import Path
 
-import whisper_timestamped as whisper
+import whisper_timestamped as whisper # type: ignore # mypy
 
 from main.whisper import search_model_path
 
@@ -63,7 +63,7 @@ def load_model_whisper(model_name: str) -> Any:
     else:
         return None
 
-def transcribe_whisper_timestamped(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> str | Dict:
+def transcribe_whisper_timestamped(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> None | Dict:
     global current_model
 
     # inModelID     = project_params["modelNumber"]
@@ -129,7 +129,7 @@ def transcribe_whisper_timestamped(project_params: Dict, media_params: Dict, cac
 
     if not media_pathname.is_file():
         Trace.error(f"media not found '{media_pathname}'")
-        return f"{filename_two} - not found"
+        return None
     else:
         with open(media_pathname, "rb") as f:
             file = f.read()

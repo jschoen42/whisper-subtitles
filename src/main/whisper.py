@@ -15,7 +15,7 @@ import hashlib
 from typing import Any, Dict
 from pathlib import Path
 
-import whisper
+import whisper # type: ignore # mypy
 
 from utils.globals  import BASE_PATH
 from utils.prefs    import Prefs
@@ -76,7 +76,7 @@ def load_model_whisper(model_name: str) -> Any:
         Trace.error(f"no model_path for '{model_name}'")
         return None
 
-def transcribe_whisper(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> str | Dict:
+def transcribe_whisper(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> None | Dict:
     global current_model
 
     # inModelID     = project_params["modelNumber"]
@@ -135,7 +135,7 @@ def transcribe_whisper(project_params: Dict, media_params: Dict, cache_nlp: Cach
 
     if not media_pathname.is_file():
         Trace.error(f"media not found '{media_pathname}'")
-        return f"{filename_two} - not found"
+        return None
     else:
         with open(media_pathname, "rb") as f:
             file = f.read()

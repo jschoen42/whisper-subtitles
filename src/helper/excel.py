@@ -13,8 +13,6 @@
 """
 
 import os
-import re
-import unicodedata
 
 from typing import Any, Dict, List, Tuple
 from pathlib import Path
@@ -24,55 +22,15 @@ from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import NamedStyle, Font, Alignment, PatternFill
 
+# from openpyxl.worksheet.worksheet import Worksheet
+# from openpyxl.workbook.workbook import Workbook
+# from openpyxl.cell.cell import Cell
+
 from utils.trace     import Trace
 from utils.decorator import duration
 from utils.file      import check_excel_file_exists, get_modification_timestamp
-
+from utils.excel     import get_cell_value, check_quotes_error
 from helper.captions import seconds_to_timecode_excel
-
-######################################################################################
-# get_cell_value with converting
-#  - '\n'  -> '<br>
-#  - '[-]' -> '&shy;'
-#  - 'true' -> True, 'false' -> False, 'N/A' -> ''
-#  - '[br]' -> <br>
-#  - [b]...[/b] -> <b>...</b>, same with i, u, mark, sub, sup
-#  - [nobr] -> <nobr>
-#  - [hide] -> <hide> (custom)
-######################################################################################
-
-def get_cell_value(cell: Any) -> bool | str:
-    if cell.value is None:
-        return ""
-    else:
-        # data_type
-        #   f: formular
-        #   s: string
-        #   n: numeric
-        #   b: boolean
-        #   n: null
-        #   inlineStr: inline
-        #   e: error
-        #   str: formlar cached string
-
-        if cell.data_type == "f":
-            return f"[formula not supported: '{cell.value}']"
-        else:
-            txt = unicodedata.normalize("NFC", str(cell.value).rstrip())
-            txt = txt.replace("\n", "<br>")
-            txt = txt.replace("[-]", "&shy;")
-
-            if txt.strip() == "true":
-                return True
-
-            if txt.strip() == "false":
-                return False
-
-            if txt.strip() == "N/A":
-                return ""
-
-            return re.sub(r"\[(/*)(br|b|i|u|mark|hide|nobr|sub|sup)]", r"<\1\2>", txt).strip()
-
 
 ######################################################################################
 #
@@ -446,16 +404,6 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | List:
 #
 ######################################################################################
 
-def check_quotes(wb_name: str, word: str, line_number: int, function_name: str) -> Tuple[dict | bool, str]:
-    if word == "":
-        return False, ""
-
-    if word[:1] == '"' and word[-1:] == '"':
-        return False, word[1:-1]
-    else:
-        Trace.error(f"{function_name} '{wb_name}': line {line_number} quotes missing: '{word}'")
-        return True, ""
-
 @duration("Custom text replacements loaded")
 def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple[ Dict[str,list[str|int]], List[str], float ]:
     pathname = Path(pathname)
@@ -483,11 +431,11 @@ def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple
         for i in range(2, ws.max_row + 1):
             row = ws[i]
 
-            error, original = check_quotes(wb_name, str(get_cell_value(row[0])), i, "import_dictionary_excel")
+            error, original = check_quotes_error(wb_name, str(get_cell_value(row[0])), i, "import_dictionary_excel")
             if error or original == "":
                 continue
 
-            error, correction = check_quotes(wb_name, str(get_cell_value(row[1])), i, "import_dictionary_excel")
+            error, correction = check_quotes_error(wb_name, str(get_cell_value(row[1])), i, "import_dictionary_excel")
             if not error and correction == "":
                 Trace.error(f"'{wb_name}': line {i} '{original}' correction empty")
                 continue
@@ -609,7 +557,7 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
 #
 #####################################################################################
 
-def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[str, Dict[str, List]]:
+def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -626,18 +574,18 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[
     def parse_ws(wb_name: str, ws: Any) -> Tuple[str, List]:
         rules: List = []
 
-        _error, template = check_quotes(wb_name, ws["e1"].value, 1, "import_ssml_rules_excel")
+        _error, template = check_quotes_error(wb_name, ws["e1"].value, 1, "import_ssml_rules_excel")
         if template == "":
             return template, rules
 
         for i in range(2, ws.max_row + 1):
             row = ws[i]
 
-            _error, key = check_quotes(wb_name, str(get_cell_value(row[1])), i, "import_ssml_rules_excel")
+            _error, key = check_quotes_error(wb_name, str(get_cell_value(row[1])), i, "import_ssml_rules_excel")
             if key != "":
-                _error, pre   = check_quotes(wb_name, str(get_cell_value(row[0])), i, "import_ssml_rules_excel")
-                _error, post  = check_quotes(wb_name, str(get_cell_value(row[2])), i, "import_ssml_rules_excel")
-                _error, value = check_quotes(wb_name, str(get_cell_value(row[3])), i, "import_ssml_rules_excel")
+                _error, pre   = check_quotes_error(wb_name, str(get_cell_value(row[0])), i, "import_ssml_rules_excel")
+                _error, post  = check_quotes_error(wb_name, str(get_cell_value(row[2])), i, "import_ssml_rules_excel")
+                _error, value = check_quotes_error(wb_name, str(get_cell_value(row[3])), i, "import_ssml_rules_excel")
                 if value != "":
                     rules.append([pre, key, post, value])
 
@@ -705,7 +653,7 @@ def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None 
         for i in range(2, ws.max_row + 1):
             row = ws[i]
 
-            error, original = check_quotes(wb_name, str(get_cell_value(row[0])), i, "import_hunspell_PreCheck_excel")
+            error, original = check_quotes_error(wb_name, str(get_cell_value(row[0])), i, "import_hunspell_PreCheck_excel")
             if not error and original != "":
                 if wb_name == "specialDot":
                     abbreviations_with_dot.append(original)

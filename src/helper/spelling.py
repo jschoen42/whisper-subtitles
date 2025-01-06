@@ -11,7 +11,7 @@ import re
 from typing import Dict, List
 from pathlib import Path
 
-from spylls.hunspell import Dictionary
+from spylls.hunspell import Dictionary # type: ignore # mypy
 
 from utils.trace     import Trace
 from utils.decorator import duration

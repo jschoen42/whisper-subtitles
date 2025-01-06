@@ -38,7 +38,7 @@ dev = [
 ]
 
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.12"
 mypy_path = "src"
 explicit_package_bases = true
 namespace_packages = true

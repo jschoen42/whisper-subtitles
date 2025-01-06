@@ -126,7 +126,7 @@ def model_loaded_faster_whisper(model_name: str) -> None | WhisperModel:
     else:
         return None
 
-def transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> str | Dict:
+def transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> None | Dict:
     global current_model
 
     # inModelID     = project_params["modelNumber"]
@@ -172,7 +172,7 @@ def transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp
     start_time = time.time()
     if not media_pathname.is_file():
         Trace.error(f"media not found '{media_pathname}'")
-        return f"{filename_two} - not found"
+        return None
     else:
         file_info = get_file_infos( path_media, media_name + "." + media_type,  media_type )
 

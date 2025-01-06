@@ -21,10 +21,10 @@ import webvtt # type: ignore # mypy
 from utils.trace import Trace
 from utils.util import export_text, format_timestamp
 
-def second_to_timecode_srt(x: float, fps: float) -> str:
+def second_to_timecode_srt(x: float, fps: float = 30) -> str:
     return format_timestamp(x, always_include_hours=True, decimal_marker=",", fps=fps)
 
-def seconds_to_timecode_vtt(x: float, fps: float) -> str:
+def seconds_to_timecode_vtt(x: float, fps: float = 30) -> str:
     return format_timestamp(x, always_include_hours=True, decimal_marker=".", fps=fps)
 
 def seconds_to_timecode_excel(x: float) -> str:
@@ -69,7 +69,7 @@ def export_vtt(captions: List[Dict], fps: float = 30) -> str:
 
     return text
 
-def import_caption(dirname: Path|str, basename: str) -> None | Tuple[Dict, int, List]:
+def import_caption(dirname: Path|str, basename: str) -> None | Tuple[List[Dict], int, List]:
     filepath = Path(dirname, basename)
 
     extention = filepath.suffix
