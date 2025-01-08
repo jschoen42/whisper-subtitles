@@ -65,25 +65,25 @@ from helper.captions import seconds_to_timecode_excel
 #
 ######################################################################################
 
-def import_project_excel(pathname: Path | str, filename: str) -> bool | Dict:
+def import_project_excel(pathname: Path | str, filename: str) -> None | Dict:
     pathname = Path(pathname)
     filepath = pathname / filename
 
     if not check_excel_file_exists(filepath):
         Trace.error(f"file not found: {filepath}")
-        return False
+        return None
 
     try:
         wb = load_workbook(filename=filepath)
     except OSError as err:
         Trace.error(f"importExcel: {err}")
-        return False
+        return None
 
     try:
         sheet = wb.worksheets[0]  # wb["mediaList"]
     except KeyError as err:
         Trace.error(f"importExcel: {err}")
-        return False
+        return None
 
     filename = ""
     speaker = ""

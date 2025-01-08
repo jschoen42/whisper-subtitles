@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 06.01.2025
+    © Jürgen Schoenemeyer, 08.01.2025
 
     PUBLIC:
      - prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: Dict, media_filename: str) -> Tuple[list, int, float, float, str, List, List]:

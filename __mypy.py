@@ -16,17 +16,27 @@ def run_mypy() -> None:
         "--disallow-untyped-calls",
         "--disallow-untyped-defs",
         "--disallow-incomplete-defs",
+        "--disallow-untyped-decorators",
+
+        "--warn-redundant-casts",
+        "--warn-unused-ignores",
+        "--warn-unreachable",
+
+        "--sqlite-cache",
     ]
 
     filepath = Path(sys.argv[1]).stem
 
-    # print( sys.argv[1:] + settings )
-    # sys.exit()
-
     text =  f"Python:   {sys.version}\n"
     text += f"Platform: {platform.platform()}\n"
-    text += f"Date:     {datetime.now()}\n"
+    text += f"Date:     {datetime.now().strftime("%d.%m.%Y %H:%M:%S")}\n"
     text += f"Path:     {BASE_PATH}\n"
+    text += "\n"
+
+    text += "MyPy settings:\n"
+    for setting in settings:
+        text += f" {setting}\n"
+
     text += "\n"
 
     result = subprocess.run(["mypy"] + (settings + sys.argv[1:]), capture_output=True, text=True)

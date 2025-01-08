@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 06.01.2025
+    © Jürgen Schoenemeyer, 08.01.2025
 
     PUBLIC:
      - search_model_path(model_name: str) -> None | str

@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 07.01.2025
+    © Jürgen Schoenemeyer, 08.01.2025
 
     class Trace:
       - Trace.set(debug_mode=True)
@@ -51,8 +51,8 @@ system = platform.system()
 if system == "Windows":
     import msvcrt
 else:
-    import tty             # type: ignore
-    import termios as term # type: ignore
+    import tty
+    import termios as term
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 
@@ -318,7 +318,7 @@ class Trace:
                         key = sys.stdin.read(1)        # type: ignore
                     finally:
                         term.tcsetattr(                # type: ignore
-                            fd,                        # type: ignore
+                            fd,
                             term.TCSADRAIN,            # type: ignore
                             old_settings
                         )
