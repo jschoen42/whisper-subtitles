@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 06.01.2025
 
     PUBLIC:
      - get_settings_transcribe_faster(info: Dict, media_type: str, media_info: Dict, vad_sampling_rate: int, speech_chunks: List) -> Tuple[dict, List]:
@@ -94,7 +94,7 @@ def get_settings_transcribe_faster(info: Dict, media_type: str, media_info: Dict
             "prepend_punctuations",
             "append_punctuations"
         ]
-        settings["transcription_options"] = {p: getattr(info.transcription_options, p) for p in props}
+        settings["transcription_options"] = {p: info["transcription_options"][p] for p in props}
     except Exception as error:
         settings["duration"] = -1
         Trace.error(f"{error}")
@@ -109,7 +109,7 @@ def get_settings_transcribe_faster(info: Dict, media_type: str, media_info: Dict
                 "min_silence_duration_ms",
                 "speech_pad_ms"
             ]
-            settings["vad_options"] = {p: getattr(info.vad_options, p) for p in props}
+            settings["vad_options"] = {p: info["vad_options"][p] for p in props}
     except Exception as error:
         settings["vad_options"] = None
         Trace.error(f"{error}")

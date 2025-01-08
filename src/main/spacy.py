@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 08.01.2025
 
     PUBLIC:
      - init_spacy(language: str) -> None
@@ -67,6 +67,32 @@ def get_modelname_spacy(language: str) -> str:
 # spaCy - analyse text -> sentences
 #
 ###########################################################################
+
+def split_sentences(text: str) -> List[Tuple[str, str]]:
+    doc = nlp(text)
+    result: List = []
+    main_clause = ""
+
+    for token in doc:
+        print( token.text, token.pos_, token.dep_ )
+
+        if token.pos_ == "SCONJ" or token.dep_ == "mark":
+            if main_clause:
+                result.append((main_clause.strip(), "main"))
+                main_clause = ""
+            result.append((token.head.text_with_ws + " ".join([t.text_with_ws for t in token.head.subtree]), "sub"))
+        elif token.dep_ in ("cc", "punct") and token.head.dep_ == "ROOT":
+            if main_clause:
+                result.append((main_clause.strip(), "main"))
+                main_clause = ""
+            main_clause = token.head.text_with_ws + " ".join([t.text_with_ws for t in token.head.subtree])
+        else:
+            main_clause += token.text_with_ws
+
+    if main_clause:
+        result.append((main_clause.strip(), "main"))
+
+    return result
 
 @duration("spacy - analyse sentences")
 def analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[List, List]:

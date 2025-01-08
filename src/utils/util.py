@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 06.01.2025
 
     PUBLIC:
      - format_subtitle( start_time: float, end_time: float, text: str, color=True ) -> str

@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 08.01.2025
 
     PUBLIC:
      - hunspell_dictionary_init(path: str, filename: str, language: str = "de-DE") -> None:
@@ -21,11 +21,10 @@ from helper.excel import import_hunspell_PreCheck_excel
 # ../data/_hunspell/de-DE.dic
 # ../data/_hunspell/PreCheck_de-DE.xlsx
 
-global_dictionary_data: None | Dict = None
-
-global_special_dot_words:       None | List = None   # 'Abs.', 'bspw.', 'bzw.', 'Bzw.', ...
-global_precheck_single_words:   None | List = None   # 'AAG', 'AfA', 'AG' ... 'www.datev.de' ... 'und/oder' ...
-global_precheck_multiple_words: None | List = None   # ['Corporate', 'Design'], ['summa', 'summarum'], ['Stock', 'Appreciation', 'Rights'], ... (ws 'multiple')
+global_dictionary_data: Dictionary | None = None
+global_special_dot_words: List[str] = []             # 'Abs.', 'bspw.', 'bzw.', 'Bzw.', ...
+global_precheck_single_words: List[str] = []         # 'AAG', 'AfA', 'AG' ... 'www.datev.de' ... 'und/oder' ...
+global_precheck_multiple_words: List[List[str]] = [] # ['Corporate', 'Design'], ['summa', 'summarum'], ['Stock', 'Appreciation', 'Rights'], ... (ws 'multiple')
 
 @duration("Hunspell Dictionary loaded")
 def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "de-DE") -> None:
@@ -43,7 +42,7 @@ def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "d
         except OSError as err:
             Trace.fatal(f"{err}")
 
-    if global_precheck_single_words is None:
+    if len(global_precheck_single_words) == 0:
         filename = "PreCheck_" + language + ".xlsx"
 
         if language == "de-DE":
@@ -59,11 +58,14 @@ def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "d
             Trace.fatal(f"unsupported language '{language}'")
 
 def spellcheck(words: List, debug: bool=False) -> Dict[str, int]:
+    if global_dictionary_data is None:
+        Trace.error("'global_dictionary_data' not loaded")
+        return {}
 
     def check_multiple_words(word: str, index: int) -> int:
         found = False
 
-        word_info = []
+        word_info: List = []
         for word_info in global_precheck_multiple_words:
             if word == word_info[0]:
                 found = True

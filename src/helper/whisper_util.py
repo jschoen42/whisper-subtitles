@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 06.01.2025
 
     PUBLIC:
      - prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: Dict, media_filename: str) -> Tuple[list, int, float, float, str, List, List]:
@@ -159,7 +159,12 @@ def format_euro(text: str, thousand_separator: str = ".", float_separator: str =
             else:
                 result = pre + " " + euro
 
-        results.append({"start": match.start(), "end": match.end(), "result": result})
+        entry: Dict = {
+            "start":  match.start(),
+            "end":    match.end(),
+            "result": result
+        }
+        results.append(entry)
 
     if len(results) == 0:
         ret = text
@@ -171,9 +176,6 @@ def format_euro(text: str, thousand_separator: str = ".", float_separator: str =
             pos =  entry["end"]
 
         ret += text[pos:]
-
-    # if text != ret:
-    #    Trace.warning(f"[{text}] => [{ret}]")
 
     return ret
 
@@ -281,7 +283,7 @@ split_words    = []
 dont_split     = []
 dont_split_two = []
 
-def init_special_text( language: str ):
+def init_special_text( language: str ) -> None:
     global silence_text, split_words, dont_split, dont_split_two
 
     language = language[:2]
@@ -309,34 +311,34 @@ def get_filename_parameter(params: Dict) -> str:
 
     # VAD on/off
 
-    params = ""
+    params_text = ""
     if engine == "faster-whisper":
-        if vad_used:
+        if vad_used is True:
             vad = "VAD on"
         else:
             vad = "VAD off"
-        params = f"{vad}, "
+        params_text = f"{vad}, "
 
     # condition_on_previous on/off
 
-    if condition_on_previous_text:
+    if condition_on_previous_text is True:
         inner_prompt = "inner-prompt on"
     else:
         inner_prompt = "inner-prompt off"
-    params += f"{inner_prompt}, "
+    params_text += f"{inner_prompt}, "
 
     if no_prompt:
-        params += "no-prompt, "
+        params_text += "no-prompt, "
 
-    params += f"beam-{beam_size}"
+    params_text += f"beam-{beam_size}"
 
-    return f"[{engine}] [{model}] ({params})"
+    return f"[{engine}] [{model}] ({params_text})"
 
 ######################
 #   Pass 1
 ######################
 
-def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: CacheJSON, media_filename: str) -> Tuple[list, int, float, float, str, List, List]:
+def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: CacheJSON, media_filename: str) -> Tuple[list, int, float, float, str, List, Dict]:
     words: List = []
     probability: List = []
 
@@ -537,7 +539,7 @@ def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_nam
             words.append(word_info)
             probability.append(word_info["probability"])
 
-            if len(words_new)>1 and word_info["word"].lower() == words_new[-1]["word"].lower(): # [1:] [1:]
+            if len(words_new)>1 and str(word_info["word"]).lower() == str(words_new[-1]["word"]).lower(): # [1:] [1:]
                 error_segment = f"{segment_id} / {(i + 1)}"
                 error_text    = f"'{words_new[-1]['word']}' / '{word_info['word']}'"
 
@@ -560,7 +562,7 @@ def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_nam
             # dual word repetition
             # LODAS Modul 3 Bauhauptgewerbe: 78945_V3_Kap_03_03: an dieser An dieser
 
-            if len(words_new)>2 and word_info["word"].lower() == words_new[-2]["word"].lower() and words_new[-1]["word"].lower() == words_new[-3]["word"].lower():
+            if len(words_new)>2 and str(word_info["word"]).lower() == str(words_new[-2]["word"]).lower() and str(words_new[-1]["word"]).lower() == str(words_new[-3]["word"]).lower():
                 error_segment = f"{segment_id} / {i}-{i+1}"
                 error_text    = f"'{words_new[-3]['word']}{words_new[-2]['word']}' / '{words_new[-1]['word']}{word_info['word']}'"
 
@@ -599,6 +601,8 @@ def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_nam
 
     if corrected:
         Trace.warning(f"corrected: {corrected}")
+
+    # Tuple[list, int, float, float, str, List, List]:
 
     return (
         words_new,
@@ -647,7 +651,7 @@ def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_nam
 #
 ####################################################
 
-def split_to_lines(words: List, dictionary: List) -> Tuple[list, str, str, List, Dict]:
+def split_to_lines(words: List, dictionary: List) -> Tuple[list, str, str, Dict, Dict]:
     line  = ""
     lines = ""
 
@@ -788,7 +792,7 @@ def split_to_lines(words: List, dictionary: List) -> Tuple[list, str, str, List,
             lines += line
 
             section += 1
-            caption = {}
+            caption: Dict = {}
             caption["section"] = section
             caption["start"]   = start
             caption["end"]     = end
@@ -826,7 +830,7 @@ def split_to_lines(words: List, dictionary: List) -> Tuple[list, str, str, List,
 
 # export in sentences -> TextToSpeech
 
-def split_to_sentences(words: Dict, dictionary: Dict) -> List:
+def split_to_sentences(words: List, dictionary: Dict) -> List:
 
     result:list = []
     text = ""

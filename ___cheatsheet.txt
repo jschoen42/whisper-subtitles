@@ -243,6 +243,7 @@ dev = [
     "types-openpyxl>=3.1.5.20241225",
     "types-pyyaml>=6.0.12.20241230",
     "types-xmltodict>=0.14.0.20241009",
+    "types-python-dateutil>=2.9.0.20241206",
 ]
 
 [tool.mypy]
@@ -256,8 +257,7 @@ module = "faster_whisper.*"
 ignore_errors = true
 ignore_missing_imports = true
 
-mypy --disallow-untyped-calls --disallow-untyped-defs --disallow-incomplete-defs src/main.py > __mypy-result-0.txt
-
-python __mypy.py > __mypy-result-0.txt
+python __mypy.py src/main.py
+uv run __mypy.py src/main.py
 
 # type: ignore # mypy

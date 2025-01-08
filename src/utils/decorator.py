@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 08.01.2025
 
     PUBLIC:
      - @duration(text: str=None, rounds: int=1)
@@ -18,7 +18,7 @@ import re
 import functools
 import inspect
 
-from typing import Any, Dict, Generator, Match, Tuple, Union
+from typing import Any, Dict, Generator, List, Match, Tuple, Union
 from collections.abc import Callable
 
 from utils.trace import Trace, Color
@@ -254,7 +254,7 @@ def get_args_values( func: Callable, *args: Any, **kwargs: Any ) -> Tuple[list, 
 # @duration("{__name__} 1: {0|name} {1|number} {2|type}"
 # args_values: ['Max', 99, False], kwargs_values: {'name': 'Max', 'number': 99, 'type': False}
 
-def replace_argument_values(match: Match, func_name: str, args_values: list, kwargs_values: Dict) -> str:
+def replace_argument_values(match: Match, func_name: str, args_values: List, kwargs_values: Dict) -> str:
     arguments = match.group(1)
 
     if arguments == "__name__":

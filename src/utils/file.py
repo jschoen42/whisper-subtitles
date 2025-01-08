@@ -1,22 +1,22 @@
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 07.01.2025
 
     PUBLIC:
      - get_modification_timestamp(filename: Path | str) -> float
      - set_modification_timestamp(filename: Path | str, timestamp: float) -> None
     #
      - check_path_exists(path: str) -> bool
-     - check_file_exists(filepath: str, filename: str) -> bool
+     - check_file_exists(filepath: Path | str, filename: str) -> bool
      - check_excel_file_exists(filename: str) -> bool
     #
-     - list_files(path: str, extensions: List) -> List
-     - list_directories(path: str) -> List
+     - list_files(path: Path | str, extensions: List) -> List
+     - list_directories(path: Path | str) -> List
      - listdir_match_extention(folder_path: Path | str, extensions: List=None) -> List
     #
      - clear_folder(path: str) -> None
-     - delete_folder_tree(dest_path: str, relax: bool = False) -> bool
+     - delete_folder_tree(dest_path: Path | str, relax: bool = False) -> bool
      - create_folder( folderpath: Path | str ) -> bool
-     - make_dir(in_path)
+     - make_dir(path: Path | str) -> None:
      - delete_file(in_path: Path | str, filename: str) -> None
      - beautify_path( path: Path | str ) -> str
     #
@@ -79,7 +79,7 @@ def set_modification_timestamp(filename: Path | str, timestamp: float) -> None:
 def check_path_exists(path: str) -> bool:
     return os.path.exists(path)
 
-def check_file_exists(filepath: Path|str, filename: str) -> bool: # case sensitive
+def check_file_exists(filepath: Path | str, filename: str) -> bool: # case sensitive
     path = Path(filepath, filename )
 
     filepath = path.parent
@@ -101,7 +101,7 @@ def check_file_exists(filepath: Path|str, filename: str) -> bool: # case sensiti
         Trace.error(f"file missing {path}")
         return False
 
-def check_excel_file_exists(filename: Path|str) -> bool:
+def check_excel_file_exists(filename: Path | str) -> bool:
     filename = Path(filename)
     if filename.suffix != ".xlsx":
         Trace.error(f"no excel file {filename}")
@@ -111,9 +111,11 @@ def check_excel_file_exists(filename: Path|str) -> bool:
 
 # dir Listing
 
-def list_files(path: str, extensions: List) -> Tuple[List, List]:
+def list_files(path: Path | str, extensions: List) -> Tuple[List, List]:
+    path = Path(path)
+
     files: List = []
-    dirs = []
+    dirs: List = []
     try:
         for filename in os.listdir(path):
             filepath = os.path.join(path, filename)
@@ -131,9 +133,10 @@ def list_files(path: str, extensions: List) -> Tuple[List, List]:
 
     return files, dirs
 
-def list_directories(path: str) -> List:
-    ret: List = []
+def list_directories(path: Path | str) -> List:
+    path = Path(path)
 
+    ret: List = []
     try:
         for file in os.listdir(path):
             if os.path.isdir(os.path.join(path, file)):
@@ -148,7 +151,7 @@ def list_directories(path: str) -> List:
 def listdir_match_extention(folder_path: Path | str, extensions: List | None = None) -> List:
     folder_path = Path(folder_path)
 
-    ret = []
+    ret: List = []
     files = os.listdir(folder_path)
     for file in files:
         if (folder_path / file).is_file():

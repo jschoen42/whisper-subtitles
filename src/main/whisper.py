@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 06.01.2025
 
     PUBLIC:
      - search_model_path(model_name: str) -> None | str
@@ -141,6 +141,8 @@ def transcribe_whisper(project_params: Dict, media_params: Dict, cache_nlp: Cach
             file = f.read()
             media_md5 = hashlib.md5(file).hexdigest()
             media_info = get_media_info(io.BytesIO(file))
+            if media_info is None:
+                return None
 
     settings: Dict = {}
     settings["language"] = language
@@ -210,7 +212,9 @@ def transcribe_whisper(project_params: Dict, media_params: Dict, cache_nlp: Cach
             result_new["segments"]   = result["segments"]
             export_json(path_json, filename_two + ".json", result_new)
 
-    (  words,
+    # Tuple[list, int, float, float, str, List, List]
+
+    (   words,
         sentences,
         _average_probability, # not used
         _standard_deviation,  # not used

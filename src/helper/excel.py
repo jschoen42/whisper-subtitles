@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 08.01.2025
 
     PUBLIC:
      - import_project_excel(pathname: str, filename: str, inType: str) -> Dict:
@@ -9,7 +9,6 @@
      - update_dictionary_excel(pathname: str, filename: str, filename_update: str, column_name: str, data: Dict) -> None | bool:
      - import_ssml_rules_excel(pathname: str, filename: str) -> Dict:
      - import_hunspell_PreCheck_excel(pathname: str, filename: str) -> Tuple[list[str], List[str], List[List]]:
-
 """
 
 import os
@@ -29,7 +28,7 @@ from openpyxl.styles import NamedStyle, Font, Alignment, PatternFill
 from utils.trace     import Trace
 from utils.decorator import duration
 from utils.file      import check_excel_file_exists, get_modification_timestamp
-from utils.excel     import get_cell_value, check_quotes_error
+from utils.excel     import get_cell_text, check_quotes_error
 from helper.captions import seconds_to_timecode_excel
 
 ######################################################################################
@@ -90,26 +89,26 @@ def import_project_excel(pathname: Path | str, filename: str) -> bool | Dict:
     speaker = ""
     main_prompt = ""
 
-    data = {}
-    part = {}
-    speakers = []
+    data: Dict[str, Any] = {}
+    part: Dict[str, Dict[str, Any]] = {}
+    speakers: List[str] = []
 
     for i in range(2, sheet.max_row + 1):
         row = sheet[i]
 
         if i == 2:
-            if get_cell_value(row[4]).lower() == "x":
+            if get_cell_text(row[4]).lower() == "x":
                 main_prompt = ""
             else:
-                main_prompt = get_cell_value(row[5])
+                main_prompt = get_cell_text(row[5])
 
         else:
-            filename = get_cell_value(row[0])
-            speaker  = get_cell_value(row[1])
-            project  = get_cell_value(row[2])
-            intro    = get_cell_value(row[3])
-            noprompt = get_cell_value(row[4]).lower() == "x"
-            prompt   = get_cell_value(row[5])
+            filename = get_cell_text(row[0])
+            speaker  = get_cell_text(row[1])
+            project  = get_cell_text(row[2])
+            intro    = get_cell_text(row[3])
+            noprompt = get_cell_text(row[4]).lower() == "x"
+            prompt   = get_cell_text(row[5])
 
             if noprompt:
                 prompt = ""
@@ -354,12 +353,12 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | List:
     for i in range(2, ws.max_row + 1):
         row = ws[i]
 
-        start  = get_cell_value(row[0])
-        end    = get_cell_value(row[1])
-        marked = get_cell_value(row[2]).lower() == "x" # start of one ssml
-        type   = get_cell_value(row[3]).lower()
-        text   = get_cell_value(row[4])
-        pause  = get_cell_value(row[5])
+        start  = get_cell_text(row[0])
+        end    = get_cell_text(row[1])
+        marked = get_cell_text(row[2]).lower() == "x" # start of one ssml
+        type   = get_cell_text(row[3]).lower()
+        text   = get_cell_text(row[4])
+        pause  = get_cell_text(row[5])
         if pause == "":
             pause = "0"
 
@@ -431,11 +430,11 @@ def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple
         for i in range(2, ws.max_row + 1):
             row = ws[i]
 
-            error, original = check_quotes_error(wb_name, str(get_cell_value(row[0])), i, "import_dictionary_excel")
+            error, original = check_quotes_error(wb_name, str(get_cell_text(row[0])), i, "import_dictionary_excel")
             if error or original == "":
                 continue
 
-            error, correction = check_quotes_error(wb_name, str(get_cell_value(row[1])), i, "import_dictionary_excel")
+            error, correction = check_quotes_error(wb_name, str(get_cell_text(row[1])), i, "import_dictionary_excel")
             if not error and correction == "":
                 Trace.error(f"'{wb_name}': line {i} '{original}' correction empty")
                 continue
@@ -500,7 +499,7 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
 
         row = -1
         for i in range(0, ws.max_column):
-            if get_cell_value(ws[1][i]) == column_name:
+            if get_cell_text(ws[1][i]) == column_name:
                 row = i
                 break
 
@@ -514,13 +513,13 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
             ws.cell(i, row + 1).value = ""
             # ws.cell(i, row+1).style = "Normal"
 
-            if get_cell_value(row_cells[0]) != "":
+            if get_cell_text(row_cells[0]) != "":
                 if str(i) in data_info_sheet:
                     ws.cell(i, row + 1).value = data_info_sheet[str(i)]
                 else:
                     ws.cell(i, row + 1).value = 0
 
-                if get_cell_value(row_cells[1]) != "":
+                if get_cell_text(row_cells[1]) != "":
                     ws.cell(i, row + 1).style = "used"
 
     dest_path = pathname / filename_update
@@ -581,11 +580,11 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict:
         for i in range(2, ws.max_row + 1):
             row = ws[i]
 
-            _error, key = check_quotes_error(wb_name, str(get_cell_value(row[1])), i, "import_ssml_rules_excel")
+            _error, key = check_quotes_error(wb_name, str(get_cell_text(row[1])), i, "import_ssml_rules_excel")
             if key != "":
-                _error, pre   = check_quotes_error(wb_name, str(get_cell_value(row[0])), i, "import_ssml_rules_excel")
-                _error, post  = check_quotes_error(wb_name, str(get_cell_value(row[2])), i, "import_ssml_rules_excel")
-                _error, value = check_quotes_error(wb_name, str(get_cell_value(row[3])), i, "import_ssml_rules_excel")
+                _error, pre   = check_quotes_error(wb_name, str(get_cell_text(row[0])), i, "import_ssml_rules_excel")
+                _error, post  = check_quotes_error(wb_name, str(get_cell_text(row[2])), i, "import_ssml_rules_excel")
+                _error, value = check_quotes_error(wb_name, str(get_cell_text(row[3])), i, "import_ssml_rules_excel")
                 if value != "":
                     rules.append([pre, key, post, value])
 
@@ -653,7 +652,7 @@ def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None 
         for i in range(2, ws.max_row + 1):
             row = ws[i]
 
-            error, original = check_quotes_error(wb_name, str(get_cell_value(row[0])), i, "import_hunspell_PreCheck_excel")
+            error, original = check_quotes_error(wb_name, str(get_cell_text(row[0])), i, "import_hunspell_PreCheck_excel")
             if not error and original != "":
                 if wb_name == "specialDot":
                     abbreviations_with_dot.append(original)

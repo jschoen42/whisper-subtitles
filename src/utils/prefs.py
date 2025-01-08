@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 08.01.2025
 
     PUBLIC:
     class Prefs:
@@ -27,7 +27,7 @@ from utils.file    import beautify_path
 class Prefs:
     pref_path: Path = BASE_PATH / "prefs"
     pref_prefix: str = ""
-    data: dict = {}
+    data: Dict = {}
 
     @classmethod
     def init(cls, pref_path: Path | str | None = None, pref_prefix: str | None = None ) -> None:

@@ -1,6 +1,5 @@
-
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 06.01.2025
 
     PUBLIC:
      - precheck_models(models: List) -> bool
@@ -175,15 +174,19 @@ def transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp
         return None
     else:
         file_info = get_file_infos( path_media, media_name + "." + media_type,  media_type )
+        if file_info is None:
+            return None
 
         with open(media_pathname, "rb") as f:
             file = f.read()
             media_md5 = hashlib.md5(file).hexdigest()
             media_info = get_media_info(io.BytesIO(file))
+            if media_info is None:
+                return None
 
     duration = time.time() - start_time
 
-    result = {
+    result: Dict = {
         "version": {
             "python": sys.version,
             "faster-whisper": faster_whisper.__version__,
@@ -271,7 +274,7 @@ def transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp
 
                 file_info = get_file_infos( path_json, file_name, "json" )
                 if file_info is None:
-                    Trace.fatal( f"{file_path}" )
+                    return None
 
                 timestamp = get_modification_timestamp(file_path)
 

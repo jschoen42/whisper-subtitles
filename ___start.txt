@@ -3,18 +3,13 @@ bash: source .venv/Scripts/activate
 deactivate
 
 python src/main.py
-uv run src/main.py
+python src/reset.py
+python src/audio.py
+python src/combine_srt.py
+python src/update_excel.py
 
-python src/_test_spelling.py
-python src/_final_srt_vtt.py
-python src/_update_excel.py
-
-python src/_reset.py
-
-python src/_audio.py
-python src/_combine_srt.py
-python src/_test_load_spacy.py
-python src/_test_prefs.py
-python src/_test_spacy.py
-python src/_test_stanza.py
-
+uv run __mypy.py src/main.py
+uv run __mypy.py src/reset.py
+uv run __mypy.py src/audio.py
+uv run __mypy.py src/combine_srt.py
+uv run __mypy.py src/update_excel.py

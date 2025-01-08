@@ -1,6 +1,5 @@
-
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 06.01.2025
 
     PUBLIC:
      - load_model_whisper(model_name: str) -> Any
@@ -135,6 +134,8 @@ def transcribe_whisper_timestamped(project_params: Dict, media_params: Dict, cac
             file = f.read()
             media_md5 = hashlib.md5(file).hexdigest()
             media_info = get_media_info(io.BytesIO(file))
+            if media_info is None:
+                return None
 
     settings: Dict = {}
     settings["language"] = language

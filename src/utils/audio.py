@@ -1,5 +1,5 @@
 """
-    (c) Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 20.12.2024
 
     PUBLIC:
      - split_audio(source_path: Path | str, dest_path: Path | str, filename: str, ffmpeg: str) -> None

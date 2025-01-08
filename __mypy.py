@@ -4,26 +4,30 @@ import sys
 import subprocess
 import platform
 
+from typing import List
 from pathlib import Path
 from datetime import datetime
 
 BASE_PATH = Path(sys.argv[0]).parent.parent.resolve()
 
-def run_mypy():
+def run_mypy() -> None:
 
-    settings = [
+    settings: List[str] = [
         "--disallow-untyped-calls",
         "--disallow-untyped-defs",
         "--disallow-incomplete-defs",
-
-        "src/main.py"
     ]
 
-    print(f"Python:   {sys.version}")
-    print(f"Platform: {platform.platform()}")
-    print(f"Date:     {datetime.now()}")
-    print(f"Path:     {BASE_PATH}")
-    print()
+    filepath = Path(sys.argv[1]).stem
+
+    # print( sys.argv[1:] + settings )
+    # sys.exit()
+
+    text =  f"Python:   {sys.version}\n"
+    text += f"Platform: {platform.platform()}\n"
+    text += f"Date:     {datetime.now()}\n"
+    text += f"Path:     {BASE_PATH}\n"
+    text += "\n"
 
     result = subprocess.run(["mypy"] + (settings + sys.argv[1:]), capture_output=True, text=True)
 
@@ -33,10 +37,13 @@ def run_mypy():
             file_path = line.split(":")[0]
             if file_path != current_file:
                 if current_file is not None:
-                    print()
+                    text += "\n"
                 current_file = file_path
 
-        print(line)
+        text += f"{line}\n"
+
+    with open(f"__mypy-{filepath}.txt", "w") as file:
+        file.write(text)
 
     sys.exit(result.returncode)
 

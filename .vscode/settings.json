@@ -1,41 +1,41 @@
 {
   "explorer.compactFolders": false,
-  "editor.fontSize": 13,
-  "editor._fontFamily": "Consolas, 'Courier New', monospace",
+
+  "editor.fontSize": 12,
+  "editor.fontFamily": "Cascadia Code NF, Consolas, Courier New, monospace",
+  "editor.fontWeight": 400,
+  "editor.lineHeight": 1.4,
+  "editor.fontLigatures": true,
+
   "editor.insertSpaces": true,
   "files.trimTrailingWhitespace": true,
+
   "editor._autoClosingQuotes": "never",
   "editor._autoSurround": "never",
+
   "terminal.integrated.minimumContrastRatio": 7,
   "[html]": {
     "editor.formatOnSave": true,
     "editor.tabSize": 2,
-    "editor.formatOnType": true
+    "editor.formatOnType": true,
   },
   "[css]": {
     "editor.formatOnSave": true,
     "editor.tabSize": 2,
-    "editor.formatOnType": true
+    "editor.formatOnType": true,
   },
   "[json]": {
     "editor.formatOnSave": true,
     "editor.tabSize": 2,
-    "editor._fontFamily": "'Ubuntu Mono', Consolas",
-    "editor._fontWeight": 400,
-    "editor._lineHeight": 1.4,
-    "editor._fontSize": 14,
     "editor.quickSuggestions": {
       "strings": true
     },
-    "editor.suggest.insertMode": "replace"
+    "editor.suggest.insertMode": "replace",
+    "editor.fontLigatures": false,
   },
   "[yaml]": {
     "editor.tabSize": 4,
-    "editor._fontFamily": "'Roboto Mono', 'Ubuntu Mono', Consolas",
-    "editor._fontLigatures": true,
-    "editor._fontWeight": 400,
-    "editor._fontSize": 12,
-    "editor.lineHeight": 1.3,
+    "editor.fontLigatures": false,
   },
   "[python]": {
     "editor.tabSize": 4,
@@ -44,11 +44,10 @@
     "editor.suggest.insertMode": "insert",
     "editor.autoClosingBrackets": "never",
     "editor.suggestOnTriggerCharacters": false,
-    "python.analysis.typeCheckingMode": "on",
     "editor.quickSuggestions": {
       "comments": "off",
       "strings": "on",
-      "other": "on"
+      "other": "on",
     }
   },
   "python.analysis.exclude": [
@@ -65,6 +64,6 @@
   "errorLens.delay": 2000,
   "errorLens.followCursor": "activeLine",
   "markdownlint.config": {
-    "MD041": false
+    "MD041": false,
   }
 }

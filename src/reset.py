@@ -11,7 +11,7 @@ from utils.file  import delete_folder_tree, get_folders_in_folder
 
 PROJECTS: str = "projects_all.yaml"  # "projects.yaml", "projects_all.yaml"
 
-def reset_project_data(project_path) -> None:
+def reset_project_data(project_path: str) -> None:
 
     # folders = ["99_trace" ]
     folders = ["06_text", "08_vtt", "09_srt", "10_excelExport", "99_trace" ]
@@ -21,7 +21,7 @@ def reset_project_data(project_path) -> None:
 
     Trace.result(f"reset '{project_path}'")
 
-def clear_cache_spacy(project_path) -> None:
+def clear_cache_spacy(project_path: str) -> None:
     path_base = Path("../data", project_path, "05_json")
 
     folders = get_folders_in_folder(path_base)

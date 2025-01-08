@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 06.01.2025
+    © Jürgen Schoenemeyer, 07.01.2025
 
     class Trace:
       - Trace.set(debug_mode=True)
@@ -51,8 +51,8 @@ system = platform.system()
 if system == "Windows":
     import msvcrt
 else:
-    import tty
-    import termios
+    import tty             # type: ignore
+    import termios as term # type: ignore
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 
@@ -308,13 +308,20 @@ class Trace:
                     key = msvcrt.getch()
                     print()
                 else:
+
+                    # unix terminal
+
                     fd = sys.stdin.fileno()
-                    old_settings = termios.tcgetattr(fd)
+                    old_settings = term.tcgetattr(fd)  # type: ignore
                     try:
-                        tty.setraw(sys.stdin.fileno())
-                        key = sys.stdin.read(1)
+                        tty.setraw(sys.stdin.fileno()) # type: ignore
+                        key = sys.stdin.read(1)        # type: ignore
                     finally:
-                        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+                        term.tcsetattr(                # type: ignore
+                            fd,                        # type: ignore
+                            term.TCSADRAIN,            # type: ignore
+                            old_settings
+                        )
                         print()
 
                 if key == b"\x1b":
@@ -326,8 +333,16 @@ class Trace:
 
     @classmethod
     def __check_file_output(cls) -> bool:
-        trace_type = inspect.currentframe().f_back.f_code.co_name
-        return trace_type in list(cls.pattern)
+        current_frame = inspect.currentframe()
+        if current_frame is None:
+            return False
+
+        caller_frame = current_frame.f_back
+        if caller_frame is None:
+            return False
+
+        trace_type = caller_frame.f_code.co_name
+        return trace_type in cls.pattern
 
     @classmethod
     def __get_time_timezone(cls, tz: bool | str) -> str:
@@ -336,7 +351,7 @@ class Trace:
 
         elif tz is True:
             d = datetime.now().astimezone()
-            return tz.strftime("%H:%M:%S.%f")[:-3] + d.strftime("%z")
+            return d.strftime("%H:%M:%S.%f")[:-3] + d.strftime("%z")
 
         else:
             try:
@@ -360,11 +375,19 @@ class Trace:
 
     @staticmethod
     def __get_pattern() -> str:
-        trace_type = inspect.currentframe().f_back.f_code.co_name
+        current_frame = inspect.currentframe()
+        if current_frame is None:
+            return pattern["clear"]
+
+        caller_frame = current_frame.f_back
+        if caller_frame is None:
+            return pattern["clear"]
+
+        trace_type = caller_frame.f_code.co_name
         if trace_type in pattern:
             return pattern[trace_type]
-        else:
-            return pattern["clear"]
+
+        return pattern["clear"]
 
     @classmethod
     def __get_caller(cls) -> str:
@@ -374,15 +397,30 @@ class Trace:
         path = inspect.stack()[2][1].replace("\\", "/")
         path = path.split(cls.settings["appl_folder"])[-1]
 
-        lineno = str(inspect.currentframe().f_back.f_back.f_lineno).zfill(3)
+        current_frame = inspect.currentframe()
+        if current_frame is None:
+            return ""
 
-        caller = inspect.currentframe().f_back.f_back.f_code.co_qualname # .co_qualname (erst ab 3.11)
+        caller_frame = current_frame.f_back
+        if caller_frame is None:
+            return ""
+
+        trace_frame = caller_frame.f_back
+        if trace_frame is None:
+            return ""
+
+        line_no = str(trace_frame.f_lineno).zfill(3)
+
+        # line_no = str(inspect.currentframe().f_back.f_back.f_lineno).zfill(3)
+        # caller = inspect.currentframe().f_back.f_back.f_code.co_qualname
+
+        caller = trace_frame.f_code.co_qualname # .co_qualname (3.11 or newer)
         caller = caller.replace(".<locals>.", " → ")
 
         if caller == "<module>":
-            return f"\t{Color.BLUE}[{path}:{lineno}]{Color.RESET}\t"
+            return f"\t{Color.BLUE}[{path}:{line_no}]{Color.RESET}\t"
         else:
-            return f"\t{Color.BLUE}[{path}:{lineno} » {caller}]{Color.RESET}\t"
+            return f"\t{Color.BLUE}[{path}:{line_no} » {caller}]{Color.RESET}\t"
 
     @classmethod
     def __get_custom_caller(cls, text: str) -> str:
