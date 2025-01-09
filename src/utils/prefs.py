@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 08.01.2025
+    © Jürgen Schoenemeyer, 09.01.2025
 
     PUBLIC:
     class Prefs:
@@ -72,20 +72,25 @@ class Prefs:
         return cls.data
 
     @classmethod
-    def get(cls, key: str) -> Any:
+    def get(cls, key_path: str, default:Any = None) -> Any:
 
-        def get_pref_key(key_path: str) -> Any:
+        def get_pref_key(key_path: str) -> Any: # key_path = "one.two.three" -
             keys = key_path.split(".")
 
             data = cls.data
+
             for key in keys:
-                if key in data:
-                    data = data[key]
-                else:
-                    Trace.fatal(f"unknown pref: {key}")
+                if data is None or key not in data:
+                    if default is None:
+                        Trace.fatal(f"unknown pref '{key_path}'")
+
+                    Trace.info(f"unknown pref '{key_path}' -> {default}")
+                    return default
+
+                data = data[key]
             return data
 
-        result = get_pref_key(key)
+        result = get_pref_key(key_path)
 
         # pref.yaml
         #   filename:  'data.xlsx'
@@ -108,7 +113,7 @@ class Prefs:
         try:
             ret = json.loads(tmp)
         except JSONDecodeError as err:
-            Trace.error(f"json error: {key} -> {tmp} ({err})")
+            Trace.error(f"json error: {key_path} -> {tmp} ({err})")
             ret = ""
 
         return ret

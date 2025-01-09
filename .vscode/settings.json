@@ -34,11 +34,13 @@
     "editor.fontLigatures": false,
   },
   "[yaml]": {
-    "editor.tabSize": 4,
+    "editor.tabSize": 2,
+    "editor.indentSize": 2,
     "editor.fontLigatures": false,
   },
   "[python]": {
     "editor.tabSize": 4,
+    "editor.indentSize": 4,
     "editor.formatOnType": true,
     "editor.acceptSuggestionOnEnter": "on",
     "editor.suggest.insertMode": "insert",

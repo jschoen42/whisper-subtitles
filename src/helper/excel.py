@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 08.01.2025
+    © Jürgen Schoenemeyer, 09.01.2025
 
     PUBLIC:
      - import_project_excel(pathname: str, filename: str, inType: str) -> Dict:
@@ -591,7 +591,7 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict:
         return template, rules
 
     result = {}
-    trace_details = ""
+    trace_details = "import"
 
     for wb_name in wb.sheetnames:
         if wb_name[:1] == "-":

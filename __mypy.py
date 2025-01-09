@@ -1,4 +1,5 @@
-# python __mypy.py > __mypy-result-00.txt
+# python __mypy.py src/main.py
+# uv run __mypy.py src/main.py
 
 import sys
 import subprocess

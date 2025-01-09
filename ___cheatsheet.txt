@@ -50,15 +50,11 @@ uv remove ...
 uv add --dev ...
 
 uv add torch<2.5
-uv add openai-whisper
-uv add whisper-timestamped
-uv add spylls spacy<3.9 spacy_curated_transformers<1
 
-uv add tzdata PyYAML arrow
-uv add openpyxl openpyxl-stubs
-uv add webvtt-py pymediainfo
+-------------- upgrade packages ---------------
 
-uv add av<13 ctranslate2<5 huggingface_hub tokenizers<1 onnxruntime<2
+uv lock --upgrade
+uv sync
 
 ------------------ licenses  -------------------
 
@@ -66,7 +62,7 @@ uv add pip-licenses
 pip-licenses > __licenses.txt
 uv remove pip-licenses
 
------------------- install Python -------------------
+---------------- install Python ----------------
 
 uv python list
 

@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 07.01.2025
+    © Jürgen Schoenemeyer, 09.01.2025
 
     PUBLIC:
      - get_modification_timestamp(filename: Path | str) -> float
@@ -76,7 +76,7 @@ def set_modification_timestamp(filename: Path | str, timestamp: float) -> None:
 
 # check
 
-def check_path_exists(path: str) -> bool:
+def check_path_exists(path: Path | str) -> bool:
     return os.path.exists(path)
 
 def check_file_exists(filepath: Path | str, filename: str) -> bool: # case sensitive
@@ -114,22 +114,27 @@ def check_excel_file_exists(filename: Path | str) -> bool:
 def list_files(path: Path | str, extensions: List) -> Tuple[List, List]:
     path = Path(path)
 
+    extensions = list({ext.lstrip(".") for ext in extensions})
+
     files: List = []
     dirs: List = []
-    try:
-        for filename in os.listdir(path):
-            filepath = os.path.join(path, filename)
 
-            if os.path.isfile(filepath):
-                for extention in extensions:
-                    if "." + extention in filename:
-                        files.append(filename)
-                        break
-            else:
-                dirs.append(filename)
+    if not check_path_exists(path):
+        Trace.error( f"folder not found '{path.as_posix()}'" )
+        return files, dirs
 
-    except OSError as err:
-        Trace.error(f"{err}")
+    for file in os.listdir(path):
+        if file.startswith("~"):
+            Trace.warning(f"skip temp file '{file}'")
+            continue
+
+        if os.path.isfile(path / file):
+            for extention in extensions:
+                if "." + extention in file:
+                    files.append(file)
+                    break
+        else:
+            dirs.append(file)
 
     return files, dirs
 
