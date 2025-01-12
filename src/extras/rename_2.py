@@ -4,6 +4,7 @@
 import os
 import sys
 
+from typing import List
 from pathlib import Path
 
 from utils.globals import BASE_PATH
@@ -146,7 +147,7 @@ def rename_project(project_path):
 
         folders = get_folders_in_folder( path )
 
-        check_folder = []
+        check_folder: List[str] = []
         for folder in folders:
             if folder[0] == "[":
                 continue
@@ -154,7 +155,7 @@ def rename_project(project_path):
             new_foldername = convert_foldername(folder)
 
             if new_foldername in check_folder:
-                Trace.error( check_folder )
+                Trace.error( f"{check_folder}" )
                 Trace.fatal( f"{project_path}/{main_folder} duplicate folder '{new_foldername}'" )
             else:
                 check_folder.append(new_foldername)

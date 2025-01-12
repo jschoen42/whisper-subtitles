@@ -23,6 +23,8 @@ def compare_file(folderpath: str, project: str, pattern: str) -> None:
     for file_info in file_infos:
         first  = import_json(folderpath, file_info[0])
         second = import_json(folderpath, file_info[1])
+        if first is None or second is None:
+            continue
 
         first_text  = first["text"]
         second_text = second["text"]

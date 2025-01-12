@@ -17,7 +17,7 @@ def main() -> None:
     Prefs.init("settings")
     Prefs.load(PROJECTS)
 
-    if not Prefs.load( PROJECTS, False ):
+    if not Prefs.load( PROJECTS ):
         Trace.fatal("pref error empty")
 
     for project in Prefs.get("projects"):
@@ -31,7 +31,11 @@ def main() -> None:
         ut = 0
         for file in os.listdir(video_path):
             if file.split(".")[-1] == "srt":
-                captions, words, types = import_caption( video_path, file )
+                captions_info = import_caption( video_path, file )
+                if captions_info is None:
+                    continue
+
+                captions, words, types = captions_info
 
                 sum_words += words
                 sum_types[0] += types[0]
