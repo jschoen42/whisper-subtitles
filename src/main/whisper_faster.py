@@ -15,7 +15,7 @@ import hashlib
 import logging
 import platform
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 from pathlib import Path
 
 import arrow
@@ -44,7 +44,7 @@ current_model: Any = None
 logging.basicConfig()
 logging.getLogger("faster_whisper").setLevel(logging.DEBUG)
 
-def precheck_models(models: List) -> bool:
+def precheck_models(models: List[Tuple[str, str]]) -> bool:
     error = False
     for model in models:
         if search_model_path( model[1] ) is None:
@@ -125,7 +125,7 @@ def model_loaded_faster_whisper(model_name: str) -> None | WhisperModel:
     else:
         return None
 
-def transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> None | Dict:
+def transcribe_fasterwhisper(project_params: Dict[str, Any], media_params: Dict[str, Any], cache_nlp: CacheJSON) -> None | Dict[str, Any]:
     global current_model
 
     # inModelID     = project_params["modelNumber"]
@@ -186,7 +186,7 @@ def transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp
 
     duration = time.time() - start_time
 
-    result: Dict = {
+    result: Dict[str, Any] = {
         "version": {
             "python": sys.version,
             "faster-whisper": faster_whisper.__version__,
@@ -263,9 +263,9 @@ def transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp
     cached, timestamp = import_json_timestamp(path_json, filename_two + ".json", show_error=False)
 
     if cached:
-        md5 = None
+        md5: str = ""
         if "md5" in cached:  # header v1
-            md5 = cached["md5"]
+            md5 = cached["md5"] # type: ignore
 
             if md5 == media_md5: # migrate from v1 -> v2 (b)
 
@@ -279,17 +279,17 @@ def transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp
                 timestamp = get_modification_timestamp(file_path)
 
                 result["created"]  = file_info["date"]
-                result["language"] = cached["language"].split("-")[0]
+                result["language"] = str(cached["language"]).split("-")[0]
                 result["text"]     = cached["text"]
                 result["segments"] = cached["segments"]
 
                 export_json(path_json, file_name, result)
                 set_modification_timestamp(file_path, timestamp)
 
-        if "media" in cached and "md5" in cached["media"]: # headerv2
-            md5 = cached["media"]["md5"]
+        if "media" in cached and "md5" in cached["media"]: # type: ignore # header v2
+            md5 = cached["media"]["md5"]                   # type: ignore
 
-        if md5 is None:
+        if md5 == "":
             Trace.fatal(f"unknown cache format {Path(path_json, filename_two + ".json")}")
 
         if md5 == media_md5:
@@ -409,7 +409,7 @@ def transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp
 
     nlp_name = " [" + modelname_nlp + "]"
 
-    text = result["text"].strip() + "\n" + text_combined + "\n\n" + text
+    text = str(result["text"]).strip() + "\n" + text_combined + "\n\n" + text
     export_text(Path(path_text, whisper_parameter + nlp_name), filename_two + ".txt", text, timestamp = timestamp)
 
     curr_subfolder = ""
@@ -420,7 +420,7 @@ def transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp
     export_text(Path(path_vtt, whisper_parameter + nlp_name, curr_subfolder), media_name + ".vtt", export_vtt(cc), timestamp = timestamp)
 
     sentence_data = split_to_sentences(words, dictionary_data)
-    export_TextToSpeech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx")
+    export_TextToSpeech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx") # type: ignore # SubtitleColumnFormat
 
     return {
         "text":            text_combined,

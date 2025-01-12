@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 09.01.2025
+    © Jürgen Schoenemeyer, 12.01.2025
 
     PUBLIC:
      - get_modification_timestamp(filename: Path | str) -> float
@@ -46,12 +46,12 @@ import hashlib
 import datetime
 import filecmp
 
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 from os.path import isfile, isdir, join
 from pathlib import Path
 
 try:
-    from dateutil.parser import parse
+    from dateutil import parser
 except ImportError:
     pass
 
@@ -111,13 +111,13 @@ def check_excel_file_exists(filename: Path | str) -> bool:
 
 # dir Listing
 
-def list_files(path: Path | str, extensions: List) -> Tuple[List, List]:
+def list_files(path: Path | str, extensions: List[str]) -> Tuple[List[str], List[str]]:
     path = Path(path)
 
     extensions = list({ext.lstrip(".") for ext in extensions})
 
-    files: List = []
-    dirs: List = []
+    files: List[str] = []
+    dirs: List[str] = []
 
     if not check_path_exists(path):
         Trace.error( f"folder not found '{path.as_posix()}'" )
@@ -138,10 +138,10 @@ def list_files(path: Path | str, extensions: List) -> Tuple[List, List]:
 
     return files, dirs
 
-def list_directories(path: Path | str) -> List:
+def list_directories(path: Path | str) -> List[str]:
     path = Path(path)
 
-    ret: List = []
+    ret: List[str] = []
     try:
         for file in os.listdir(path):
             if os.path.isdir(os.path.join(path, file)):
@@ -153,10 +153,10 @@ def list_directories(path: Path | str) -> List:
 
 #  extensions: [".zip", ".story", ".xlsx", ".docx"], None => all
 
-def listdir_match_extention(folder_path: Path | str, extensions: List | None = None) -> List:
+def listdir_match_extention(folder_path: Path | str, extensions: List[str] | None = None) -> List[str]:
     folder_path = Path(folder_path)
 
-    ret: List = []
+    ret: List[str] = []
     files = os.listdir(folder_path)
     for file in files:
         if (folder_path / file).is_file():
@@ -267,10 +267,10 @@ def _increment_filename(filename_stem: str) -> str:
 
     return filename_stem
 
-def get_files_in_folder( path: Path ) -> List:
+def get_files_in_folder( path: Path ) -> List[str]:
     return [f for f in os.listdir(path) if isfile(join(path, f))]
 
-def get_folders_in_folder( path: Path ) -> List:
+def get_folders_in_folder( path: Path ) -> List[str]:
     return [f for f in os.listdir(path) if isdir(join(path, f))]
 
 def get_save_filename( path: Path, stem: str, suffix: str ) -> str:
@@ -436,7 +436,7 @@ def get_valid_filename(name: str) -> str:
     #    raise SuspiciousFileOperation("Could not derive file name from '%s'" % name)
     return s
 
-def get_file_infos(path: Path | str, filename: str, _in_type: str) -> None | Dict:
+def get_file_infos(path: Path | str, filename: str, _in_type: str) -> None | Dict[str, Any]:
     filepath = Path(path, filename)
 
     if os.path.isfile(filepath):
@@ -479,7 +479,7 @@ def copy_my_file(source: str, dest: str, _show_updated: bool) -> bool:
     return True
 
 def convert_datetime(time_string: str) -> int:
-    my_time_string = parse(time_string.replace("UTC", ""))
+    my_time_string = parser.parse(time_string.replace("UTC", ""))
 
     my_timestamp = int(datetime.datetime.timestamp(my_time_string))
 

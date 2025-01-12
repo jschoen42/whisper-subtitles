@@ -10,7 +10,7 @@
 import re
 import warnings
 
-from typing import Any, List, Tuple
+from typing import Any, Dict, List, Tuple
 from pathlib import Path
 from importlib.metadata import version
 
@@ -60,7 +60,7 @@ def get_modelname_spacy(language: str) -> str:
     if language.split("-")[0] == "en":
         model_name = Prefs.get("spacy." + spacy_version + ".model_name.en")
 
-    return model_name
+    return str(model_name)
 
 ###########################################################################
 #
@@ -70,11 +70,11 @@ def get_modelname_spacy(language: str) -> str:
 
 def split_sentences(text: str) -> List[Tuple[str, str]]:
     doc = nlp(text)
-    result: List = []
+    result: List[Tuple[str, str]] = []
     main_clause = ""
 
     for token in doc:
-        print( token.text, token.pos_, token.dep_ )
+        Trace.info(f"{token.text =} {token.pos_ =} {token.dep_ =}")
 
         if token.pos_ == "SCONJ" or token.dep_ == "mark":
             if main_clause:
@@ -95,7 +95,7 @@ def split_sentences(text: str) -> List[Tuple[str, str]]:
     return result
 
 @duration("spacy - analyse sentences")
-def analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[List, List]:
+def analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[List[int], List[int]]:
     # global nlp
 
     if text == "":
@@ -125,7 +125,7 @@ def analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[List, L
     if text[0] == " ":
         min_idx = 1
 
-    for i, token in enumerate(tokens):
+    for _i, token in enumerate(tokens):
         token_info = {
             "idx":      token.idx,
             "text":     token.text,
@@ -180,7 +180,7 @@ def analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[List, L
 # token.shape --> '.', ',', 'xx', 'xxx', 'xxxx', 'Xx', 'Xxx', 'Xxxx', 'Xxxxx', 'Xxxxx-Xxxxx', '§', 'd', 'dd'
 
 
-def analyse_noun_nlp(text: str, language: str = "de-DE") -> dict:
+def analyse_noun_nlp(text: str, language: str = "de-DE") -> Dict[str, Any]:
     # global nlp
 
     if not nlp:
@@ -215,7 +215,7 @@ def analyse_noun_nlp(text: str, language: str = "de-DE") -> dict:
     return warn_list
 
 
-def analyse_nlp(_string_id: str, text: str, language: str = "de-DE") -> List:
+def analyse_nlp(_string_id: str, text: str, language: str = "de-DE") -> List[Dict[str, Any]]:
     # global nlp
 
     if not nlp:

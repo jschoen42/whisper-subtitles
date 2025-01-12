@@ -10,7 +10,7 @@
 
 import io
 
-from typing import Dict, List
+from typing import Any, Dict, List
 from pathlib import Path
 from typing import Tuple
 
@@ -21,7 +21,7 @@ from utils.util import import_json
 from utils.metadata import get_audio_duration, get_video_metadata, get_audio_metadata
 # from utils.metadata_mutagen import get_audio_metadata_mutagen, get_video_metadata_mutagen
 
-def analyse_results(model_id: str, model_name: str, media_type: str, media_name: str, media_path: str, json_path: str, _info_path: str, _analyse_path: str, beam_size: int) -> None | Dict:
+def analyse_results(model_id: str, model_name: str, media_type: str, media_name: str, media_path: str, json_path: str, _info_path: str, _analyse_path: str, beam_size: int) -> None | Dict[str, Any]:
 
     condition_on_previous_text = True
     if model_name == "large-v3":
@@ -74,8 +74,8 @@ def analyse_results(model_id: str, model_name: str, media_type: str, media_name:
         "words_per_minute": words_per_minute,
     }
 
-def show_parts_results(project: str, results: List[Dict]) -> Tuple[int, int]:
-    words_per_minute = []
+def show_parts_results(project: str, results: List[Dict[str, Any]]) -> Tuple[int, int]:
+    words_per_minute: List[float] = []
 
     duration = 0
     words = 0
@@ -98,10 +98,11 @@ def get_video_length(path: Path | str, filename: str) -> None | float:
         with open(Path(path, filename), "rb") as media_file:
             media_data = media_file.read()
 
-            media_details = get_video_metadata(io.BytesIO(media_data))
+            media_details: None |Dict[str, Any] = get_video_metadata(io.BytesIO(media_data))
             if media_details is None:
                 return None
-            media_duration = media_details["duration"]
+
+            media_duration: float = media_details["duration"]
 
         return media_duration
 

@@ -10,62 +10,66 @@
   "editor.insertSpaces": true,
   "files.trimTrailingWhitespace": true,
 
-  "editor._autoClosingQuotes": "never",
-  "editor._autoSurround": "never",
+  "editor.autoClosingQuotes": "never",
+  "editor.autoSurround": "never",
 
   "terminal.integrated.minimumContrastRatio": 7,
   "[html]": {
-    "editor.formatOnSave": true,
-    "editor.tabSize": 2,
-    "editor.formatOnType": true,
+      "editor.formatOnSave": true,
+      "editor.tabSize": 2,
+      "editor.formatOnType": true
   },
   "[css]": {
-    "editor.formatOnSave": true,
-    "editor.tabSize": 2,
-    "editor.formatOnType": true,
+      "editor.formatOnSave": true,
+      "editor.tabSize": 2,
+      "editor.formatOnType": true
   },
   "[json]": {
-    "editor.formatOnSave": true,
-    "editor.tabSize": 2,
-    "editor.quickSuggestions": {
-      "strings": true
-    },
-    "editor.suggest.insertMode": "replace",
-    "editor.fontLigatures": false,
+      "editor.formatOnSave": true,
+      "editor.tabSize": 2,
+      "editor.quickSuggestions": {
+          "strings": true
+      },
+      "editor.suggest.insertMode": "replace",
+      "editor.fontLigatures": false
   },
   "[yaml]": {
-    "editor.tabSize": 2,
-    "editor.indentSize": 2,
-    "editor.fontLigatures": false,
+      "editor.tabSize": 2,
+      "editor.indentSize": 2,
+      "editor.fontLigatures": false
   },
   "[python]": {
-    "editor.tabSize": 4,
-    "editor.indentSize": 4,
-    "editor.formatOnType": true,
-    "editor.acceptSuggestionOnEnter": "on",
-    "editor.suggest.insertMode": "insert",
-    "editor.autoClosingBrackets": "never",
-    "editor.suggestOnTriggerCharacters": false,
-    "editor.quickSuggestions": {
-      "comments": "off",
-      "strings": "on",
-      "other": "on",
-    }
+      "editor.tabSize": 4,
+      "editor.indentSize": 4,
+      "editor.formatOnType": true,
+      "editor.acceptSuggestionOnEnter": "on",
+      "editor.suggest.insertMode": "insert",
+      "editor.autoClosingBrackets": "never",
+      "editor.suggestOnTriggerCharacters": false,
+      "editor.quickSuggestions": {
+          "comments": "off",
+          "strings": "on",
+          "other": "on"
+      }
   },
   "python.analysis.exclude": [
-    "data/**",
-    "result/**",
-    ".git/**",
-    ".venv/**",
-    ".mypy_cache/**",
-    "**/__pycache__/**",
-    "dist/**",
-    "build/**",
+      "data/**",
+      "result/**",
+      ".git/**",
+      ".venv/**",
+      ".mypy_cache/**",
+      "**/__pycache__/**",
+      "dist/**",
+      "build/**"
   ],
+  "python.analysis.diagnosticSeverityOverrides": {
+      "reportUnnecessaryTypeIgnoreComment": "none",
+  },
+  "python.analysis.typeCheckingMode": "off",
   "_errorLens.codeLensEnabled": true,
   "errorLens.delay": 2000,
   "errorLens.followCursor": "activeLine",
   "markdownlint.config": {
-    "MD041": false,
+      "MD041": false
   }
 }

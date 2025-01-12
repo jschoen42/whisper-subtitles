@@ -57,7 +57,7 @@ def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "d
         else:
             Trace.fatal(f"unsupported language '{language}'")
 
-def spellcheck(words: List, debug: bool=False) -> Dict[str, int]:
+def spellcheck(words: List[str], debug: bool=False) -> Dict[str, int]:
     if global_dictionary_data is None:
         Trace.error("'global_dictionary_data' not loaded")
         return {}
@@ -65,7 +65,7 @@ def spellcheck(words: List, debug: bool=False) -> Dict[str, int]:
     def check_multiple_words(word: str, index: int) -> int:
         found = False
 
-        word_info: List = []
+        word_info: List[str] = []
         for word_info in global_precheck_multiple_words:
             if word == word_info[0]:
                 found = True

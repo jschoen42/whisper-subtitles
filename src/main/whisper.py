@@ -49,7 +49,7 @@ def search_model_path(model_name: str) -> None | str:
         Trace.fatal(f"'{model_name}.pt' not found")
         return None
 
-    return model_path
+    return str(model_path)
 
 def load_model_whisper(model_name: str) -> Any:
     global current_model_name
@@ -76,7 +76,7 @@ def load_model_whisper(model_name: str) -> Any:
         Trace.error(f"no model_path for '{model_name}'")
         return None
 
-def transcribe_whisper(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> None | Dict:
+def transcribe_whisper(project_params: Dict[str, Any], media_params: Dict[str, Any], cache_nlp: CacheJSON) -> None | Dict[str, Any]:
     global current_model
 
     # inModelID     = project_params["modelNumber"]
@@ -144,7 +144,7 @@ def transcribe_whisper(project_params: Dict, media_params: Dict, cache_nlp: Cach
             if media_info is None:
                 return None
 
-    settings: Dict = {}
+    settings: Dict[str, Any] = {}
     settings["language"] = language
     settings["duration"] = media_info["duration"]
     settings["transcription_options"] = param
@@ -245,7 +245,7 @@ def transcribe_whisper(project_params: Dict, media_params: Dict, cache_nlp: Cach
     export_text(Path(path_vtt, whisper_parameter + nlp_name, curr_subfolder), media_name + ".vtt", export_vtt(cc))
 
     sentence_data = split_to_sentences(words, dictionary_data)
-    export_TextToSpeech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx")
+    export_TextToSpeech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx") # type: ignore # SubtitleColumnFormat
 
     return {
         "text":            text_combined,

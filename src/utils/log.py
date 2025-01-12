@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 04.01.2025
+    © Jürgen Schoenemeyer, 10.01.2025
 
     PUBLIC:
      - log_clear()
@@ -8,11 +8,11 @@
     #
     class DictionaryLog:
      - add(self, data: Dict, data_spelling: Dict) -> None
-     - get(self) -> Tuple[dict, Dict, Dict]
+     - get(self) -> Tuple[Dict, Dict, Dict]
 
 """
 
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, TypedDict, List, Tuple
 
 global_complete_text: str = ""
 global_complete_text_corr: str = ""
@@ -106,44 +106,57 @@ def log_get_data() -> Tuple[str, str]:
 #
 #  (*) _dictionary/Dictionary-DATEV.xlsx: used word replace
 #
+#  init: List[str]
 #  init: ["normalize", "allgemein", "urls", "Fallbeispiele", "spezielles"]
 #
+#  add: data:          Dict[str, DictionaryEntry],
+#       data_spelling: Dict[str, int]
 #  add: { "[abc] -> [aBc]": {"count": 2, "worksheet": "allgemein", "row": 126}, ... }
 #       { "HV": 1, "K6": 1, ... }
 #
+#  get: Tuple[
+#           Dict[str, Dict[int, int]],
+#           Dict[str, int],
+#           Dict[str, int]]
+#       ]
 #  get: (
-#          { "allgemein": {126: 2, 400: 1, 1165: 3, ... }, }
-#          { "[abc] -> [aBc]": 2, "[def] -> [deF]" 1, ... }
-#          { "HV": 1, "K6": 4, ... }
-#      )
+#          { "allgemein": {126: 2, 400: 1, 1165: 3, ... }, } # excel used
+#          { "[abc] -> [aBc]": 2, "[def] -> [deF]" 1, ... }  # word replaced
+#          { "HV": 1, "K6": 4, ... }                         # spelling
+#       )
 #
 #######################################################################################
 
+class DictionaryEntry(TypedDict):
+    worksheet: str
+    row:       int
+    count:     int
+
 class DictionaryLog:
-    def __init__(self, data: Dict) -> None:
-        self.spelling: Dict[str, int]      = {}
-        self.word_replaced: Dict[str, int] = {}
-        self.excel_used: Dict[str, Dict]   = {}
+    def __init__(self, data: List[str]) -> None:
+        self.excel_used: Dict[str, Dict[int, int]] = {} # { "allgemein": {126: 2, 400: 1, 1165: 3, ... }
+        self.word_replaced: Dict[str, int] = {}         # { "[abc] -> [aBc]": 2, "[def] -> [deF]" 1, ... }
+        self.spelling: Dict[str, int]      = {}         # { "HV": 1, "K6": 4, ... }
 
-        for value in data:
-            self.excel_used[value] = {}
+        for key in data:
+            self.excel_used[key] = {}
 
-    def add(self, data: Dict, data_spelling: Dict) -> None:
-
+    def add(self, data: Dict[str, DictionaryEntry], data_spelling: Dict[str, int]) -> None:
         for key, value in data.items():
 
             # word replace
 
+            count = value["count"]
+
             if key in self.word_replaced:
-                self.word_replaced[key] += value["count"]
+                self.word_replaced[key] += count
             else:
-                self.word_replaced[key]  = value["count"]
+                self.word_replaced[key]  = count
 
             # excel used
 
             worksheet = value["worksheet"]
             row       = value["row"]
-            count     = value["count"]
 
             if worksheet in self.excel_used:
                 if row in self.excel_used[worksheet]:
@@ -153,11 +166,11 @@ class DictionaryLog:
             else:
                 self.excel_used[worksheet] = {row: count}
 
-        for key, value in data_spelling.items():
+        for key, number in data_spelling.items():
             if key in self.spelling:
-                self.spelling[key] += value
+                self.spelling[key] += number
             else:
-                self.spelling[key] = value
+                self.spelling[key] = number
 
-    def get(self) -> Tuple[dict, Dict, Dict]:
+    def get(self) -> Tuple[Dict[str, Dict[int, int]], Dict[str, int], Dict[str, int]]:
         return self.excel_used, self.word_replaced, self.spelling

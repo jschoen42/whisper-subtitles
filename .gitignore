@@ -10,6 +10,7 @@ _traceAll/*
 *.7z
 __history*.txt
 __mypy*.txt
+__pyright*.txt
 
 ### Python
 

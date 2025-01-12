@@ -5,6 +5,7 @@ import sys
 import json
 import time
 
+from typing import Any, Dict
 from pathlib import Path
 
 from utils.globals import BASE_PATH
@@ -89,7 +90,7 @@ def main() -> None:
 
     start = time.perf_counter()
 
-    projects: dict = {}
+    projects: Dict[str, Any] = {}
     for project in Prefs.get("projects"):
         parts = project.split("/")
         folder = parts[-1]
@@ -353,9 +354,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    Trace.set( debug_mode=False, timezone=False )
+    Trace.set( debug_mode=True, timezone=False )
     Trace.action(f"Python version {sys.version}")
-    # Trace.action(f"base path: '{BASE_PATH}'")
 
     try:
         main()

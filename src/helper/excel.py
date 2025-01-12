@@ -1,39 +1,47 @@
 """
-    © Jürgen Schoenemeyer, 09.01.2025
+    © Jürgen Schoenemeyer, 11.01.2025
 
     PUBLIC:
-     - import_project_excel(pathname: str, filename: str, inType: str) -> Dict:
-     - set_print_settings(ws: Any):
-     - import_captions_excel(pathname: str, filename: str) -> List:
-     - import_dictionary_excel(pathname: str, filename: str) -> Tuple[ Dict[str,list[str|int]], List[str], float ]:
+     - import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str, Any]:
+     - export_TextToSpeech_excel(data: List[ColumnSubtitleInfo], pathname: Path | str, filename: str) -> bool:
+     - import_captions_excel(pathname: Path | str, filename: str) -> None | List[ColumnSubtitleInfo]:
+     - import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple[ DictionaryResultDict, SheetNames, float ]:
+
+
      - update_dictionary_excel(pathname: str, filename: str, filename_update: str, column_name: str, data: Dict) -> None | bool:
      - import_ssml_rules_excel(pathname: str, filename: str) -> Dict:
      - import_hunspell_PreCheck_excel(pathname: str, filename: str) -> Tuple[list[str], List[str], List[List]]:
+
+    PRIVATE:
+     - def page_setup_print(ws: Any) -> None:
+
 """
 
-import os
-
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, NamedTuple, Tuple, TypedDict, cast
 from pathlib import Path
+from enum import StrEnum, IntEnum
 
 import openpyxl
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import NamedStyle, Font, Alignment, PatternFill
 
-# from openpyxl.worksheet.worksheet import Worksheet
-# from openpyxl.workbook.workbook import Workbook
-# from openpyxl.cell.cell import Cell
+from openpyxl.workbook.workbook import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl.worksheet._read_only import ReadOnlyWorksheet
+from openpyxl.chartsheet.chartsheet import Chartsheet
+from openpyxl.cell.cell import Cell, MergedCell
+from openpyxl.cell.read_only import ReadOnlyCell
 
 from utils.trace     import Trace
 from utils.decorator import duration
-from utils.file      import check_excel_file_exists, get_modification_timestamp
+from utils.file      import check_excel_file_exists, get_modification_timestamp, create_folder
 from utils.excel     import get_cell_text, check_quotes_error
 from helper.captions import seconds_to_timecode_excel
 
 ######################################################################################
 #
-#   import_project_excel(pathname: str, filename: str, inType: str) -> Dict:
+#   import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str, Any]:
 #
 #   ./data/[project]/[project].xlsx
 #
@@ -65,7 +73,7 @@ from helper.captions import seconds_to_timecode_excel
 #
 ######################################################################################
 
-def import_project_excel(pathname: Path | str, filename: str) -> None | Dict:
+def import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str, Any]:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -80,7 +88,7 @@ def import_project_excel(pathname: Path | str, filename: str) -> None | Dict:
         return None
 
     try:
-        sheet = wb.worksheets[0]  # wb["mediaList"]
+        sheet: Worksheet | ReadOnlyWorksheet = wb.worksheets[0]
     except KeyError as err:
         Trace.error(f"importExcel: {err}")
         return None
@@ -93,7 +101,7 @@ def import_project_excel(pathname: Path | str, filename: str) -> None | Dict:
     part: Dict[str, Dict[str, Any]] = {}
     speakers: List[str] = []
 
-    for i in range(2, sheet.max_row + 1):
+    for i in range(2, sheet.max_row + 1): # type: ignore
         row = sheet[i]
 
         if i == 2:
@@ -103,12 +111,12 @@ def import_project_excel(pathname: Path | str, filename: str) -> None | Dict:
                 main_prompt = get_cell_text(row[5])
 
         else:
-            filename = get_cell_text(row[0])
-            speaker  = get_cell_text(row[1])
-            project  = get_cell_text(row[2])
-            intro    = get_cell_text(row[3])
+            filename = get_cell_text(row[0]) or ""
+            speaker  = get_cell_text(row[1]) or ""
+            project  = get_cell_text(row[2]) or ""
+            intro    = get_cell_text(row[3]) or ""
             noprompt = get_cell_text(row[4]).lower() == "x"
-            prompt   = get_cell_text(row[5])
+            prompt   = get_cell_text(row[5]) or ""
 
             if noprompt:
                 prompt = ""
@@ -138,170 +146,203 @@ def import_project_excel(pathname: Path | str, filename: str) -> None | Dict:
 
     return data
 
-
 ######################################################################################
 #
-#  helper
+#  worksheet: printing setting
 #
 ######################################################################################
 
-excel_column_format: Dict = {
-    "source":  [40],
-    "dest":    [40],
-    "comment": [50],
-}
-
-def set_print_settings(ws: Any) -> None:
+def page_setup_print(ws: Any) -> None:
     # https://openpyxl.readthedocs.io/en/stable/print_settings.html
 
     def inch_to_mm(inch: float) -> float:
         return inch / 2.54
 
+    # Page Setup -> Page
     ws.page_setup.orientation = ws.ORIENTATION_LANDSCAPE
+    ws.sheet_properties.pageSetUpPr.fitToPage = True
+    ws.page_setup.fitToHeight = False
+    # ws.page_setup.scale = 100
 
-    ws.print_options.gridLines = True
-    ws.print_options.horizontalCentered = True
-
-    ws.print_title_rows = "1:1"  # the first row
-    # ws.print_title_cols = "A:A" # the first column
-
+    # Page Setup -> Margins
     ws.page_margins.left   = inch_to_mm(1.5)
     ws.page_margins.right  = inch_to_mm(1.5)
     ws.page_margins.top    = inch_to_mm(1.5)
     ws.page_margins.bottom = inch_to_mm(1.75)
-
     ws.page_margins.footer = inch_to_mm(0.9)
+    ws.print_options.horizontalCentered = True
 
+    # Page Setup -> Header/Footer
     ws.oddFooter.right.text = "&P / &N"  # curr page / max page
     ws.oddFooter.left.text  = "&F / &A"  # filename / name worksheet
 
-    # ws.page_setup.scale = 100
-
-    ws.sheet_properties.pageSetUpPr.fitToPage = True
-    ws.page_setup.fitToHeight = False
-
+    # Page Setup -> Sheet
+    ws.print_options.gridLines = True
+    ws.print_title_rows = "1:1"   # Rows to repeat at top
+    # ws.print_title_cols = "A:A" # Columns to repeat al left
 
 ######################################################################################
 #
-#   export_TextToSpeech_excel(pathname: str, filename: str, data: List) -> int:
-#
-#   data [
-#       {'start': 6.08, 'end': 20.52, 'text': "Ich begrüße Sie ..."},
-#       ...
-#   ]
+#   export_TextToSpeech_excel(data: List[ColumnSubtitleInfo], pathname: Path | str, filename: str) -> bool:
 #
 #   ./data/[project]/09_excel/[settings]/[video].xlsx
 #
 ######################################################################################
 
-excel_column_format_cc: Dict = {
-    "start": [ 15, "head", "start", "time"],
-    "end":   [ 15, "head", "end",   "time"],
-    "X":     [  5, "head", "",      "mark"],
-    "s-p":   [  5, "head", "",      "mark"],
-    "text":  [100, "head", "text",  "text"],
-    "pause": [ 10, "head", "pause", "mark"],
+class ColumnSubtitleInfo(TypedDict):
+    start: float
+    end:   float
+    text:  str
+    pause: float
+
+"""
+  [
+    {'start': 12.55, 'end': 18.59, 'text': "Herzlich willkommen zum Seminar 'Chancen der Digitalisierung im Rechnungswesen nutzen'.", 'pause': 0},
+    {'start': 18.59, 'end': 20.43, 'text': '[pause: 1.84 sec]', 'pause': -1},
+    {'start': 20.43, 'end': 23.51, 'text': 'Liebe Kolleginnen und Kollegen, ich darf mich kurz vorstellen.', 'pause': 1.84},
+    {'start': 23.51, 'end': 23.85, 'text': '[pause: 0.34 sec]', 'pause': -1},
+    ...
+    # one paragraph:
+    {'start': 100.11, 'end': 107.75, 'text': 'Im Kapitel 1 möchte ich Ihnen ganz gerne ein paar grundlegende Hinweise geben, wie Sie die Digitalisierung ins Rennen bringen.', 'pause': 0.72},
+    {'start': 107.75, 'end': 121.27, 'text': 'Im Kapitel 2 befassen wir uns mit elektronischen Bankauszügen, den verschiedenen Varianten, wie wir an die Daten, die so oder so elektronisch bei der Bank vorhanden sind, optimal verarbeiten können.', 'pause': 0},
+    {'start': 121.27, 'end': 125.17, 'text': 'Das Kapitel 3 betrifft die Lerndatei.', 'pause': 0},
+    ...
+  ]
+"""
+
+class SubtitleColumnFormat(NamedTuple): # substitute for not existing TypedList
+    width:        int
+    header_style: str
+    header_text:  str
+    body_style:   str
+
+excel_format_subtitle: Dict[str, SubtitleColumnFormat] = {
+    "start": SubtitleColumnFormat( 15, "head", "start", "time"), # 00:09.764
+    "end":   SubtitleColumnFormat( 15, "head", "end",   "time"), # 00:18.464
+    "X":     SubtitleColumnFormat(  5, "head", "",      "mark"), # x (start new block) | empty (continue block)
+    "s-p":   SubtitleColumnFormat(  5, "head", "",      "mark"), # ssml p (paragraph) | s (sentence) | > (append)
+    "text":  SubtitleColumnFormat(100, "head", "text",  "text"), # subtitle text
+    "pause": SubtitleColumnFormat( 10, "head", "pause", "mark"), # extra pause in seconds (manual added later)
 }
 
-def export_TextToSpeech_excel(data: List, pathname: Path | str, filename: str) -> bool:
+class Color(StrEnum):
+    WHITE = "00ffffff"
+    BLUE  = "004f81bd"
+    BLACK = "00000000"
+
+class Fontname(StrEnum):
+    HEAD = "Open Sans Bold"
+    BODY = "Consolas" # "Segoe UI"
+
+class Fontsize(IntEnum):
+    HEAD = 10
+    BODY = 10 # 11
+
+def export_TextToSpeech_excel(data: List[SubtitleColumnFormat], pathname: Path | str, filename: str) -> bool:
     pathname = Path(pathname)
 
     def patch_width(width: int) -> float:
         return width + 91 / 128
 
+    # define cell style
+    #  - head: 'head'
+    #  - body: 'time', 'mark', 'text'
+
     def set_styles(wb: Any) -> None:
         style = NamedStyle(name="head")
-        style.font = Font(name="Open Sans Bold", color="00ffffff", size=10)
-        style.fill = PatternFill(fgColor="004f81bd", fill_type="solid")
+        style.font = Font(name=Fontname.HEAD, color=Color.WHITE, size=Fontsize.HEAD)
+        style.fill = PatternFill(fgColor=Color.BLUE, fill_type="solid")
         style.alignment = Alignment(vertical="top", horizontal="center")
         wb.add_named_style(style)
 
         style = NamedStyle(name="time")
-        style.font = Font(name="Segoe UI", color="00000000", size=11)
-        # style.fill = PatternFill(fgColor="00ffffff", fill_type = "solid")
+        style.font = Font(name=Fontname.BODY, color=Color.BLACK, size=Fontsize.BODY)
+        # style.fill = PatternFill(fgColor=Color.WHITE, fill_type = "solid")
         style.alignment = Alignment(horizontal="center", vertical="center", wrapText=True)
         wb.add_named_style(style)
 
         style = NamedStyle(name="mark")
-        style.font = Font(name="Segoe UI", color="00000000", size=11)
-        # style.fill = PatternFill(fgColor="00ffffff", fill_type = "solid")
+        style.font = Font(name=Fontname.BODY, color=Color.BLACK, size=Fontsize.BODY)
+        # style.fill = PatternFill(fgColor=Color.WHITE, fill_type = "solid")
         style.alignment = Alignment(horizontal="center", vertical="center", wrapText=True)
         wb.add_named_style(style)
 
         style = NamedStyle(name="text")
-        style.font = Font(name="Segoe UI", color="00000000", size=11)
-        # style.fill = PatternFill(fgColor="00ffffff", fill_type = "solid")
+        style.font = Font(name=Fontname.BODY, color=Color.BLACK, size=Fontsize.BODY)
+        # style.fill = PatternFill(fgColor=Color.WHITE, fill_type = "solid")
         style.alignment = Alignment(vertical="center", wrapText=True)
         wb.add_named_style(style)
 
-    wb = openpyxl.Workbook()
-    set_styles(wb)
-
-    ws = wb.worksheets[0]
-    ws.title = "whisper transcription"
-    ws.freeze_panes = ws["A2"]
-
-    set_print_settings(ws)
-
-    def append_row(line_number: int, styles: List, values: List) -> None:
+    def append_row(ws, line_number: int, styles: List[str], values: List[str]) -> None:
         for i, value in enumerate(values):
             ws.cell(line_number, i + 1).style = styles[i]
             ws.cell(line_number, i + 1).value = value
 
-    header_style = []
-    header_text  = []
-    body_style   = []
-    for i, entry in enumerate(excel_column_format_cc):
-        values = excel_column_format_cc[entry]
-        width = values[0]
-        ws.column_dimensions[get_column_letter(i + 1)].width = patch_width(width)
+    wb: Workbook = openpyxl.Workbook()
+    set_styles(wb)
 
+    ws: Worksheet | ReadOnlyWorksheet = wb.worksheets[0]
+    if isinstance(ws, ReadOnlyWorksheet):
+        Trace.error(f"ReadOnlyWorksheet {wb.worksheets[0]}")
+        return False
+
+    ws.title = "whisper transcription"
+    ws.freeze_panes = ws["A2"]
+
+    page_setup_print(ws)
+
+    header_style: List[str] = []
+    header_text: List[str] = []
+    body_style: List[str] = []
+
+    for i, entry in enumerate(excel_format_subtitle):
+        values = excel_format_subtitle[entry]
+
+        ws.column_dimensions[get_column_letter(i + 1)].width = patch_width(values[0])
         header_style.append(values[1])
         header_text.append(values[2])
         body_style.append(values[3])
 
-    append_row(1, header_style, header_text)
+    append_row(ws, 1, header_style, header_text)
 
     last_end = True
     count = 0
-    for i, entry in enumerate(data):
-        start = seconds_to_timecode_excel(entry["start"])
-        end = seconds_to_timecode_excel(entry["end"])
+
+    for i in range(0, len(data)):
+        subtitle_info = cast(ColumnSubtitleInfo, data[i])
+
+        start = seconds_to_timecode_excel(subtitle_info["start"])
+        end = seconds_to_timecode_excel(subtitle_info["end"])
+
         if i == 0 and last_end:
             mark = "x"
         else:
             mark = ""
 
-        text = entry["text"]
+        text = subtitle_info["text"]
 
         last_end = text[-1] != "…"
 
-        if entry["pause"] == -1:
+        if subtitle_info["pause"] == -1:
             # count += 1
-            # append_row(count+1, body_style, [start, end, mark, "", text, ""])
+            # append_row(ws, count+1, body_style, [start, end, mark, "", text, ""])
             pass
         else:
             count += 1
-            if entry["pause"] == 0 and count != 1:
-                append_row(count + 1, body_style, [start, end, mark, ">", text, 0])
+            if subtitle_info["pause"] == 0 and count != 1:
+                append_row(ws, count + 1, body_style, [start, end, mark, ">", text, "0"])
             else:
-                append_row(count + 1, body_style, [start, end, mark, "p", text, 0])
+                append_row(ws, count + 1, body_style, [start, end, mark, "p", text, "0"])
 
-    if not pathname.is_dir():
-        try:
-            os.makedirs(pathname)
-            Trace.update(f"makedir: {pathname}")
-        except OSError as err:
-            error_msg = str(err).split(":")[0]
-            Trace.error(f"{error_msg}: {pathname}")
+    create_folder(pathname)
 
     dest_path = Path(pathname, filename)
     try:
         wb.save(filename=dest_path)
-        Trace.result(f"'{dest_path}'")
+        Trace.error(f"'{dest_path}'")
         return True
     except OSError as err:
-        Trace.error(f"{err}")
+        Trace.wait(f"{err}")
         return False
 
 ######################################################################################
@@ -317,14 +358,27 @@ def export_TextToSpeech_excel(data: List, pathname: Path | str, filename: str) -
 #     5: text
 #     6: extrapause
 #
-#   return([
+#   return(
+
+#      [
+#       start,
+#       end,
 #       [id, text, type, pause],
 #       ...
+#        ]
 #   ])
 #
 ######################################################################################
 
-def import_captions_excel(pathname: Path | str, filename: str) -> None | List:
+class ColumnSubtitleExcel(TypedDict):
+    start: float
+    end:   float
+    mark:  str
+    type:  str
+    text:  str
+    pause: float
+
+def import_captions_excel(pathname: Path | str, filename: str) -> None | List[List[Any]]:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -333,23 +387,27 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | List:
         return None
 
     try:
-        wb = load_workbook(filename=filepath)
+        wb: Workbook = load_workbook(filename=filepath)
     except OSError as err:
         Trace.error(f"[import_captions_excel] importExcel: {err}")
         return None
 
     try:
-        ws = wb.worksheets[0]  # wb["mediaList"]
+        ws: Worksheet | ReadOnlyWorksheet = wb.worksheets[0]
     except KeyError as err:
         Trace.error(f"[import_captions_excel] importExcel: {err}")
         return None
 
-    result = []
+    if ws.max_row is None:
+        return None
+
+    result: List[List[Any]] = []
     curr_start = ""
     curr_end   = ""
 
     text = ""
-    curr_text: List = []
+    curr_text: List[Any] = []
+
     for i in range(2, ws.max_row + 1):
         row = ws[i]
 
@@ -388,7 +446,7 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | List:
 
 ######################################################################################
 #
-#   import_dictionary_excel(pathname: str, filename: str) -> Dict:
+#   import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple[ DictionaryResultDict, SheetNames, float ]:
 #
 #   ./data/_dictionary/Dictionary.xlsx
 #
@@ -403,8 +461,36 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | List:
 #
 ######################################################################################
 
+"""
+    Workbook
+     - "normalize"
+     - "allgmein"
+     - "urls"
+     - "Fallbeispiele"
+     - "Spezielles"
+     - "-sz" # starts with "-" -> will be ignored (not imported)
+
+    Worksheet
+     - 1: "original"
+     - 2: "correction"
+     - 3: "Anmerkung"
+     - 4: "used v2" # reimport of used static with whisper large-v2
+     - 5: "used v3" # reimport of used static with whisper large-v3
+
+    return result, sheet_names, get_modification_timestamp(filepath)
+                   List[str], List[]
+"""
+
+class DictionaryEntry(NamedTuple):
+    correction: str
+    sheet_name: str
+    row: int
+
+DictionaryResultDict = Dict[str, DictionaryEntry]
+SheetNames = List[str]
+
 @duration("Custom text replacements loaded")
-def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple[ Dict[str,list[str|int]], List[str], float ]:
+def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple[ DictionaryResultDict, SheetNames, float ]:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -413,20 +499,28 @@ def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple
         return None
 
     try:
-        wb = load_workbook(filename=filepath)
+        wb: Workbook = load_workbook(filename=filepath)
     except OSError as err:
         Trace.error(f"importExcel: {err}")
         return None
 
-    sheet_names: List = []
-    result: Dict = {}
+    sheet_names: SheetNames = []
+    result: DictionaryResultDict = {}
+
     for wb_name in wb.sheetnames:
         if wb_name[:1] == "-":
             continue
 
         sheet_names.append(wb_name)
 
-        ws = wb[wb_name]
+        ws: Chartsheet | Worksheet | ReadOnlyWorksheet = wb[wb_name]
+        if isinstance(ws, Chartsheet):
+            Trace.error(f"Chartsheet {wb_name}")
+            continue
+
+        if ws.max_row is None:
+            continue
+
         for i in range(2, ws.max_row + 1):
             row = ws[i]
 
@@ -447,11 +541,13 @@ def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple
                 Trace.error(f"'{wb_name}': line {i} '{original}' double entries => {result[original]} / {correction}")
                 continue
 
-            result[original] = [correction, wb_name, i]
+            result[original] = DictionaryEntry(correction, wb_name, i)
+
+    modification_timestamp = get_modification_timestamp(filepath)
 
     Trace.result(f"{filename}: {len(result)} entries")
+    return result, sheet_names, modification_timestamp
 
-    return result, sheet_names, get_modification_timestamp(filepath)
 
 ######################################################################################
 #
@@ -459,13 +555,13 @@ def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple
 #
 #   ./data/_dictionary/Dictionary.xlsx
 
-def update_dictionary_excel(pathname: Path | str, filename: str, filename_update: str, column_name: str, data: Dict) -> None | bool:
+def update_dictionary_excel(pathname: Path | str, filename: str, filename_update: str, column_name: str, data: Dict[str, Any]) -> None | bool:
     pathname = Path(pathname)
     source = pathname / filename
 
     def set_styles(wb: Any) -> None:
         style = NamedStyle(name="used")
-        style.font = Font(name="Consolas", color="00000000", size=10)
+        style.font = Font(name=Fontname.BODY, color=Color.BLACK, size=Fontsize.HEAD)
         style.alignment = Alignment(vertical="top", horizontal="center")
 
         try:
@@ -478,7 +574,7 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
         return None
 
     try:
-        wb = load_workbook(filename=source)
+        wb: Workbook = load_workbook(filename=source)
     except OSError as err:
         Trace.error(f"importExcel: {err}")
         return None
@@ -495,7 +591,10 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
             Trace.error(f"sheet '{wb_name}' missing in update info")
             continue
 
-        ws = wb[wb_name]
+        ws: Chartsheet | Worksheet | ReadOnlyWorksheet = wb[wb_name]
+        if isinstance(ws, Chartsheet) or isinstance(ws, ReadOnlyWorksheet):
+            Trace.error(f"Chartsheet {wb_name}")
+            continue
 
         row = -1
         for i in range(0, ws.max_column):
@@ -508,19 +607,24 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
             continue
 
         for i in range(3, ws.max_row + 1):
-            row_cells = ws[i]
+            row_cells: MergedCell | ReadOnlyCell | Cell = ws[i]
 
-            ws.cell(i, row + 1).value = ""
-            # ws.cell(i, row+1).style = "Normal"
+            if isinstance(row_cells, Cell):
+                clear_cell: MergedCell | ReadOnlyCell | Cell = ws.cell(i, row + 1)
+                if isinstance(clear_cell, Cell):
+                    clear_cell.value = ""
 
-            if get_cell_text(row_cells[0]) != "":
-                if str(i) in data_info_sheet:
-                    ws.cell(i, row + 1).value = data_info_sheet[str(i)]
-                else:
-                    ws.cell(i, row + 1).value = 0
+                if get_cell_text(row_cells[0]) != "": # type: ignore
+                    mycell: MergedCell | ReadOnlyCell | Cell = ws.cell(i, row + 1)
 
-                if get_cell_text(row_cells[1]) != "":
-                    ws.cell(i, row + 1).style = "used"
+                    if isinstance(mycell, Cell):
+                        if str(i) in data_info_sheet:
+                            mycell.value = data_info_sheet[str(i)]
+                        else:
+                            mycell.value = 0
+
+                        if get_cell_text(row_cells[1]) != "": # type: ignore
+                            mycell.style = "used"
 
     dest_path = pathname / filename_update
     try:
@@ -556,7 +660,7 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
 #
 #####################################################################################
 
-def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict:
+def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[str, Any]:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -565,13 +669,13 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict:
         return None
 
     try:
-        wb = load_workbook(filename=filepath)
+        wb: Workbook = load_workbook(filename=filepath)
     except OSError as err:
         Trace.error(f"importExcel: {err}")
         return None
 
-    def parse_ws(wb_name: str, ws: Any) -> Tuple[str, List]:
-        rules: List = []
+    def parse_ws(wb_name: str, ws: Any) -> Tuple[str, List[List[str]]]:
+        rules: List[List[str]] = []
 
         _error, template = check_quotes_error(wb_name, ws["e1"].value, 1, "import_ssml_rules_excel")
         if template == "":
@@ -590,7 +694,7 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict:
 
         return template, rules
 
-    result = {}
+    result: Dict[str, Any] = {}
     trace_details = "import"
 
     for wb_name in wb.sheetnames:
@@ -627,7 +731,7 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict:
 #
 #####################################################################################
 
-def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None | Tuple[list[str], List[str], List[List]]:
+def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None | Tuple[List[str], List[str], List[List[str]]]:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -636,19 +740,27 @@ def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None 
         return None
 
     try:
-        wb = load_workbook(filename=filepath)
+        wb: Workbook = load_workbook(filename=filepath)
     except OSError as err:
         Trace.error(f"importExcel: {err}")
         return None
 
-    abbreviations_with_dot = []
-    singles = []
-    multiples = []
+    abbreviations_with_dot: List[str] = []
+    singles: List[str] = []
+    multiples: List[List[str]] = []
+
     for wb_name in wb.sheetnames:
         if wb_name[:1] == "-":
             continue
 
-        ws = wb[wb_name]
+        ws: Chartsheet | Worksheet | ReadOnlyWorksheet = wb[wb_name]
+        if isinstance(ws, Chartsheet):
+            Trace.error(f"Chartsheet {wb_name}")
+            continue
+
+        if ws.max_row is None:
+            continue
+
         for i in range(2, ws.max_row + 1):
             row = ws[i]
 

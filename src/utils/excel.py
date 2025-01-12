@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 08.01.2025
+    © Jürgen Schoenemeyer, 12.01.2025
 
     PUBLIC:
     get_excel_file(source_path: str, filename: str, comment: str, last_timestamp: float = 0) -> Tuple[Workbook, int]
@@ -22,12 +22,13 @@ import datetime
 
 import warnings
 
-from typing import Any, Tuple
-
+from typing import Any, Dict, Tuple
 
 from openpyxl import load_workbook
-from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.workbook.workbook import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl.worksheet._read_only import ReadOnlyWorksheet
+from openpyxl.chartsheet.chartsheet import Chartsheet
 from openpyxl.cell.cell import Cell, MergedCell
 
 from utils.trace import Trace
@@ -59,33 +60,37 @@ def get_excel_sheet(source_path: str, filename: str, sheet_name: str, comment: s
         return (None, 0)
 
     try:
-        workbook = load_workbook(filename = file_path)
+        workbook: Workbook = load_workbook(filename = file_path)
     except OSError as err:
         Trace.error(f"{comment} - importExcel '{err}'")
         return (None, 0)
 
     try:
-        sheet = workbook[sheet_name]
+        sheet: Worksheet | ReadOnlyWorksheet | Chartsheet = workbook[sheet_name]
     except KeyError as err:
         Trace.error(f"{comment} - importExcel '{filename}' {err}")
         return (None, 0)
 
-    check_hidden(sheet, "get_excel_sheet")
-
-    return (
-        sheet,
-        max(last_timestamp, get_modification_timestamp(file_path))
-    )
+    if isinstance(sheet, Worksheet):
+        check_hidden(sheet, "get_excel_sheet")
+        return ( sheet, max(last_timestamp, get_modification_timestamp(file_path)))
+    else:
+        Trace.error(f"{comment} - sheet '{sheet_name}' is not a Worksheet")
+        return (None, 0)
 
 def get_excel_sheet_special(workbook: Workbook, sheet_name: str, comment: str) -> None | Worksheet:
     try:
-        sheet = workbook[sheet_name]
+        sheet: Worksheet | ReadOnlyWorksheet | Chartsheet = workbook[sheet_name]
     except KeyError as err:
         Trace.error(f"{comment} - importExcel {err}")
         return None
 
-    check_hidden(sheet, "get_excel_sheet_special")
-    return sheet
+    if isinstance(sheet, Worksheet):
+        check_hidden(sheet, "get_excel_sheet_special")
+        return sheet
+    else:
+        Trace.error(f"{comment} - sheet '{sheet_name}' is not a Worksheet")
+        return None
 
 ######################################################################################
 # get_cell_value with converting
@@ -133,6 +138,9 @@ def get_cell_text(in_cell: Cell | MergedCell) -> str:
     if in_cell.value is None:
         return ""
 
+    if isinstance(in_cell, MergedCell):
+        return ""
+
     # data_type
     #   f: formular
     #   s: string
@@ -165,7 +173,7 @@ def check_quotes( wb_name: str, word: str, line_number: int, function_name: str 
         Trace.error( f"[{function_name}] '{wb_name}': line {line_number} quotes missing: '{word}'")
         return ""
 
-def check_quotes_error(wb_name: str, word: str, line_number: int, function_name: str) -> Tuple[dict | bool, str]:
+def check_quotes_error(wb_name: str, word: str, line_number: int, function_name: str) -> Tuple[Dict[str, Any] | bool, str]:
     if word == "":
         return False, ""
 

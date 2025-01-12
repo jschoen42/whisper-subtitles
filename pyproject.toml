@@ -47,3 +47,10 @@ namespace_packages = true
 module = "faster_whisper.*"
 ignore_errors = true
 ignore_missing_imports = true
+
+[tool.pyright]
+include = ["src"]
+exclude = ["**/node_modules",
+    "**/__pycache__",
+]
+pythonVersion = "3.12"

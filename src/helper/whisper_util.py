@@ -18,7 +18,7 @@
 import re
 import hashlib
 
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Set, Tuple
 import numpy
 
 from main.spacy import analyse_sentences_spacy
@@ -60,7 +60,7 @@ def are_prompts_allowed(model_name: str) -> bool: # ->
 
 SPLIT_DEBUG: bool = False
 
-prompt_replace: Dict = {
+prompt_replace: Dict[str, str] = {
     '"': "'",
 
     # "„": "»",
@@ -159,7 +159,7 @@ def format_euro(text: str, thousand_separator: str = ".", float_separator: str =
             else:
                 result = pre + " " + euro
 
-        entry: Dict = {
+        entry: Dict[str, Any] = {
             "start":  match.start(),
             "end":    match.end(),
             "result": result
@@ -278,10 +278,10 @@ silence_text: List = [
 ]
 """
 
-silence_text   = []
-split_words    = []
-dont_split     = []
-dont_split_two = []
+silence_text:   List[str] = []
+split_words:    List[str] = []
+dont_split:     List[str] = []
+dont_split_two: List[str] = []
 
 def init_special_text( language: str ) -> None:
     global silence_text, split_words, dont_split, dont_split_two
@@ -294,7 +294,7 @@ def init_special_text( language: str ) -> None:
     dont_split_two = Prefs.get(f"dont_split_two.{language}")
 
 
-def get_filename_parameter(params: Dict) -> str:
+def get_filename_parameter(params: Dict[str, Any]) -> str:
     engine      = params["whisper"]
     model_id    = params["modelNumber"]
     model_name  = params["modelName"]
@@ -338,11 +338,11 @@ def get_filename_parameter(params: Dict) -> str:
 #   Pass 1
 ######################
 
-def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: CacheJSON, media_filename: str) -> Tuple[list, int, float, float, str, List, Dict]:
-    words: List = []
-    probability: List = []
+def prepare_words(data: Dict[str, Any], is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: CacheJSON, media_filename: str) -> Tuple[List[Dict[str, Any]], int, float, float, str, List[Dict[str, Any]], Dict[str, Any]]:
 
-    words_new: List = []
+    words:       List[Dict[str, Any]] = []
+    probability: List[float] = []
+    words_new:   List[Dict[str, Any]] = []
 
     segments = data["segments"]
 
@@ -372,9 +372,9 @@ def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_nam
     last_segment_end  = 0
     last_segment_text = ""
 
-    corrected: set = set()
-    repetition_error = []
-    pause_error: Dict = {
+    corrected: Set[str] = set()
+    repetition_error: List[Dict[str, Any]] = []
+    pause_error: Dict[str, Any] = {
         "introStart":  [],
         "normalStart": [],
         "innerPause":  [],
@@ -465,7 +465,7 @@ def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_nam
 
         for i, word_info_original in enumerate(segment_words):
 
-            word_info = {
+            word_info: Dict[str, Any] = {
                 "word":           "",
 
                 "sentence_start": 0,
@@ -651,7 +651,7 @@ def prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_nam
 #
 ####################################################
 
-def split_to_lines(words: List, dictionary: List) -> Tuple[list, str, str, Dict, Dict]:
+def split_to_lines(words: List[Dict[str, Any]], dictionary: Dict[str, Any]) -> Tuple[List[Dict[str, Any]], str, str, Dict[str, Any], Dict[str, Any]]:
     line  = ""
     lines = ""
 
@@ -659,9 +659,9 @@ def split_to_lines(words: List, dictionary: List) -> Tuple[list, str, str, Dict,
     end   = 0
     count = 0
 
-    corrected_details: Dict = {}
+    corrected_details: Dict[str, Any] = {}
 
-    captions = []
+    captions: List[Dict[str, Any]] = []
     section = 0
 
     def check_any_runctuation(word: str) -> bool:
@@ -670,7 +670,7 @@ def split_to_lines(words: List, dictionary: List) -> Tuple[list, str, str, Dict,
     def check_comma(word: str) -> bool:
         return word[-1] in ","
 
-    def predict(words: List, index: int, limit: int) -> bool:
+    def predict(words: List[Dict[str, Any]], index: int, limit: int) -> bool:
         split = False
         for j in range(index + 1, len(words)):
             # print(j, words[j]["word"], "sentence_end", words[j]["sentence_end"])
@@ -792,7 +792,7 @@ def split_to_lines(words: List, dictionary: List) -> Tuple[list, str, str, Dict,
             lines += line
 
             section += 1
-            caption: Dict = {}
+            caption: Dict[str, Any] = {}
             caption["section"] = section
             caption["start"]   = start
             caption["end"]     = end
@@ -828,11 +828,12 @@ def split_to_lines(words: List, dictionary: List) -> Tuple[list, str, str, Dict,
     return captions, text, lines.strip(), corrected_details, spelling_result
 
 
+
 # export in sentences -> TextToSpeech
 
-def split_to_sentences(words: List, dictionary: Dict) -> List:
+def split_to_sentences(words: List[Dict[str, Any]], dictionary: Dict[str, Any]) -> List[Dict[str, Any]]:
 
-    result:list = []
+    result: List[Dict[str, Any]] = []
     text = ""
     start = 0
 
@@ -861,20 +862,20 @@ def split_to_sentences(words: List, dictionary: Dict) -> List:
                 pause = next_start - word_info["end"]
 
             result.append({
-                "pause": last_pause,
                 "start": start,
                 "end":   end,
                 "text":  text.strip(),
-            })
+                "pause": last_pause,
+           })
 
             if pause > 0:
                 last_pause = round(pause, 2)
 
                 result.append({
-                    "pause": -1,
                     "start": end,
                     "end":   next_start,
                     "text":  f"[pause: {last_pause} sec]",
+                    "pause": -1,
                 })
             else:
                 last_pause = 0

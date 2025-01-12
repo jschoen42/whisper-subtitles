@@ -2,7 +2,7 @@
 # python src/combine_srt.py
 
 import sys
-from typing import Dict
+from typing import Any, Dict, List
 
 from utils.globals import BASE_PATH
 from utils.prefs   import Prefs
@@ -32,7 +32,7 @@ def main() -> None:
             mainfolder = parts[0]
             folder     = parts[1]
 
-        videos: list = []
+        videos: List[str] = []
         ret = import_project_excel( data_path / mainfolder / folder, folder + ".xlsx" )
         if ret is None:
             return None
@@ -45,7 +45,7 @@ def main() -> None:
 
         duration_one = get_video_length( dirname, basename )
 
-        video_infos: dict = {}
+        video_infos: Dict[str, float] = {}
         duration_sum: float = 0.0
         for video in videos:
             duration = get_video_length( dirname, video )
@@ -63,7 +63,7 @@ def main() -> None:
             if result is None:
                 return None
 
-            result_cc: Dict = {
+            result_cc: Dict[str, Any] = {
                 "duration": duration,
                 "cc": result[0]
             }
@@ -83,7 +83,7 @@ def main() -> None:
             for caption_info in caption_infos:
                 section_number += 1
 
-                caption_modified: Dict = {}
+                caption_modified: Dict[str, Any] = {}
                 caption_modified["section"] = section_number
                 caption_modified["start"]   = offset + caption_info["start"]
                 caption_modified["end"]     = offset + caption_info["end"]

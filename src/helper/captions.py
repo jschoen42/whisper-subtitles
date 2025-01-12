@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 08.01.2025
+    © Jürgen Schoenemeyer, 12.01.2025
 
     PUBLIC:
      - second_to_timecode_srt(x: float, fps: float) -> str
@@ -17,6 +17,7 @@ from typing  import Any, Dict, List, Tuple
 from pathlib import Path
 
 import webvtt # type: ignore # mypy
+# from webvtt.structures import Caption
 
 from utils.trace import Trace
 from utils.util import export_text, format_timestamp
@@ -42,7 +43,7 @@ def parse_timecode(text: str) -> float:
 
     return h * 3600 + m * 60 + s
 
-def export_srt(captions: List[Dict], fps: float = 30) -> str:
+def export_srt(captions: List[Dict[str, Any]], fps: float = 30) -> str:
     text = ""
 
     for caption in captions:
@@ -56,7 +57,7 @@ def export_srt(captions: List[Dict], fps: float = 30) -> str:
 
     return text
 
-def export_vtt(captions: List[Dict], fps: float = 30) -> str:
+def export_vtt(captions: List[Dict[str, Any]], fps: float = 30) -> str:
     text = "WEBVTT\n\n"
 
     for caption in captions:
@@ -69,52 +70,59 @@ def export_vtt(captions: List[Dict], fps: float = 30) -> str:
 
     return text
 
-def import_caption(dirname: Path|str, basename: str) -> None | Tuple[List[Dict], int, List]:
-    filepath = Path(dirname, basename)
+def import_caption(dirname: Path|str, basename: str) -> None | Tuple[List[Dict[str, Any]], int, List[int]]:
+    dirname = Path(dirname)
 
-    extention = filepath.suffix
-    if extention.lower() == ".vtt":
-        ret = webvtt.read(str(filepath))
-    elif extention.lower() == ".srt":
+    filepath = dirname / basename
+    extension = filepath.suffix
+
+    if extension == ".vtt":
         try:
-            ret = webvtt.from_srt(str(filepath))
+            captions = webvtt.read(str(filepath))
+        except OSError as error:
+            Trace.error(f"[import_caption] {basename}: {error}")
+            return None
+
+    elif extension == ".srt":
+        try:
+            captions = webvtt.from_srt(str(filepath))
         except OSError as error:
             Trace.error(f"[import_caption] {basename}: {error}")
             return None
     else:
-        Trace.error(f"unknown extention '{extention}'")
-        ret = None
+        Trace.error(f"unknown extension '{extension}'")
+        return None
 
-    segments:  List[Dict] = []
+    segments:  List[Dict[str, Any]] = []
     words:     int = 0
-    line_type: List = [0, 0]
+    line_type: List[int] = [0, 0]
 
-    if ret:
-        for i, caption in enumerate(ret):
-            start = parse_timecode(caption.start)
-            end   = parse_timecode(caption.end)
-            text  = caption.text
+    for i, caption in enumerate(captions): # type: ignore
+        start = parse_timecode(caption.start)
+        end   = parse_timecode(caption.end)
+        text  = caption.text
 
-            tmp = text.replace("\n", " ")
-            words += len(tmp.split(" "))
+        tmp = text.replace("\n", " ")
+        words += len(tmp.split(" "))
 
-            if "\n" in text:
-                line_type[1] += 1
-            else:
-                line_type[0] += 1
+        if "\n" in text:
+            line_type[1] += 1
+        else:
+            line_type[0] += 1
 
-            segment: Dict[str, Any] = {}
-            segment["section"] = i+1
-            segment["start"]   = start
-            segment["end"]     = end
-            segment["text"]    = text
+        segment: Dict[str, Any] = {
+            "section": i + 1,
+            "start": start,
+            "end":   end,
+            "text":  text
+        }
 
-            segments.append(segment)
+        segments.append(segment)
 
     return segments, words, line_type
 
-def writefile_srt(data_captions: List, dirname: Path | str, basename: str) -> None:
+def writefile_srt(data_captions: List[Dict[str, Any]], dirname: Path | str, basename: str) -> None:
     export_text(dirname, basename, export_srt(data_captions, 30), ret_lf = True)
 
-def writefile_vtt(data_captions: List, dirname: Path | str, basename: str) -> None:
+def writefile_vtt(data_captions: List[Dict[str, Any]], dirname: Path | str, basename: str) -> None:
     export_text(dirname, basename, export_vtt(data_captions, 30 ), ret_lf = True)

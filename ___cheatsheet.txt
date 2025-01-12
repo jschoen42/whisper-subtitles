@@ -257,3 +257,18 @@ python __mypy.py src/main.py
 uv run __mypy.py src/main.py
 
 # type: ignore # mypy
+# xtype: ignore
+
+###################### pyright ########################
+
+npm install --global pyright
+
+[tool.pyright]
+include = ["src"]
+exclude = ["**/node_modules",
+    "**/__pycache__",
+]
+pythonVersion = "3.13"
+
+
+uv run __pyright.py src/main.py
