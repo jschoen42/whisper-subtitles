@@ -36,10 +36,11 @@ from openpyxl.cell.read_only import ReadOnlyCell
 from utils.trace     import Trace
 from utils.decorator import duration
 from utils.file      import get_modification_timestamp, create_folder
-from utils.excel     import check_excel_file_exists, get_cell_text, check_double_quotes
+from utils.excel     import check_excel_file_exists, get_cell_text, check_quotes_error
 from utils.util      import export_json
 
 from helper.captions import seconds_to_timecode_excel
+
 
 ######################################################################################
 #
@@ -75,7 +76,6 @@ from helper.captions import seconds_to_timecode_excel
 #
 ######################################################################################
 
-@duration("import '{filename}'")
 def import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str, Any]:
     pathname = Path(pathname)
     filepath = pathname / filename
@@ -100,7 +100,7 @@ def import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str
     speaker = ""
     main_prompt = ""
 
-    result: Dict[str, Any] = {}
+    data: Dict[str, Any] = {}
     part: Dict[str, Dict[str, Any]] = {}
     speakers: List[str] = []
 
@@ -141,13 +141,13 @@ def import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str
 
                 # print(f"media '{filename}', speaker '{speaker}', folder '{project}', prompt '{prompt}'")
 
-    result["prompt"] = main_prompt
-    result["parts"]  = []
+    data["prompt"] = main_prompt
+    data["parts"]  = []
 
     for _key, value in part.items():
-        result["parts"].append(value)
+        data["parts"].append(value)
 
-    return result
+    return data
 
 ######################################################################################
 #
@@ -245,10 +245,14 @@ class Fontsize(IntEnum):
     HEAD = 10
     BODY = 10 # 11
 
+
+
 def export_TextToSpeech_excel(data: List[SubtitleColumnFormat], pathname: Path | str, filename: str) -> bool:
     pathname = Path(pathname)
 
-    # export_json(pathname, filename.replace(".xlsx", ".json"), data, None)
+    Trace.fatal(filename)
+    export_json(pathname, filename, data, None)
+
 
     def patch_width(width: int) -> float:
         return width + 91 / 128
@@ -387,7 +391,6 @@ class ColumnSubtitleExcel(TypedDict):
     text:  str
     pause: float
 
-@duration("import '{filename}'")
 def import_captions_excel(pathname: Path | str, filename: str) -> None | List[List[Any]]:
     pathname = Path(pathname)
     filepath = pathname / filename
@@ -465,7 +468,7 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | List[Li
 #     3: Anmerkung
 #
 #   return(
-#        { original:  [correction, sheet_name, row], ... },
+#        { original:  [correction, wb_name, row], ... },
 #        { sheet: mayRow, ... }
 #  )
 #
@@ -499,7 +502,7 @@ class DictionaryEntry(NamedTuple):
 DictionaryResultDict = Dict[str, DictionaryEntry]
 SheetNames = List[str]
 
-@duration("import '{filename}'")
+@duration("Custom text replacements loaded")
 def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple[ DictionaryResultDict, SheetNames, float ]:
     pathname = Path(pathname)
     filepath = pathname / filename
@@ -517,15 +520,15 @@ def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple
     sheet_names: SheetNames = []
     result: DictionaryResultDict = {}
 
-    for sheet_name in wb.sheetnames:
-        if sheet_name[:1] == "-":
+    for wb_name in wb.sheetnames:
+        if wb_name[:1] == "-":
             continue
 
-        sheet_names.append(sheet_name)
+        sheet_names.append(wb_name)
 
-        ws: Chartsheet | Worksheet | ReadOnlyWorksheet = wb[sheet_name]
+        ws: Chartsheet | Worksheet | ReadOnlyWorksheet = wb[wb_name]
         if isinstance(ws, Chartsheet):
-            Trace.error(f"Chartsheet {sheet_name}")
+            Trace.error(f"Chartsheet {wb_name}")
             continue
 
         if ws.max_row is None:
@@ -534,24 +537,24 @@ def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple
         for i in range(2, ws.max_row + 1):
             row = ws[i]
 
-            error, original = check_double_quotes(sheet_name, str(get_cell_text(row[0])), i, "import_dictionary_excel")
+            error, original = check_quotes_error(wb_name, str(get_cell_text(row[0])), i, "import_dictionary_excel")
             if error or original == "":
                 continue
 
-            error, correction = check_double_quotes(sheet_name, str(get_cell_text(row[1])), i, "import_dictionary_excel")
+            error, correction = check_quotes_error(wb_name, str(get_cell_text(row[1])), i, "import_dictionary_excel")
             if not error and correction == "":
-                Trace.error(f"'{sheet_name}': line {i} '{original}' correction empty")
+                Trace.error(f"'{wb_name}': line {i} '{original}' correction empty")
                 continue
 
             if original == correction:
-                Trace.error(f"'{sheet_name}': line {i} '{original}' original == correction")
+                Trace.error(f"'{wb_name}': line {i} '{original}' original == correction")
                 continue
 
             if original in result:
-                Trace.error(f"'{sheet_name}': row {i+1} '{original}' double entries => '{result[original].correction}' / '{correction}'")
+                Trace.error(f"'{wb_name}': line {i} '{original}' double entries => {result[original]} / {correction}")
                 continue
 
-            result[original] = DictionaryEntry(correction, sheet_name, i)
+            result[original] = DictionaryEntry(correction, wb_name, i)
 
     modification_timestamp = get_modification_timestamp(filepath)
 
@@ -591,19 +594,19 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
 
     set_styles(wb)
 
-    for sheet_name in wb.sheetnames:
-        if sheet_name[:1] == "-":
+    for wb_name in wb.sheetnames:
+        if wb_name[:1] == "-":
             continue
 
-        if sheet_name in data:
-            data_info_sheet = data[sheet_name]
+        if wb_name in data:
+            data_info_sheet = data[wb_name]
         else:
-            Trace.error(f"sheet '{sheet_name}' missing in update info")
+            Trace.error(f"sheet '{wb_name}' missing in update info")
             continue
 
-        ws: Chartsheet | Worksheet | ReadOnlyWorksheet = wb[sheet_name]
+        ws: Chartsheet | Worksheet | ReadOnlyWorksheet = wb[wb_name]
         if isinstance(ws, Chartsheet) or isinstance(ws, ReadOnlyWorksheet):
-            Trace.error(f"Chartsheet {sheet_name}")
+            Trace.error(f"Chartsheet {wb_name}")
             continue
 
         row = -1
@@ -613,7 +616,7 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
                 break
 
         if row < 0:
-            Trace.error(f"sheet '{sheet_name}' - column '{column_name}' not found")
+            Trace.error(f"sheet '{wb_name}' - column '{column_name}' not found")
             continue
 
         for i in range(3, ws.max_row + 1):
@@ -670,7 +673,6 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
 #
 #####################################################################################
 
-@duration("import '{filename}'")
 def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[str, Any]:
     pathname = Path(pathname)
     filepath = pathname / filename
@@ -685,21 +687,21 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[
         Trace.error(f"importExcel: {err}")
         return None
 
-    def parse_ws(sheet_name: str, ws: Any) -> Tuple[str, List[List[str]]]:
+    def parse_ws(wb_name: str, ws: Any) -> Tuple[str, List[List[str]]]:
         rules: List[List[str]] = []
 
-        _error, template = check_double_quotes(sheet_name, ws["e1"].value, 1, "import_ssml_rules_excel")
+        _error, template = check_quotes_error(wb_name, ws["e1"].value, 1, "import_ssml_rules_excel")
         if template == "":
             return template, rules
 
         for i in range(2, ws.max_row + 1):
             row = ws[i]
 
-            _error, key = check_double_quotes(sheet_name, str(get_cell_text(row[1])), i, "import_ssml_rules_excel")
+            _error, key = check_quotes_error(wb_name, str(get_cell_text(row[1])), i, "import_ssml_rules_excel")
             if key != "":
-                _error, pre   = check_double_quotes(sheet_name, str(get_cell_text(row[0])), i, "import_ssml_rules_excel")
-                _error, post  = check_double_quotes(sheet_name, str(get_cell_text(row[2])), i, "import_ssml_rules_excel")
-                _error, value = check_double_quotes(sheet_name, str(get_cell_text(row[3])), i, "import_ssml_rules_excel")
+                _error, pre   = check_quotes_error(wb_name, str(get_cell_text(row[0])), i, "import_ssml_rules_excel")
+                _error, post  = check_quotes_error(wb_name, str(get_cell_text(row[2])), i, "import_ssml_rules_excel")
+                _error, value = check_quotes_error(wb_name, str(get_cell_text(row[3])), i, "import_ssml_rules_excel")
                 if value != "":
                     rules.append([pre, key, post, value])
 
@@ -708,18 +710,18 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[
     result: Dict[str, Any] = {}
     trace_details = "import"
 
-    for sheet_name in wb.sheetnames:
-        if sheet_name[:1] == "-":
+    for wb_name in wb.sheetnames:
+        if wb_name[:1] == "-":
             continue
 
-        template, rules = parse_ws(sheet_name, wb[sheet_name])
+        template, rules = parse_ws(wb_name, wb[wb_name])
         if template != "":
-            result[sheet_name] = {
+            result[wb_name] = {
                 "template": template,
                 "rules": rules,
             }
 
-        trace_details += f" {sheet_name}: {len(rules)},"
+        trace_details += f" {wb_name}: {len(rules)},"
 
     Trace.result(f"{trace_details[:-1]}")
     return result
@@ -742,7 +744,6 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[
 #
 #####################################################################################
 
-@duration("import '{filename}'")
 def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None | Tuple[List[str], List[str], List[List[str]]]:
     pathname = Path(pathname)
     filepath = pathname / filename
@@ -761,13 +762,13 @@ def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None 
     singles: List[str] = []
     multiples: List[List[str]] = []
 
-    for sheet_name in wb.sheetnames:
-        if sheet_name[:1] == "-":
+    for wb_name in wb.sheetnames:
+        if wb_name[:1] == "-":
             continue
 
-        ws: Chartsheet | Worksheet | ReadOnlyWorksheet = wb[sheet_name]
+        ws: Chartsheet | Worksheet | ReadOnlyWorksheet = wb[wb_name]
         if isinstance(ws, Chartsheet):
-            Trace.error(f"Chartsheet {sheet_name}")
+            Trace.error(f"Chartsheet {wb_name}")
             continue
 
         if ws.max_row is None:
@@ -776,9 +777,9 @@ def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None 
         for i in range(2, ws.max_row + 1):
             row = ws[i]
 
-            error, original = check_double_quotes(sheet_name, str(get_cell_text(row[0])), i, "import_hunspell_PreCheck_excel")
+            error, original = check_quotes_error(wb_name, str(get_cell_text(row[0])), i, "import_hunspell_PreCheck_excel")
             if not error and original != "":
-                if sheet_name == "specialDot":
+                if wb_name == "specialDot":
                     abbreviations_with_dot.append(original)
                 else:
                     multiple = original.replace("  ", " ").split(" ")

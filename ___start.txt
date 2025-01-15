@@ -14,8 +14,9 @@ uv run __mypy.py src/audio.py
 uv run __mypy.py src/combine_srt.py
 uv run __mypy.py src/update_excel.py
 
+uv run __pyright.py src
 uv run __pyright.py src/main.py
-uv run __pyright.py src/reset.py
-uv run __pyright.py src/audio.py
-uv run __pyright.py src/combine_srt.py
-uv run __pyright.py src/update_excel.py
+uv run __pyright.py src/main
+uv run __pyright.py src/helper
+uv run __pyright.py src/utils
+

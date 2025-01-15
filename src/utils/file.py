@@ -1,31 +1,38 @@
 """
-    © Jürgen Schoenemeyer, 12.01.2025
+    © Jürgen Schoenemeyer, 15.01.2025
+
+    src/utils/file.py
 
     PUBLIC:
+     # timestamp
      - get_modification_timestamp(filename: Path | str) -> float
      - set_modification_timestamp(filename: Path | str, timestamp: float) -> None
-    #
+
+     # check
      - check_path_exists(path: str) -> bool
      - check_file_exists(filepath: Path | str, filename: str) -> bool
-     - check_excel_file_exists(filename: str) -> bool
-    #
-     - list_files(path: Path | str, extensions: List) -> List
-     - list_directories(path: Path | str) -> List
-     - listdir_match_extention(folder_path: Path | str, extensions: List=None) -> List
-    #
-     - clear_folder(path: str) -> None
-     - delete_folder_tree(dest_path: Path | str, relax: bool = False) -> bool
-     - create_folder( folderpath: Path | str ) -> bool
+
+     # Listing
+     - listdir(path: Path | str ) -> Tuple[List[str], List[str]]
+     - listdir_match_extention(path: Path | str, extensions: List[str] | None = None) -> Tuple[List[str], List[str]]
+
+     # folder operations
+     - list_folders(path: Path | str) -> List[str]:
+     - clear_folder(path: Path | str) -> None:
+     - delete_folder_tree(dest_path: Path | str, relax: bool = False) -> bool:
+     - create_folder( folderpath: Path | str ) -> bool:
      - make_dir(path: Path | str) -> None:
-     - delete_file(in_path: Path | str, filename: str) -> None
-     - beautify_path( path: Path | str ) -> str
-    #
-     - get_trace_path(filepath: Path | str) -> str
-     - get_files_in_folder( path: Path ) -> List
-     - get_folders_in_folder( path: Path ) -> List
-     - get_save_filename( path, stem, suffix ) -> str
-     - export_binary_file(filepath: Path | str, filename: str, data: bytes, _timestamp: float=0, create_folder: bool=False) -> None
-     - export_file(filepath: Path|str, filename: str, text: str, in_type: str = None, timestamp: float=0, create_folder: bool=False, encoding: str ="utf-8", overwrite: bool=True) -> str
+     - delete_file(path: Path | str, filename: str) -> None:
+     - beautify_path( path: Path | str ) -> str:
+
+     #
+     - get_trace_path(filepath: Path | str) -> str:
+     - get_files_in_folder( path: Path ) -> List[str]
+     - get_folders_in_folder( path: Path ) -> List[str]
+     - get_save_filename( path: Path, stem: str, suffix: str ) -> str
+
+     - export_binary_file(filepath: Path | str, filename: str, data: bytes, _timestamp: float=0, create_new_folder: bool=False) -> None
+     - export_file(filepath: Path|str, filename: str, text: str, in_type: str | None = None, timestamp: float=0, create_new_folder: bool=True, encoding: str ="utf-8", overwrite: bool=True) -> None | str
     #
      - get_filename_unique(dirpath: Path, filename: str) -> str
      - find_matching_file(path_name: str) -> bool | str
@@ -36,6 +43,9 @@
      - copy_my_file(source: str, dest: str, _show_updated: bool) -> bool
     #
      - convert_datetime( time_string: str ) -> int
+
+    PRIVATE:
+     - _increment_filename(filename_stem: str) -> str
 """
 
 import shutil
@@ -79,11 +89,19 @@ def set_modification_timestamp(filename: Path | str, timestamp: float) -> None:
 def check_path_exists(path: Path | str) -> bool:
     return os.path.exists(path)
 
-def check_file_exists(filepath: Path | str, filename: str) -> bool: # case sensitive
-    path = Path(filepath, filename )
+def check_file_exists(filepath_start: Path | str, filepath_end: Path | str) -> bool:
 
-    filepath = path.parent
-    filename = path.name
+    # case sensitive
+
+    # "/dir1/dir2/dir3" + "/file.ext"
+    # "/dir1/dir2" + "/dir3/file.ext"
+    # "/dir1" + "/dir2/dir3/file.ext"
+    # "" + "/dir1/dir2/dir3/file.ext"
+
+    full_path = Path(filepath_start) / filepath_end
+
+    filepath = full_path.parent
+    filename = full_path.name
 
     if not filepath.exists():
         Trace.error(f"directory missing '{filepath}'")
@@ -98,30 +116,27 @@ def check_file_exists(filepath: Path | str, filename: str) -> bool: # case sensi
     if filename in filenames:
         return True
     else:
-        Trace.error(f"file missing {path}")
+        Trace.error(f"file missing {full_path}")
         return False
 
-def check_excel_file_exists(filename: Path | str) -> bool:
-    filename = Path(filename)
-    if filename.suffix != ".xlsx":
-        Trace.error(f"no excel file {filename}")
-        return False
+# folder Listing
 
-    return filename.is_file()
+def listdir(path: Path | str ) -> Tuple[List[str], List[str]]:
+    return listdir_match_extention( path, [".*"] )
 
-# dir Listing
+#  extensions: [".zip", ".story", ".xlsx", ".docx"], ".*" => all
 
-def list_files(path: Path | str, extensions: List[str]) -> Tuple[List[str], List[str]]:
+def listdir_match_extention(path: Path | str, extensions: List[str]) -> Tuple[List[str], List[str]]:
     path = Path(path)
 
     extensions = list({ext.lstrip(".") for ext in extensions})
 
-    files: List[str] = []
-    dirs: List[str] = []
+    files:   List[str] = []
+    folders: List[str] = []
 
     if not check_path_exists(path):
         Trace.error( f"folder not found '{path.as_posix()}'" )
-        return files, dirs
+        return files, folders
 
     for file in os.listdir(path):
         if file.startswith("~"):
@@ -130,40 +145,30 @@ def list_files(path: Path | str, extensions: List[str]) -> Tuple[List[str], List
 
         if os.path.isfile(path / file):
             for extention in extensions:
-                if "." + extention in file:
+                if extention == "*" or file.endswith("." + extention):
                     files.append(file)
                     break
+
+        elif os.path.isdir(path / file):
+            folders.append(file)
+
         else:
-            dirs.append(file)
+            Trace.warning(f"skip unknown filetype '{file}'")
 
-    return files, dirs
+    return files, folders
 
-def list_directories(path: Path | str) -> List[str]:
+def list_folders(path: Path | str) -> List[str]:
     path = Path(path)
 
-    ret: List[str] = []
+    folders: List[str] = []
     try:
         for file in os.listdir(path):
             if os.path.isdir(os.path.join(path, file)):
-                ret.append(file)
+                folders.append(file)
     except OSError as err:
         Trace.error(f"{err}")
 
-    return ret
-
-#  extensions: [".zip", ".story", ".xlsx", ".docx"], None => all
-
-def listdir_match_extention(folder_path: Path | str, extensions: List[str] | None = None) -> List[str]:
-    folder_path = Path(folder_path)
-
-    ret: List[str] = []
-    files = os.listdir(folder_path)
-    for file in files:
-        if (folder_path / file).is_file():
-            if extensions is None or (folder_path / file).suffix in extensions:
-                ret.append(file)
-
-    return ret
+    return folders
 
 def clear_folder(path: Path | str) -> None:
     path = Path(path)
@@ -247,26 +252,6 @@ def get_trace_path(filepath: Path | str) -> str:
     return trace_path
 
 
-# increment_filename(filename_stem: str) -> str:
-#
-# 'filaname'     -> 'filaname (1)'
-# 'filaname (1)' -> 'filaname (2)'
-# 'filaname (2)' -> 'filaname (3)'
-# ...
-
-def _increment_filename(filename_stem: str) -> str:
-    pattern = r"^(.*?)(?: \((\d+)\))?$"
-
-    match = re.match(pattern, filename_stem)
-    if match:
-        base_name, number = match.groups()
-        number = int(number) + 1 if number else 1
-
-        new_name = f"{base_name} ({number})"
-        return new_name
-
-    return filename_stem
-
 def get_files_in_folder( path: Path ) -> List[str]:
     return [f for f in os.listdir(path) if isfile(join(path, f))]
 
@@ -290,7 +275,6 @@ def export_binary_file(filepath: Path | str, filename: str, data: bytes, _timest
 
     with open(Path(filepath, filename), "wb") as binary_file:
         binary_file.write(data)
-
 
 def export_file(filepath: Path|str, filename: str, text: str, in_type: str | None = None, timestamp: float=0, create_new_folder: bool=True, encoding: str ="utf-8", overwrite: bool=True) -> None | str:
     trace_export_path_folder = get_trace_path(Path(filepath))
@@ -370,24 +354,25 @@ def export_file(filepath: Path|str, filename: str, text: str, in_type: str | Non
             Trace.error(f"{error} '{trace_export_path}'")
             return None
 
-"""
-def get_filename_unique(path: str) -> str:
-    tmp = path.split(".")
-    ext = tmp.pop()
-    dest2 = ".".join(tmp)
-    copy = ""
+# increment_filename(filename_stem: str) -> str:
+#
+# 'filaname'     -> 'filaname (1)'
+# 'filaname (1)' -> 'filaname (2)'
+# 'filaname (2)' -> 'filaname (3)'
+# ...
 
-    c = 0
-    while os.path.isfile(dest2 + copy + "." + ext):
-        if c == 0:
-            c = 2
-        else:
-            c += 1
-        copy = "_[" + str(c) + "]"
+def _increment_filename(filename_stem: str) -> str:
+    pattern = r"^(.*?)(?: \((\d+)\))?$"
 
-    dest = dest2 + copy + "." + ext
-    return dest
-"""
+    match = re.match(pattern, filename_stem)
+    if match:
+        base_name, number = match.groups()
+        number = int(number) + 1 if number else 1
+
+        new_name = f"{base_name} ({number})"
+        return new_name
+
+    return filename_stem
 
 def get_filename_unique(dirpath: Path, filename: str) -> str:
     suffix = Path(filename).suffix
@@ -414,18 +399,18 @@ def find_matching_file(path_name: str) -> bool | str:
 
     return s[0].replace("\\", "/")
 
-def find_matching_file_path(dirpath: Path, filename: str) -> Path | bool:
+def find_matching_file_path(dirpath: Path, filename: str) -> None | Path:
     filepath = str(dirpath / filename)
 
     s = glob.glob( filepath )
 
     if len(s) == 0:
         Trace.error(f"file not found: {filepath}")
-        return False
+        return None
 
     if len(s) > 1:
         Trace.error(f"file not unique: {filepath} - {s}")
-        return False
+        return None
 
     return Path(s[0].replace("\\", "/"))
 

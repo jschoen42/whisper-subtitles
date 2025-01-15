@@ -66,7 +66,12 @@ def run_mypy() -> None:
         # "--enable-incomplete-feature", # Tuple[int, ...]
     ]
 
-    filepath = Path(sys.argv[1]).stem
+    filepath = Path(sys.argv[1])
+    if not filepath.exists():
+        print(f"Error: '{filepath}' not found ")
+        return
+
+    name = filepath.stem
 
     text =  f"Python:   {sys.version}\n"
     text += f"Platform: {platform.platform()}\n"
@@ -96,10 +101,10 @@ def run_mypy() -> None:
 
         text += f"{line}\n"
 
-    with open(f"__mypy-{filepath}.txt", "w") as file:
+    with open(f"__mypy-{name}.txt", "w") as file:
         file.write(text)
 
-    print(f"[MyPy] {sys.argv[1:][0]}: {summary} -> __mypy-{filepath}.txt")
+    print(f"[MyPy] {sys.argv[1:][0]}: {summary} -> __mypy-{name}.txt")
     sys.exit(result.returncode)
 
 if __name__ == "__main__":

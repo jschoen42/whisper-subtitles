@@ -1,5 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 12.01.2025
+    © Jürgen Schoenemeyer, 15.01.2025
+
+    src/utils/trace.py
 
     class Trace:
       - Trace.set(debug_mode=True)

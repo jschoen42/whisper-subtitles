@@ -776,20 +776,6 @@ wheels = [
 ]
 
 [[package]]
-name = "openpyxl-stubs"
-version = "0.1.25"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "mypy" },
-    { name = "openpyxl" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/82/c4/8dfd61c01a2fb0ac8bd37cadf0f19b87a8133eb6f690fc057a9536b4def0/openpyxl-stubs-0.1.25.tar.gz", hash = "sha256:108b112df072f7645ca356eacdd5730b1bd986c67ae33366a4a13c6879c369e7", size = 18803 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b9/04/5847e2e75c39f80e65c388f8e292719b46c00cda2c987f2d5c53ed617d11/openpyxl_stubs-0.1.25-py3-none-any.whl", hash = "sha256:db29f7804993b4a46b155fc4be45314c14538cb475b00591d8096e5af486abf1", size = 26598 },
-]
-
-[[package]]
 name = "packaging"
 version = "24.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1343,6 +1329,15 @@ wheels = [
 ]
 
 [[package]]
+name = "types-openpyxl"
+version = "3.1.5.20241225"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/bf/b2/e43fcf7eaa5e1a284275df561da843de278eb4c3fcebbcb283faa9903d34/types_openpyxl-3.1.5.20241225.tar.gz", hash = "sha256:3c076f4c6f114e1859b6857ffd486e96c938c0434451c60dc54c2bcb62750d78", size = 100287 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/92/ac/d88fa0369b16d8e1a2c72a872b87618bb7e25f41a7c1c29973ff4b352f4d/types_openpyxl-3.1.5.20241225-py3-none-any.whl", hash = "sha256:903d92f58f42135b0614d609868c619aee12e1c7b65ccf8472dfd2706bcc6f47", size = 166021 },
+]
+
+[[package]]
 name = "types-python-dateutil"
 version = "2.9.0.20241206"
 source = { registry = "https://pypi.org/simple" }
@@ -1453,7 +1448,6 @@ dependencies = [
     { name = "onnxruntime" },
     { name = "openai-whisper" },
     { name = "openpyxl" },
-    { name = "openpyxl-stubs" },
     { name = "pymediainfo" },
     { name = "pyyaml" },
     { name = "spacy" },
@@ -1469,6 +1463,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "mypy" },
+    { name = "types-openpyxl" },
     { name = "types-pyyaml" },
     { name = "types-requests" },
 ]
@@ -1483,7 +1478,6 @@ requires-dist = [
     { name = "onnxruntime", specifier = "<2" },
     { name = "openai-whisper", specifier = ">=20240930" },
     { name = "openpyxl", specifier = ">=3.1.5" },
-    { name = "openpyxl-stubs", specifier = ">=0.1.25" },
     { name = "pymediainfo", specifier = ">=6.1.0" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "spacy", specifier = "<3.9" },
@@ -1499,6 +1493,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "mypy", specifier = ">=1.14.0" },
+    { name = "types-openpyxl", specifier = ">=3.1.5.20241225" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20241230" },
     { name = "types-requests", specifier = ">=2.32.0.20241016" },
 ]

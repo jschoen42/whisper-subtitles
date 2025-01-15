@@ -1,5 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 10.01.2025
+    © Jürgen Schoenemeyer, 15.01.2025
+
+    src/utils/util.py
 
     PUBLIC:
      - format_subtitle( start_time: float, end_time: float, text: str, color=True ) -> str

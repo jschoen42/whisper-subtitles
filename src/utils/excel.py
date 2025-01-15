@@ -1,96 +1,129 @@
 """
-    © Jürgen Schoenemeyer, 12.01.2025
+    © Jürgen Schoenemeyer, 15.01.2025
+
+    src/utils/excel.py
 
     PUBLIC:
-    get_excel_file(source_path: str, filename: str, comment: str, last_timestamp: float = 0) -> Tuple[Workbook, int]
+     - def check_excel_file_exists(filepath: Path | str) -> bool
 
-    get_excel_sheet(source_path: str, filename: str, sheet: str, comment: str, last_timestamp: float = 0.0) -> Tuple[None | Worksheet, float]
-    get_excel_sheet_special(workbook: Workbook, sheet: str, comment: str) -> None | Worksheet
+     - read_excel_file(folderpath: Path | str, filename: str) -> None | Tuple[Workbook, float]
+     - read_excel_worksheet(folderpath: str, filename: str, sheet_name: str) -> None | Tuple[Worksheet, float]
+     - get_excel_worksheet(workbook: Workbook, sheet_name: str) -> None | Worksheet
 
-    get_cell_text(in_cell: Cell | MergedCell) -> str:
-    get_cell_value(in_cell: Cell | MergedCell) -> bool | str
+     - get_cell_text(in_cell: Cell | MergedCell) -> str:
+     - get_cell_value(in_cell: Cell | MergedCell, check_boolean: bool = True) -> bool | str:
 
-    check_quotes( wb_name: str, word: str, line_number: int, function_name: str ) -> str
-    check_quotes_error(wb_name: str, word: str, line_number: int, function_name: str) -> Tuple[dict | bool, str]
-    check_hidden(sheet, comment: str) -> None
-    excel_date(date, time_zone) -> float
+     - check_single_quotes(wb_name: str, cell_text: str, line_number: int, function_name: str) -> Tuple[bool, str]:
+     - check_double_quotes(wb_name: str, cell_text: str, line_number: int, function_name: str) -> Tuple[bool, str]:
+
+     - excel_date(date: datetime, time_zone_offset: tzoffset) -> float:
 """
 
 import re
 import unicodedata
-import datetime
-
 import warnings
 
-from typing import Any, Dict, Tuple
+from typing import Tuple
+from pathlib import Path
+from datetime import datetime
+
+from dateutil.tz import tzoffset
 
 from openpyxl import load_workbook
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.worksheet._read_only import ReadOnlyWorksheet
-from openpyxl.chartsheet.chartsheet import Chartsheet
 from openpyxl.cell.cell import Cell, MergedCell
+from openpyxl.chartsheet.chartsheet import Chartsheet
+
+# from openpyxl.workbook.defined_name import DefinedName, DefinedNameList
+# from openpyxl.worksheet._write_only import WriteOnlyWorksheet
+# from openpyxl.cell.read_only import ReadOnlyCell
+# from openpyxl.styles.named_styles import NamedStyle
 
 from utils.trace import Trace
-from utils.file  import get_modification_timestamp, check_excel_file_exists
+from utils.file  import get_modification_timestamp, check_file_exists
 
 # UserWarning: Data Validation extension is not supported and will be removed
 warnings.simplefilter("ignore")
 
-def get_excel_file(source_path: str, filename: str, comment: str, last_timestamp: float = 0.0) -> Tuple[None | Workbook, float]:
-    file_path = source_path + filename
+def check_excel_file_exists(filepath: Path | str) -> bool:
+    filepath = Path(filepath)
 
-    if check_excel_file_exists(file_path) is False:
-        Trace.error(f"{comment} - file not found '{file_path}'")
-        return (None, 0)
+    folderpath = filepath.parent
+    filename = filepath.name
 
-    try:
-        workbook = load_workbook(filename = file_path)
-    except OSError as err:
-        Trace.error(f"{comment} - importExcel {err}")
-        return (None, 0)
+    if Path(filename).suffix.lower() != ".xlsx":
+        Trace.error(f"unkown extention '{filename}'")
+        return False
 
-    return (workbook, max(last_timestamp, get_modification_timestamp(file_path)))
-
-def get_excel_sheet(source_path: str, filename: str, sheet_name: str, comment: str, last_timestamp: float = 0.0) -> Tuple[None | Worksheet, float]:
-    file_path = source_path + filename
-
-    if check_excel_file_exists(file_path) is False:
-        Trace.error(f"{comment} - file not found '{file_path}'")
-        return (None, 0)
-
-    try:
-        workbook: Workbook = load_workbook(filename = file_path)
-    except OSError as err:
-        Trace.error(f"{comment} - importExcel '{err}'")
-        return (None, 0)
-
-    try:
-        sheet: Worksheet | ReadOnlyWorksheet | Chartsheet = workbook[sheet_name]
-    except KeyError as err:
-        Trace.error(f"{comment} - importExcel '{filename}' {err}")
-        return (None, 0)
-
-    if isinstance(sheet, Worksheet):
-        check_hidden(sheet, "get_excel_sheet")
-        return ( sheet, max(last_timestamp, get_modification_timestamp(file_path)))
     else:
-        Trace.error(f"{comment} - sheet '{sheet_name}' is not a Worksheet")
-        return (None, 0)
+        return check_file_exists(folderpath, filename)
 
-def get_excel_sheet_special(workbook: Workbook, sheet_name: str, comment: str) -> None | Worksheet:
+def read_excel_file(folderpath: Path | str, filename: str) -> None | Tuple[Workbook, float]:
+    filepath = Path(folderpath) / filename
+
+    if check_excel_file_exists(filepath) is False:
+        return None
+
+    try:
+        workbook = load_workbook(filename = filepath)
+    except OSError as err:
+        Trace.error(f"{err}")
+        return None
+
+    return (workbook, get_modification_timestamp(filepath))
+
+def read_excel_worksheet(folderpath: str, filename: str, sheet_name: str) -> None | Tuple[Worksheet, float]:
+    filepath = Path(folderpath) / filename
+
+    if check_excel_file_exists(filepath) is False:
+        return None
+
+    try:
+        workbook: Workbook = load_workbook(filename = filepath)
+    except OSError as err:
+        Trace.error(f"{err}")
+        return None
+
     try:
         sheet: Worksheet | ReadOnlyWorksheet | Chartsheet = workbook[sheet_name]
     except KeyError as err:
-        Trace.error(f"{comment} - importExcel {err}")
+        Trace.error(f"KeyError: {err}")
         return None
 
     if isinstance(sheet, Worksheet):
-        check_hidden(sheet, "get_excel_sheet_special")
+        check_hidden_rows_columns(sheet)
+        return ( sheet, get_modification_timestamp(filepath) )
+    else:
+        Trace.error(f"sheet '{sheet_name}' is not a Worksheet")
+        return None
+
+def get_excel_worksheet(workbook: Workbook, sheet_name: str) -> None | Worksheet:
+    try:
+        sheet: Worksheet | ReadOnlyWorksheet | Chartsheet = workbook[sheet_name]
+    except KeyError as err:
+        Trace.error(f"{err}")
+        return None
+
+    if isinstance(sheet, Worksheet):
+        check_hidden_rows_columns(sheet)
         return sheet
     else:
-        Trace.error(f"{comment} - sheet '{sheet_name}' is not a Worksheet")
+        Trace.error(f"sheet '{sheet_name}' is not a Worksheet")
         return None
+
+# check if column(s) or row(s) are hidden
+
+def check_hidden_rows_columns(sheet: Worksheet) -> None:
+    for key, value in sheet.column_dimensions.items():
+        if value.hidden is True:
+            if key != "A":
+                Trace.warning( f"hidden column: {key}")
+
+    for row_num, row_dimension in sheet.row_dimensions.items():
+        if row_dimension.hidden is True:
+            Trace.warning( f"hidden row: {row_num}")
 
 ######################################################################################
 # get_cell_value with converting
@@ -103,7 +136,7 @@ def get_excel_sheet_special(workbook: Workbook, sheet_name: str, comment: str) -
 #  - [hide] -> <hide> (custom)
 ######################################################################################
 
-def get_cell_value(in_cell: Cell | MergedCell) -> bool | str:
+def get_cell_value(in_cell: Cell | MergedCell, check_boolean: bool = True) -> bool | str:
     if in_cell.value is None:
         return ""
 
@@ -123,11 +156,12 @@ def get_cell_value(in_cell: Cell | MergedCell) -> bool | str:
     txt = unicodedata.normalize("NFC", str(in_cell.value).rstrip())
     txt = txt.replace("\n", "<br>")
     txt = txt.replace("[-]", "&shy;")
-    if txt == "true":
-        return True
 
-    if txt == "false":
-        return False
+    if check_boolean is True:
+        if txt == "true":
+            return True
+        if txt == "false":
+            return False
 
     if txt == "N/A":
         return ""
@@ -135,70 +169,44 @@ def get_cell_value(in_cell: Cell | MergedCell) -> bool | str:
     return re.sub(r"\[(\/*)(br|b|i|u|mark|hide|nobr|sub|sup)\]", r"<\1\2>", txt)
 
 def get_cell_text(in_cell: Cell | MergedCell) -> str:
-    if in_cell.value is None:
-        return ""
+    return str(get_cell_value(in_cell, check_boolean=False))
 
-    if isinstance(in_cell, MergedCell):
-        return ""
 
-    # data_type
-    #   f: formular
-    #   s: string
-    #   n: numeric
-    #   b: boolean
-    #   n: null
-    #   inlineStr: inline
-    #   e: error
-    #   str: formlar cached string
+# if beginning or ending spaces are relevant in excel cells
+#  -> warp text in single or double quotes " word"
+# e.g. whisper DATEV dictionary (uses double quotes)
 
-    if in_cell.data_type == "f":
-        return f"formula not support: {in_cell.value}"
+def check_single_quotes(wb_name: str, cell_text: str, line_number: int, function_name: str) -> Tuple[bool, str]:
+    text = cell_text.strip()
 
-    txt = unicodedata.normalize("NFC", str(in_cell.value).rstrip())
-    txt = txt.replace("\n", "<br>")
-    txt = txt.replace("[-]", "&shy;")
-
-    if txt == "N/A":
-        return ""
-
-    return re.sub(r"\[(\/*)(br|b|i|u|mark|hide|nobr|sub|sup)\]", r"<\1\2>", txt)
-
-def check_quotes( wb_name: str, word: str, line_number: int, function_name: str ) -> str:
-    if word == "":
-        return ""
-
-    if word[:1] == '"' and word[-1:] == '"':
-        return word[1:-1]
-    else:
-        Trace.error( f"[{function_name}] '{wb_name}': line {line_number} quotes missing: '{word}'")
-        return ""
-
-def check_quotes_error(wb_name: str, word: str, line_number: int, function_name: str) -> Tuple[Dict[str, Any] | bool, str]:
-    if word == "":
+    if text == "":
         return False, ""
 
-    if word[:1] == '"' and word[-1:] == '"':
-        return False, word[1:-1]
+    if text[:1] == "'" and text[-1:] == "'":
+        return True, text[1:-1]
     else:
-        Trace.error(f"{function_name} '{wb_name}': line {line_number} quotes missing: '{word}'")
+        Trace.error(f"{function_name} '{wb_name}': line {line_number} single quotes missing: |{text}|")
+        return False, ""
+
+def check_double_quotes(wb_name: str, cell_text: str, line_number: int, function_name: str) -> Tuple[bool, str]:
+    text = cell_text.strip()
+
+    if text == "":
+        return False, ""
+
+    if text[:1] == '"' and text[-1:] == '"':
+        return False, text[1:-1]
+    else:
+        Trace.error(f"{function_name} '{wb_name}': line {line_number} doublequotes missing: |{text}|")
         return True, ""
 
-def check_hidden(sheet: Worksheet, comment: str) -> None:
-    for key, value in sheet.column_dimensions.items():
-        if value.hidden is True:
-            if key != "A":
-                Trace.warning( f"{comment}:  hidden column: {key}")
+# get excel excel (inner) date
+# https://forum.openoffice.org/en/forum/viewtopic.php?t=108820#post_content529967
+#
+# start date: 30.12.1899 (+ 1 day)
 
-    for row_num, row_dimension in sheet.row_dimensions.items():
-        if row_dimension.hidden is True:
-            Trace.warning( f"{comment}:  hidden row: {row_num}")
-
-def excel_date(date: Any, time_zone: str) -> float:
+def excel_date(date: datetime, time_zone_offset: tzoffset) -> float:
     day_in_seconds = 86400
 
-    # 30.12.1899 (+ 1 day)
-    # https://forum.openoffice.org/en/forum/viewtopic.php?t=108820#post_content529967
-
-    tz = datetime.timezone.utc if time_zone == "UTC" else None
-    delta = date - datetime.datetime(1899, 12, 30, 0, 0, 0, 0, tzinfo=tz)
-    return float(delta.days) + (float(delta.seconds) / day_in_seconds)
+    delta = date - datetime(1899, 12, 30, tzinfo=time_zone_offset)
+    return delta.days + delta.seconds / day_in_seconds

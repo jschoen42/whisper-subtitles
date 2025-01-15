@@ -1,5 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 10.01.2025
+    © Jürgen Schoenemeyer, 15.01.2025
+
+    src/utils/globals.py
 
     PUBLIC:
      - DRIVE: Path

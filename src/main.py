@@ -48,7 +48,7 @@ data_path = BASE_PATH / "../data"
 # ("07", "large-v3•turbo-de") # fast ohne 'ß'
 # ("07", "large-v3•distil-en")
 
-models = [("07", "large-v3•turbo")]
+models = [("06", "large-v2")]
 
 beams = [5] # [1, 3, 5, 7, 9] -> keinen signifikater Unterschied zw. 3 ... 9
 
