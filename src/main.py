@@ -16,7 +16,7 @@ from utils.file    import check_file_exists
 from utils.log     import log_clear, log_add, log_get_data
 from utils.log     import DictionaryLog
 
-from helper.excel        import import_project_excel, import_dictionary_excel
+from helper.excel_read   import import_project_excel, import_dictionary_excel
 from helper.captions     import seconds_to_timecode_vtt
 from helper.spelling     import hunspell_dictionary_init
 from helper.whisper_util import init_special_text, are_inner_prompts_possible, prompt_main_normalize, prompt_normalize, get_filename_parameter
@@ -28,7 +28,7 @@ from main.whisper_faster import precheck_models, transcribe_fasterwhisper
 from main.whisper import transcribe_whisper
 from main.whisper_timestamped import transcribe_whisper_timestamped
 
-PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
+PROJECTS: str = "projects_all.yaml"  # "projects.yaml", "projects_all.yaml"
 
 data_path = BASE_PATH / "../data"
 
@@ -48,7 +48,7 @@ data_path = BASE_PATH / "../data"
 # ("07", "large-v3•turbo-de") # fast ohne 'ß'
 # ("07", "large-v3•distil-en")
 
-models = [("06", "large-v2")]
+models = [ ("07", "large-v3•turbo") ]
 
 beams = [5] # [1, 3, 5, 7, 9] -> keinen signifikater Unterschied zw. 3 ... 9
 

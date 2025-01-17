@@ -468,5 +468,5 @@ def convert_datetime(time_string: str) -> int:
 
     my_timestamp = int(datetime.datetime.timestamp(my_time_string))
 
-    Trace.debug( f"convert_datetime: {time_string} -> {my_time_string} => epoch: {my_timestamp}" )
+    # Trace.debug( f"convert_datetime: {time_string} -> {my_time_string} => epoch: {my_timestamp}" )
     return my_timestamp

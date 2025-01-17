@@ -8,7 +8,7 @@ projects:
   - 'Baulohnabrechnung/Baulohnabrechnung_GaLaBau_LuG'                                # 78956: Michael Schumann
   - 'Baulohnabrechnung/Baulohnabrechnung_Maler_LODAS'                                # 78957: Michael Schumann
   - 'Baulohnabrechnung/Baulohnabrechnung_Maler_LuG'                                  # 78958: Michael Schumann
-  ##- 'Baulohnabrechnung/Baulohnabrechnung_Gerüstbauer_LODAS'                          # 78959: Brita Kuttritz
+  - 'Baulohnabrechnung/Baulohnabrechnung_Gerüstbauer_LODAS'                          # 78959: Brita Kuttritz
   - 'Baulohnabrechnung/Baulohnabrechnung_Gerüstbauer_LuG'                            # 78960: Michael Schumann # UT - NEU: 24. April 2024
 
   - 'Branchenpaket Bau und Handwerk'                                                 # 78989: Andrea Leiser
@@ -74,9 +74,10 @@ projects:
   - '_Online-Seminar/BHG/BHG LuG Modul 3'                              # 78950: Marion Petersen # UT
   - '_Online-Seminar/BHG/BHG LuG Modul 5'                              # 78952: Marion Petersen # UT - Update 20.3.2024
 
+  - '_Online-Seminar/OSR_2102_LuG_LODAS'                               # 77766, 77956: Steffen Panzer
+  - '_Online-Seminar/OSR_2103_LuG_LODAS'                               # 78923, 78924: Gunther Schwanke + Uta Lange
   - '_Online-Seminar/OSR_2201_LuG_LODAS/OSR_2201_LODAS'                # 77760: Steffen Panzer
   - '_Online-Seminar/OSR_2201_LuG_LODAS/OSR_2201_LuG'                  # 77761: Steffen Panzer
-  - '_Online-Seminar/OSR_2102_LuG_LODAS'                               # 77766, 77956: Steffen Panzer
   - '_Online-Seminar/OSR_2205_LuG_LODAS'                               # 78712, 78711: Michael Lillot
   - '_Online-Seminar/OSR_2208_LuG_LODAS'                               # 73198, 73437: Steffen Panzer
   - '_Online-Seminar/OSR_2303_LuG_LODAS'                               # 78746, 78745: Michael Lillot
@@ -91,23 +92,23 @@ projects:
   - '_Online-Seminar/OSR_2406_LuG_LODAS'                               # 73196, 73435: Steffen Panzer, Klaus Herrmann
 
     # Kurzbeiträge
-  - '_Kurzbeitrag/OSR_2105_KB'                                          # Gunther Schwanke, Markus Burgenmeister
-  - '_Kurzbeitrag/OSR_2107_KB'                                          # Christian Beck, Markus Burgenmeister
-  - '_Kurzbeitrag/OSR_2111_KB'                                          # Christian Beck, Markus Burgenmeister
-  - '_Kurzbeitrag/OSR_2201_KB'                                          # Christian Beck, Markus Burgenmeister
-  - '_Kurzbeitrag/OSR_2203_KB'                                          # Gunther Schwanke, Markus Burgenmeister
-  - '_Kurzbeitrag/OSR_2206_KB'                                          # Christian Beck, Klaus Herrmann
-  - '_Kurzbeitrag/OSR_2209_KB'                                          # Gunther Schwanke, Klaus Herrmann
-  - '_Kurzbeitrag/OSR_2211_KB'                                          # Gunther Schwanke, Klaus Herrmann
-  - '_Kurzbeitrag/OSR_2212_KB'                                          # Christian Beck, Markus Burgenmeister
-  - '_Kurzbeitrag/OSR_2302_KB'                                          # Christian Beck, Markus Burgenmeister
-  - '_Kurzbeitrag/OSR_2304_KB'                                          # Christian Beck, Klaus Herrmann
-  - '_Kurzbeitrag/OSR_2305_KB'                                          # Gunther Schwanke, Klaus Herrmann
-  - '_Kurzbeitrag/OSR_2308_KB'                                          # Christian Beck, Klaus Herrmann
-  - '_Kurzbeitrag/OSR_2310_KB'                                          # Christian Beck, Markus Burgenmeister
-  - '_Kurzbeitrag/OSR_2312_KB'                                          # Christian Beck, Klaus Herrmann
-  - '_Kurzbeitrag/OSR_2403_KB'                                          # Gunther Schwanke, Markus Burgenmeister
-  - '_Kurzbeitrag/OSR_2404_KB'                                          # Christian Beck, Klaus Herrmann
-  - '_Kurzbeitrag/OSR_2405_KB'                                          # Gunther Schwanke, Markus Burgenmeister
-  - '_Kurzbeitrag/OSR_2407_KB'                                          # Gunther Schwanke, Markus Burgenmeister
-  - '_Kurzbeitrag/OSR_2409_KB'                                          # Gunther Schwanke, Markus Burgenmeister
+  - '_Kurzbeitrag/OSR_2105_KB'                                         # Gunther Schwanke, Markus Burgenmeister
+  - '_Kurzbeitrag/OSR_2107_KB'                                         # Christian Beck, Markus Burgenmeister
+  - '_Kurzbeitrag/OSR_2111_KB'                                         # Christian Beck, Markus Burgenmeister
+  - '_Kurzbeitrag/OSR_2201_KB'                                         # Christian Beck, Markus Burgenmeister
+  - '_Kurzbeitrag/OSR_2203_KB'                                         # Gunther Schwanke, Markus Burgenmeister
+  - '_Kurzbeitrag/OSR_2206_KB'                                         # Christian Beck, Klaus Herrmann
+  - '_Kurzbeitrag/OSR_2209_KB'                                         # Gunther Schwanke, Klaus Herrmann
+  - '_Kurzbeitrag/OSR_2211_KB'                                         # Gunther Schwanke, Klaus Herrmann
+  - '_Kurzbeitrag/OSR_2212_KB'                                         # Christian Beck, Markus Burgenmeister
+  - '_Kurzbeitrag/OSR_2302_KB'                                         # Christian Beck, Markus Burgenmeister
+  - '_Kurzbeitrag/OSR_2304_KB'                                         # Christian Beck, Klaus Herrmann
+  - '_Kurzbeitrag/OSR_2305_KB'                                         # Gunther Schwanke, Klaus Herrmann
+  - '_Kurzbeitrag/OSR_2308_KB'                                         # Christian Beck, Klaus Herrmann
+  - '_Kurzbeitrag/OSR_2310_KB'                                         # Christian Beck, Markus Burgenmeister
+  - '_Kurzbeitrag/OSR_2312_KB'                                         # Christian Beck, Klaus Herrmann
+  - '_Kurzbeitrag/OSR_2403_KB'                                         # Gunther Schwanke, Markus Burgenmeister
+  - '_Kurzbeitrag/OSR_2404_KB'                                         # Christian Beck, Klaus Herrmann
+  - '_Kurzbeitrag/OSR_2405_KB'                                         # Gunther Schwanke, Markus Burgenmeister
+  - '_Kurzbeitrag/OSR_2407_KB'                                         # Gunther Schwanke, Markus Burgenmeister
+  - '_Kurzbeitrag/OSR_2409_KB'                                         # Gunther Schwanke, Markus Burgenmeister

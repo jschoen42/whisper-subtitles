@@ -9,7 +9,7 @@ whisper:
     use_initial_prompt: True
 
     faster_whisper:
-        cpu_threads: 3
+        cpu_threads: 2
         use_vad: true
 
         model_base: ../models/faster-whisper

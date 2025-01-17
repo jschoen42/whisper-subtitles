@@ -54,6 +54,9 @@ TranscriptionInfo(
 """
 
 def get_settings_transcribe_faster(info: Dict[str, Any], media_type: str, media_info: Dict[str, Any], vad_sampling_rate: int, speech_chunks: List[Dict[str, Any]]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+
+    # dataclass: TranscriptionInfo
+
     settings: Dict[str, Any] = {}
 
     try:
@@ -69,47 +72,22 @@ def get_settings_transcribe_faster(info: Dict[str, Any], media_type: str, media_
         settings["duration"] = -1
         Trace.error(f"{error}")
 
-    settings["transcription_options"] = {}
+    # transcription_options: TranscriptionOptions
+
     try:
-        props = [
-            "beam_size",
-            "best_of",
-            "patience",
-            "length_penalty",
-            "repetition_penalty",
-            "no_repeat_ngram_size",
-            "log_prob_threshold",
-            "no_speech_threshold",
-            "compression_ratio_threshold",
-            "condition_on_previous_text",
-            "prompt_reset_on_temperature",
-            "temperatures",
-            "initial_prompt",
-            "prefix",
-            "suppress_blank",
-            "suppress_tokens",
-            "without_timestamps",
-            "max_initial_timestamp",
-            "word_timestamps",
-            "prepend_punctuations",
-            "append_punctuations"
-        ]
-        settings["transcription_options"] = {p: info["transcription_options"][p] for p in props}
+        settings["transcription_options"] = {
+            prop: value for prop, value in info.transcription_options.__dict__.items() # type: ignore [attr-defined]
+        }
     except Exception as error:
-        settings["duration"] = -1
+        settings["transcription_options"] = None
         Trace.error(f"{error}")
 
-    settings["vad_options"] = None
+    # vad_options: Optional[VadOptions]
+
     try:
-        if "vad_options" in info:
-            props = [
-                "threshold",
-                "min_speech_duration_ms",
-                "max_speech_duration_s",
-                "min_silence_duration_ms",
-                "speech_pad_ms"
-            ]
-            settings["vad_options"] = {p: info["vad_options"][p] for p in props}
+        settings["vad_options"] = {
+            prop: value for prop, value in info.vad_options.__dict__.items() # type: ignore [attr-defined]
+        }
     except Exception as error:
         settings["vad_options"] = None
         Trace.error(f"{error}")

@@ -16,7 +16,7 @@ from spylls.hunspell import Dictionary # type: ignore # mypy
 from utils.trace     import Trace
 from utils.decorator import duration
 
-from helper.excel import import_hunspell_PreCheck_excel
+from helper.excel_read import import_hunspell_PreCheck_excel
 
 # ../data/_hunspell/de-DE.dic
 # ../data/_hunspell/PreCheck_de-DE.xlsx

@@ -30,8 +30,8 @@ from utils.file     import get_file_infos, get_modification_timestamp, set_modif
 from utils.util     import import_json_timestamp, export_json, export_text, format_subtitle, CacheJSON
 from utils.metadata import get_media_info
 
-from helper.captions import export_srt, export_vtt
-from helper.excel import export_TextToSpeech_excel
+from helper.captions    import export_srt, export_vtt
+from helper.excel_write import export_TextToSpeech_excel
 
 from helper.whisper_util import get_filename_parameter, are_prompts_allowed, prepare_words, split_to_lines, split_to_sentences
 from helper.whisper_faster_util import get_settings_transcribe_faster

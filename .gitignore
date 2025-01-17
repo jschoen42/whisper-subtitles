@@ -9,8 +9,8 @@ _traceAll/*
 
 *.7z
 __history*.txt
-__mypy*.txt
-__pyright*.txt
+.type-check-result/*
+_dictionary/*.json
 
 ### Python
 
@@ -35,7 +35,7 @@ Thumbs.db
 Icon
 
 # Thumbnails
-._*
+#._*
 
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
@@ -52,3 +52,4 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+src/update_excel.py

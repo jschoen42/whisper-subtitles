@@ -23,8 +23,8 @@ from utils.trace    import Trace
 from utils.util     import import_json, export_json, export_text, CacheJSON
 from utils.metadata import get_media_info
 
-from helper.captions import export_srt, export_vtt
-from helper.excel    import export_TextToSpeech_excel
+from helper.captions     import export_srt, export_vtt
+from helper.excel_write  import export_TextToSpeech_excel
 from helper.whisper_util import get_filename_parameter, prepare_words, split_to_lines, split_to_sentences
 
 # warnings.simplefilter("ignore", UserWarning)

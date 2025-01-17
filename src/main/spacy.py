@@ -145,7 +145,6 @@ def analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[List[in
         if token.is_sent_start != token.is_sent_end:
 
             if token.is_sent_start:
-                Trace.debug()
                 sentence_start.append(max(min_idx, token.idx)) # word starts with a visible char (not with a space)
 
             if token.is_sent_end:

@@ -26,7 +26,7 @@ echo $env:UV_CACHE_DIR
 
 -------------------- uv venv -------------------
 
-uv venv .venv -p 3.13
+uv venv .venv -p 3.13 --prompt .venv
 .venv\Scripts\activate
 deactivate
 
@@ -39,6 +39,8 @@ deactivate
 ├── hello.py
 ├── pyproject.toml
 └── uv.lock
+
+.venv/pyenv.cfg -> 'prompt = xyz' -> terminal -> (xyz)
 
 ---------- uv dependencies -> uv pip  -----------
 
@@ -166,9 +168,12 @@ git log --name-status --pretty=format:"%h [%ai] %D >> '%s'" > __history.txt
 
 git fetch origin
 git log origin/main
-git diff --name-only origin/main
+
+git diff --name-only HEAD        # changed files since last commit
+git diff --name-only origin/main # changed files since last fetch
 git diff origin/main -- _prefs/base.yaml
 git diff origin/main
+
 
 git rebase -i HEAD~3
 git rebase -i --root
@@ -255,11 +260,11 @@ module = "faster_whisper.*"
 ignore_errors = true
 ignore_missing_imports = true
 
-python __mypy.py src/main.py
-uv run __mypy.py src/main.py
+python _mypy.py src/main.py
+ -> main.py and all imported (!) files will be checked
 
-# type: ignore # mypy
-# xtype: ignore
+# type: ignore
+# type: ignore[attr-defined]
 
 ###################### pyright ########################
 
@@ -272,8 +277,12 @@ exclude = ["**/node_modules",
 ]
 pythonVersion = "3.13"
 
+python _pyright.py src/main.py
+ -> only main.py will be checked
 
-uv run __pyright.py src
-uv run __pyright.py src/main
-uv run __pyright.py src/helper
-uv run __pyright.py src/utils
+python _pyright.py src
+-> all (!) files in src will be checked
+
+python _pyright.py src/main
+python _pyright.py src/helper
+python _pyright.py src/utils

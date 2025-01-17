@@ -97,7 +97,7 @@ def import_caption(dirname: Path|str, basename: str) -> None | Tuple[List[Dict[s
     words:     int = 0
     line_type: List[int] = [0, 0]
 
-    for i, caption in enumerate(captions): # type: ignore
+    for i, caption in enumerate(captions): # type: ignore # -> pyright
         start = parse_timecode(caption.start)
         end   = parse_timecode(caption.end)
         text  = caption.text

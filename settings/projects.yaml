@@ -27,5 +27,5 @@ projects:
    # - '_Kurzbeitrag/OSR_2409_KB'                                          # Gunther Schwanke, Markus Burgenmeister
 
    # - 'Chancen Digitalisierung Rechnungswesen'
-   - 'Branchenpaket Bau und Handwerk'
-
+   # - 'Branchenpaket Bau und Handwerk'
+   - '_Online-Seminar/OSR_2103_LuG_LODAS'                               # 78923, 78924: Gunther Schwanke + Uta Lange

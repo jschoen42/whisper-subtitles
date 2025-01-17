@@ -4,17 +4,18 @@
     src/utils/excel.py
 
     PUBLIC:
-     - def check_excel_file_exists(filepath: Path | str) -> bool
+     - check_excel_file_exists(filepath: Path | str) -> bool
 
      - read_excel_file(folderpath: Path | str, filename: str) -> None | Tuple[Workbook, float]
      - read_excel_worksheet(folderpath: str, filename: str, sheet_name: str) -> None | Tuple[Worksheet, float]
      - get_excel_worksheet(workbook: Workbook, sheet_name: str) -> None | Worksheet
 
      - get_cell_text(in_cell: Cell | MergedCell) -> str:
-     - get_cell_value(in_cell: Cell | MergedCell, check_boolean: bool = True) -> bool | str:
+     - get_cell_value(in_cell: Cell | MergedCell, check_boolean: bool = True) -> bool | str
 
-     - check_single_quotes(wb_name: str, cell_text: str, line_number: int, function_name: str) -> Tuple[bool, str]:
-     - check_double_quotes(wb_name: str, cell_text: str, line_number: int, function_name: str) -> Tuple[bool, str]:
+     - check_hidden_rows_columns(sheet: Worksheet) -> None
+     - check_single_quotes(wb_name: str, cell_text: str, line_number: int, function_name: str) -> Tuple[bool, str]
+     - check_double_quotes(wb_name: str, cell_text: str, line_number: int, function_name: str) -> Tuple[bool, str]
 
      - excel_date(date: datetime, time_zone_offset: tzoffset) -> float:
 """
@@ -32,12 +33,12 @@ from dateutil.tz import tzoffset
 from openpyxl import load_workbook
 from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
-from openpyxl.worksheet._read_only import ReadOnlyWorksheet
 from openpyxl.cell.cell import Cell, MergedCell
-from openpyxl.chartsheet.chartsheet import Chartsheet
 
 # from openpyxl.workbook.defined_name import DefinedName, DefinedNameList
 # from openpyxl.worksheet._write_only import WriteOnlyWorksheet
+# from openpyxl.worksheet._read_only import ReadOnlyWorksheet
+# from openpyxl.chartsheet.chartsheet import Chartsheet
 # from openpyxl.cell.read_only import ReadOnlyCell
 # from openpyxl.styles.named_styles import NamedStyle
 
@@ -60,58 +61,50 @@ def check_excel_file_exists(filepath: Path | str) -> bool:
     else:
         return check_file_exists(folderpath, filename)
 
-def read_excel_file(folderpath: Path | str, filename: str) -> None | Tuple[Workbook, float]:
+def read_excel_file(folderpath: Path | str, filename: str) -> Tuple[Workbook | None, float]:
     filepath = Path(folderpath) / filename
 
     if check_excel_file_exists(filepath) is False:
-        return None
+        return None, 0
 
     try:
         workbook = load_workbook(filename = filepath)
     except OSError as err:
         Trace.error(f"{err}")
-        return None
+        return None, 0
 
-    return (workbook, get_modification_timestamp(filepath))
+    return workbook, get_modification_timestamp(filepath)
 
-def read_excel_worksheet(folderpath: str, filename: str, sheet_name: str) -> None | Tuple[Worksheet, float]:
+def read_excel_worksheet(folderpath: str, filename: str, sheet_name: str) -> Tuple[Worksheet | None, float]:
     filepath = Path(folderpath) / filename
 
     if check_excel_file_exists(filepath) is False:
-        return None
+        return None, 0
 
     try:
         workbook: Workbook = load_workbook(filename = filepath)
     except OSError as err:
         Trace.error(f"{err}")
-        return None
+        return None, 0
 
     try:
-        sheet: Worksheet | ReadOnlyWorksheet | Chartsheet = workbook[sheet_name]
+        sheet: Worksheet = workbook[sheet_name]
     except KeyError as err:
         Trace.error(f"KeyError: {err}")
-        return None
+        return None, 0
 
-    if isinstance(sheet, Worksheet):
-        check_hidden_rows_columns(sheet)
-        return ( sheet, get_modification_timestamp(filepath) )
-    else:
-        Trace.error(f"sheet '{sheet_name}' is not a Worksheet")
-        return None
+    check_hidden_rows_columns(sheet)
+    return sheet, get_modification_timestamp(filepath)
 
 def get_excel_worksheet(workbook: Workbook, sheet_name: str) -> None | Worksheet:
     try:
-        sheet: Worksheet | ReadOnlyWorksheet | Chartsheet = workbook[sheet_name]
+        sheet: Worksheet = workbook[sheet_name]
     except KeyError as err:
         Trace.error(f"{err}")
         return None
 
-    if isinstance(sheet, Worksheet):
-        check_hidden_rows_columns(sheet)
-        return sheet
-    else:
-        Trace.error(f"sheet '{sheet_name}' is not a Worksheet")
-        return None
+    check_hidden_rows_columns(sheet)
+    return sheet
 
 # check if column(s) or row(s) are hidden
 
