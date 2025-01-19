@@ -8,9 +8,9 @@ from utils.globals import BASE_PATH
 from utils.prefs   import Prefs
 from utils.trace   import Trace
 
-from src.helper.excel_read import import_project_excel
-from helper.analyse        import get_video_length
-from helper.captions       import import_caption, writefile_srt
+from helper.excel_read import import_project_excel
+from helper.analyse    import get_video_length
+from helper.captions   import import_caption, writefile_srt
 
 data_path = BASE_PATH / "../data"
 

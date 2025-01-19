@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 16.01.2025
+    © Jürgen Schoenemeyer, 19.01.2025
 
     src/utils/prefs.py
 
@@ -9,8 +9,8 @@
       - load(cls, pref_name: str) -> bool
       - get(cls, key_path: str) -> Any
 
-    merge_dicts(a: Dict, b: Dict) -> Dict
-    build_tree(tree: List, in_key: str, value: str) -> Dict
+     - merge_dicts(a: Dict, b: Dict) -> Dict
+     - build_tree(tree: List, in_key: str, value: str) -> Dict
 """
 
 import json
@@ -175,7 +175,21 @@ def merge_dicts(a: Dict[Any, Any], b: Dict[Any, Any]) -> Any:
 
 # https://stackoverflow.com/questions/7204805/deep-merge-dictionaries-of-dictionaries-in-python?page=1&tab=scoredesc#answer-7205107
 
-def merge(a: Dict[Any, Any], b: Dict[Any, Any], path: List[str] = []) -> Any:
+# def merge(a: Dict[Any, Any], b: Dict[Any, Any], path: List[str] = []) -> Any:
+#     for key in b:
+#         if key in a:
+#             if isinstance(a[key], dict) and isinstance(b[key], Dict):
+#                 merge(a[key], b[key], path + [str(key)])
+#             elif a[key] != b[key]:
+#                 raise Exception("Conflict at " + ".".join(path + [str(key)]))
+#         else:
+#             a[key] = b[key]
+#     return a
+
+def merge(a: Dict[Any, Any], b: Dict[Any, Any], path: List[str] | None = None) -> Any:
+    if path is None:
+        path = []
+
     for key in b:
         if key in a:
             if isinstance(a[key], dict) and isinstance(b[key], Dict):

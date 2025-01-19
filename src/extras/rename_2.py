@@ -72,7 +72,7 @@ models = {
     "(8) large-v2-de":       "07 large-v2-de",
 }
 
-def convert_foldername(folder):
+def convert_foldername(folder: str) -> str:
 
     # engine
 
@@ -125,7 +125,7 @@ def convert_foldername(folder):
 
     return f"[{engine}] [{model}] ({params})"
 
-def convert_filename(filename):
+def convert_filename(filename: str) -> str:
     suffix = Path(filename).suffix
     stem = Path(filename).stem
 
@@ -138,7 +138,7 @@ def convert_filename(filename):
 
 
 
-def rename_project(project_path):
+def rename_project(project_path: str) -> None:
 
     main_folders = ["04_settings", "05_json" ]
 
@@ -174,11 +174,11 @@ def rename_project(project_path):
 
     Trace.result(f"rename '{project_path}'")
 
-def rename_folder( folder ):
+def rename_folder( folder: str ) -> None:
     Trace.info( f"{folder}")
 
 
-def main():
+def main() -> None:
     Prefs.init("settings")
     Prefs.load(PROJECTS)
 
@@ -186,7 +186,7 @@ def main():
         rename_project(project)
 
 if __name__ == "__main__":
-    Trace.set( debug_mode=True, show_timestamp=False )
+    Trace.set( debug_mode=True, timezone=False )
     Trace.action(f"Python version {sys.version}")
 
     main()

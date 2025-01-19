@@ -4,7 +4,7 @@
     PUBLIC:
      - second_to_timecode_srt(x: float, fps: float) -> str
      - seconds_to_timecode_vtt(x: float, fps: float) -> str
-     - seconds_to_timecode_excel(x: float) -> str
+     # - seconds_to_timecode_excel(x: float) -> str
      - parse_timecode(text: str) -> float
      - export_srt(captions: List[Dict], fps: float = 30) -> str
      - export_vtt(captions: List[Dict],  fps: float = 30) -> str
@@ -28,8 +28,8 @@ def second_to_timecode_srt(x: float, fps: float = 30) -> str:
 def seconds_to_timecode_vtt(x: float, fps: float = 30) -> str:
     return format_timestamp(x, always_include_hours=True, decimal_marker=".", fps=fps)
 
-def seconds_to_timecode_excel(x: float) -> str:
-    return format_timestamp(x, always_include_hours=False, decimal_marker=".")
+# def seconds_to_timecode_excel(x: float) -> str:
+#     return format_timestamp(x, always_include_hours=False, decimal_marker=".")
 
 # vtt: 00:01:06.680
 # srt: 00:01:06,680
@@ -97,10 +97,10 @@ def import_caption(dirname: Path|str, basename: str) -> None | Tuple[List[Dict[s
     words:     int = 0
     line_type: List[int] = [0, 0]
 
-    for i, caption in enumerate(captions): # type: ignore # -> pyright
+    for i, caption in enumerate(captions):    # type: ignore[reportUnknownVariableType]
         start = parse_timecode(caption.start)
         end   = parse_timecode(caption.end)
-        text  = caption.text
+        text  = str(caption.text)
 
         tmp = text.replace("\n", " ")
         words += len(tmp.split(" "))

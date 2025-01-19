@@ -1,25 +1,27 @@
 """
     © Jürgen Schoenemeyer, 17.01.2025
 
+    src/helper/whisper_excel_import.py
+
+    https://github.com/tafia/calamine
+
     PUBLIC:
-     - import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str, Any]
-     - import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple[ DictionaryResultDict, SheetNames, float ]
-     - import_hunspell_PreCheck_excel(pathname: str, filename: str) -> Tuple[list[str], List[str], List[List]]
-     - import_captions_excel(pathname: Path | str, filename: str) -> None | List[ColumnSubtitleInfo]
-     - import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[str, Any]
+     - import_project_excel(pathname: Path | str, filename: str)           -> None | Dict[str, Any]
+     - import_dictionary_excel(pathname: Path | str, filename: str)        -> None | Tuple[ DictionaryResultDict, SheetNames, float ]
+     - import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None | Tuple[List[str], List[str], List[List[str]]]
+     - import_captions_excel(pathname: Path | str, filename: str)          -> None | List[ColumnSubtitleInfo]
+     - import_ssml_rules_excel(pathname: Path | str, filename: str)        -> None | Dict[str, Any]
 """
 
-from typing import Any, Dict, List, NamedTuple, Tuple, TypedDict
+from typing import Any, Dict, List, NamedTuple, Tuple
 from pathlib import Path
 
-from openpyxl import load_workbook
-from openpyxl.workbook.workbook import Workbook
-from openpyxl.worksheet.worksheet import Worksheet
+from python_calamine import CalamineWorkbook, CalamineError, WorksheetNotFound
 
 from utils.trace     import Trace
 from utils.decorator import duration
 from utils.file      import get_modification_timestamp
-from utils.excel     import check_excel_file_exists, get_cell_text, check_double_quotes
+from utils.excel     import check_excel_file_exists, check_double_quotes
 
 """
     Excel: Project Infos -> SpeechToText
@@ -39,6 +41,7 @@ from utils.excel     import check_excel_file_exists, get_cell_text, check_double
     Return
       - dict prompt: main_prompt
       - list parts: [speaker, files [filename, folder, isIntro, prompt]]
+
 """
 @duration("import '{filename}'")
 def import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str, Any]:
@@ -50,16 +53,13 @@ def import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str
         return None
 
     try:
-        wb = load_workbook(filename=filepath)
-    except OSError as err:
-        Trace.error(f"importExcel: {err}")
+        workbook = CalamineWorkbook.from_path(filepath)
+    except CalamineError as err:
+        Trace.error(f"CalamineError: {err}")
         return None
 
-    try:
-        sheet: Worksheet = wb.worksheets[0]
-    except KeyError as err:
-        Trace.error(f"importExcel: {err}")
-        return None
+    sheet_name = workbook.sheet_names[0]
+    data: List[Any] = workbook.get_sheet_by_name(sheet_name).to_python(skip_empty_area=False)
 
     filename = ""
     speaker = ""
@@ -69,22 +69,23 @@ def import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str
     part: Dict[str, Dict[str, Any]] = {}
     speakers: List[str] = []
 
-    for i in range(2, sheet.max_row + 1):
-        row = sheet[i]
+    for i, row in enumerate(data):
+        if i == 0:
+            continue # skip header
 
-        if i == 2:
-            if get_cell_text(row[4]).lower() == "x":
+        if i == 1:
+            if row[4].strip().lower() == "x":
                 main_prompt = ""
             else:
-                main_prompt = get_cell_text(row[5])
+                main_prompt = row[5].strip()
 
         else:
-            filename = get_cell_text(row[0]) or ""
-            speaker  = get_cell_text(row[1]) or ""
-            project  = get_cell_text(row[2]) or ""
-            intro    = get_cell_text(row[3]) or ""
-            noprompt = get_cell_text(row[4]).lower() == "x"
-            prompt   = get_cell_text(row[5]) or ""
+            filename = row[0].strip()
+            speaker  = row[1].strip()
+            project  = row[2].strip()
+            isintro  = row[3].strip().lower() == "x"
+            noprompt = row[4].strip().lower() == "x"
+            prompt   = row[5].strip()
 
             if noprompt:
                 prompt = ""
@@ -100,19 +101,18 @@ def import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str
                 part[speaker]["files"].append({
                     "file": filename,
                     "folder": project,
-                    "isIntro": intro.lower() == "x",
+                    "isIntro": isintro,
                     "prompt": prompt,
                 })
 
-                # print(f"media '{filename}', speaker '{speaker}', folder '{project}', prompt '{prompt}'")
+        result["prompt"] = main_prompt
+        result["parts"]  = []
 
-    result["prompt"] = main_prompt
-    result["parts"]  = []
-
-    for _key, value in part.items():
-        result["parts"].append(value)
+        for _key, value in part.items():
+            result["parts"].append(value)
 
     return result
+
 
 """
     Excel: Dictionary
@@ -155,51 +155,46 @@ def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple
         return None
 
     try:
-        wb: Workbook = load_workbook(filename=filepath)
-    except OSError as err:
-        Trace.error(f"importExcel: {err}")
+        workbook = CalamineWorkbook.from_path(filepath)
+    except CalamineError as err:
+        Trace.error(f"CalamineError: {err}")
         return None
 
-    sheet_names: SheetNames = []
     result: DictionaryResultDict = {}
 
-    for sheet_name in wb.sheetnames:
-        if sheet_name[:1] == "-":
+    for sheet_name in workbook.sheet_names:
+        if sheet_name.startswith("-"):
             continue
 
-        sheet_names.append(sheet_name)
+        data: List[Any]	 = workbook.get_sheet_by_name(sheet_name).to_python(skip_empty_area=False)
 
-        ws: Worksheet = wb[sheet_name]
+        for i, row in enumerate(data):
+            if i == 0:
+               continue # skip header
 
-        # if ws.max_row is None:
-        #     continue
-
-        for i in range(2, ws.max_row + 1):
-            row = ws[i]
-
-            error, original = check_double_quotes(sheet_name, str(get_cell_text(row[0])), i, "import_dictionary_excel")
+            error, original = check_double_quotes(sheet_name, row[0], i+1, filename)
             if error or original == "":
                 continue
 
-            error, correction = check_double_quotes(sheet_name, str(get_cell_text(row[1])), i, "import_dictionary_excel")
+            error, correction = check_double_quotes(sheet_name, row[1], i+1, filename)
             if not error and correction == "":
-                Trace.error(f"'{sheet_name}': line {i} '{original}' correction empty")
+                Trace.error(f"'{sheet_name}': row {i+1} '{original}' correction empty")
                 continue
 
             if original == correction:
-                Trace.error(f"'{sheet_name}': line {i} '{original}' original == correction")
+                Trace.error(f"'{sheet_name}': row {i+1} '{original}' original == correction")
                 continue
 
             if original in result:
                 Trace.error(f"'{sheet_name}': row {i+1} '{original}' double entries => '{result[original].correction}' / '{correction}'")
                 continue
 
-            result[original] = DictionaryEntry(correction, sheet_name, i)
+            result[original] = DictionaryEntry(correction, sheet_name, i+1)
 
     modification_timestamp = get_modification_timestamp(filepath)
 
     Trace.result(f"{filename}: {len(result)} entries")
-    return result, sheet_names, modification_timestamp
+    return result, workbook.sheet_names, modification_timestamp
 
 
 """
@@ -233,28 +228,30 @@ def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None 
         return None
 
     try:
-        wb: Workbook = load_workbook(filename=filepath)
-    except OSError as err:
-        Trace.error(f"importExcel: {err}")
+        workbook = CalamineWorkbook.from_path(filepath)
+    except CalamineError as err:
+        Trace.error(f"CalamineError: {err}")
         return None
 
     abbreviations_with_dot: List[str] = []
     singles: List[str] = []
     multiples: List[List[str]] = []
 
-    for sheet_name in wb.sheetnames:
-        if sheet_name[:1] == "-":
+    for sheet_name in workbook.sheet_names:
+        if sheet_name.startswith("-"):
             continue
 
-        ws: Worksheet = wb[sheet_name]
+        try:
+            data: List[Any] = workbook.get_sheet_by_name(sheet_name).to_python(skip_empty_area=False)
+        except WorksheetNotFound as err:
+            Trace.error(f"WorksheetNotFound: '{err}'")
+            return None
 
-        # if ws.max_row is None:
-        #     continue
+        for i, row in enumerate(data):
+            if i == 0:
+               continue # skip header
 
-        for i in range(2, ws.max_row + 1):
-            row = ws[i]
-
-            error, original = check_double_quotes(sheet_name, str(get_cell_text(row[0])), i, "import_hunspell_PreCheck_excel")
+            error, original = check_double_quotes(sheet_name, row[0], i+1, filename)
             if not error and original != "":
                 if sheet_name == "specialDot":
                     abbreviations_with_dot.append(original)
@@ -294,38 +291,23 @@ def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None 
       - Segement
         [start_timecode, end_timecode, [id, text, type, pause], ...]
 """
-
-class ColumnSubtitleExcel(TypedDict):
-    start: float
-    end:   float
-    mark:  str
-    type:  str
-    text:  str
-    pause: float
-
 @duration("import '{filename}'")
 def import_captions_excel(pathname: Path | str, filename: str) -> None | List[List[Any]]:
     pathname = Path(pathname)
     filepath = pathname / filename
 
     if not check_excel_file_exists(filepath):
-        Trace.error(f"[import_captions_excel] file not found: {filepath}")
+        Trace.error(f"file not found: {filepath}")
         return None
 
     try:
-        wb: Workbook = load_workbook(filename=filepath)
-    except OSError as err:
-        Trace.error(f"[import_captions_excel] importExcel: {err}")
+        workbook = CalamineWorkbook.from_path(filepath)
+    except CalamineError as err:
+        Trace.error(f"CalamineError: {err}")
         return None
 
-    try:
-        ws: Worksheet = wb.worksheets[0]
-    except KeyError as err:
-        Trace.error(f"[import_captions_excel] importExcel: {err}")
-        return None
-
-    # if ws.max_row is None:
-    #     return None
+    sheet_name = workbook.sheet_names[0]
+    data: List[Any] = workbook.get_sheet_by_name(sheet_name).to_python(skip_empty_area=False)
 
     result: List[List[Any]] = []
     curr_start = ""
@@ -334,20 +316,23 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | List[Li
     text = ""
     curr_text: List[Any] = []
 
-    for i in range(2, ws.max_row + 1):
-        row = ws[i]
+    for i, row in enumerate(data):
+        if i == 0:
+            continue # skip header
 
-        start  = get_cell_text(row[0])
-        end    = get_cell_text(row[1])
-        marked = get_cell_text(row[2]).lower() == "x" # start of one ssml
-        type   = get_cell_text(row[3]).lower()
-        text   = get_cell_text(row[4])
-        pause  = get_cell_text(row[5])
+        row = data[i]
+
+        start  = row[0].strip()
+        end    = row[1].strip()
+        marked = row[2].strip().lower() == "x" # start of one ssml
+        type   = row[3].strip().lower()
+        text   = row[4].strip()
+        pause  = row[5]
         if pause == "":
-            pause = "0"
+            pause = 0.0
 
         if type != "" and type not in "psn>":
-            Trace.error(f"{filename} unknown type {type} (use 's' (sentence), 'p' (paragraph), 'n' (nothing) or '>' for append)")
+            Trace.error(f"{filename} unknown type {type} (use 'p' (paragraph), 's' (sentence), 'n' (nothing) or '>' for merge)")
             type = "p"
 
         if marked:
@@ -360,7 +345,7 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | List[Li
             "id":    start,
             "text":  text,
             "type":  type,
-            "pause": int(pause),
+            "pause": pause,
         })
 
         curr_end = end
@@ -410,7 +395,6 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | List[Li
      - language: template: <template> / rules: [pre, key, post, value]
      - say_as:   template: <template> / rules: [pre, key, post, value]
 """
-
 @duration("import '{filename}'")
 def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[str, Any]:
     pathname = Path(pathname)
@@ -421,44 +405,43 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[
         return None
 
     try:
-        wb: Workbook = load_workbook(filename=filepath)
-    except OSError as err:
-        Trace.error(f"importExcel: {err}")
+        workbook = CalamineWorkbook.from_path(filepath)
+    except CalamineError as err:
+        Trace.error(f"CalamineError: {err}")
         return None
-
-    def parse_ws(sheet_name: str, ws: Any) -> Tuple[str, List[List[str]]]:
-        rules: List[List[str]] = []
-
-        _error, template = check_double_quotes(sheet_name, ws["e1"].value, 1, "import_ssml_rules_excel")
-        if template == "":
-            return template, rules
-
-        for i in range(2, ws.max_row + 1):
-            row = ws[i]
-
-            _error, key = check_double_quotes(sheet_name, str(get_cell_text(row[1])), i, "import_ssml_rules_excel")
-            if key != "":
-                _error, pre   = check_double_quotes(sheet_name, str(get_cell_text(row[0])), i, "import_ssml_rules_excel")
-                _error, post  = check_double_quotes(sheet_name, str(get_cell_text(row[2])), i, "import_ssml_rules_excel")
-                _error, value = check_double_quotes(sheet_name, str(get_cell_text(row[3])), i, "import_ssml_rules_excel")
-                if value != "":
-                    rules.append([pre, key, post, value])
-
-        return template, rules
 
     result: Dict[str, Any] = {}
     trace_details = "import"
 
-    for sheet_name in wb.sheetnames:
-        if sheet_name[:1] == "-":
+    for sheet_name in workbook.sheet_names:
+        if sheet_name.startswith("-"):
             continue
 
-        template, rules = parse_ws(sheet_name, wb[sheet_name])
-        if template != "":
-            result[sheet_name] = {
-                "template": template,
-                "rules": rules,
-            }
+        data: List[Any] = workbook.get_sheet_by_name(sheet_name).to_python(skip_empty_area=False)
+
+        _error, template = check_double_quotes(sheet_name, data[0][4], 1, filename)
+        if template == "":
+            continue
+
+        rules: List[List[str]] = []
+        for i, row in enumerate(data):
+            if i == 0:
+               continue # skip header
+
+            row = data[i]
+
+            _error, key = check_double_quotes(sheet_name, row[1], i+1, filename)
+            if key != "":
+                _error, pre   = check_double_quotes(sheet_name, row[0], i+1, filename)
+                _error, post  = check_double_quotes(sheet_name, row[2], i+1, filename)
+                _error, value = check_double_quotes(sheet_name, row[3], i+1, filename)
+                if value != "":
+                    rules.append([pre, key, post, value])
+
+        result[sheet_name] = {
+            "template": template,
+            "rules": rules,
+        }
 
         trace_details += f" {sheet_name}: {len(rules)},"
 

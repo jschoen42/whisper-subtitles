@@ -28,7 +28,7 @@ from main.whisper_faster import precheck_models, transcribe_fasterwhisper
 from main.whisper import transcribe_whisper
 from main.whisper_timestamped import transcribe_whisper_timestamped
 
-PROJECTS: str = "projects_all.yaml"  # "projects.yaml", "projects_all.yaml"
+PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
 
 data_path = BASE_PATH / "../data"
 
@@ -118,8 +118,8 @@ def main() -> None:
             path_media = data_path / path_project / "03_audio" /  media_type
         elif media_type == "mp4":
             path_media = data_path / path_project / "02_video"
-
         else:
+            path_media = ""
             Trace.fatal( f"unknown type '{media_type}'")
 
         Trace.info(f"check media file exist '{path_project}'")
@@ -150,6 +150,7 @@ def main() -> None:
     for model in models:
         log_dictionary = DictionaryLog( names_dictionary_sheet )
 
+        settings       = ""
         project_all    = 0
         file_count_all = 0
         duration_all   = 0
@@ -176,6 +177,9 @@ def main() -> None:
                 path_media = data_path / path_project / "03_audio" / media_type
             elif media_type == "mp4":
                 path_media = data_path / path_project / "02_video"
+            else:
+                path_media = ""
+                Trace.fatal( f"unknown type '{media_type}'")
 
             path_settings  = data_path / path_project / "04_settings"
             path_json      = data_path / path_project / "05_json"
@@ -272,6 +276,7 @@ def main() -> None:
                             result = transcribe_whisper_timestamped(whisper_params, media_params, nlp)
 
                         else:
+                            result = None
                             Trace.fatal(f"unknown whisper type >{whisper_type}<")
 
                         if result:

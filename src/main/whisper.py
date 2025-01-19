@@ -15,7 +15,7 @@ import hashlib
 from typing import Any, Dict
 from pathlib import Path
 
-import whisper # type: ignore # mypy
+import whisper # type: ignore [import-untyped]
 
 from utils.globals  import BASE_PATH
 from utils.prefs    import Prefs

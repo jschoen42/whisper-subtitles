@@ -1,9 +1,10 @@
 # python _mypy.py src/main.py
-# uv run _mypy.py src/main.py
 
+import re
 import sys
 import subprocess
 import platform
+import time
 
 from typing import List
 from pathlib import Path
@@ -12,7 +13,7 @@ from datetime import datetime
 BASE_PATH = Path(sys.argv[0]).parent.parent.resolve()
 RESULT_FOLDER = ".type-check-result"
 
-def run_mypy() -> None:
+def run_mypy(target_file: str) -> None:
 
     # https://mypy.readthedocs.io/en/stable/command_line.html
     # https://gist.github.com/Michael0x2a/36c5948a7ea571b722686226639b0859
@@ -29,7 +30,7 @@ def run_mypy() -> None:
 
         # Configuring warnings
         "--warn-redundant-casts",
-        "--warn-unused-ignores",
+        # "--warn-unused-ignores",
         "--warn-unreachable",
 
         # Configuring error messages
@@ -67,6 +68,8 @@ def run_mypy() -> None:
         # "--enable-incomplete-feature", # Tuple[int, ...]
     ]
 
+    start = time.time()
+
     filepath = Path(sys.argv[1])
     if not filepath.exists():
         print(f"Error: '{filepath}' not found ")
@@ -84,19 +87,51 @@ def run_mypy() -> None:
     text += f"Path:     {BASE_PATH}\n"
     text += "\n"
 
-    text += "MyPy settings:\n"
+    text += "MyPy [version] settings:\n"
     for setting in settings:
         text += f" {setting}\n"
-
     text += "\n"
 
-    result = subprocess.run(["mypy"] + (settings + sys.argv[1:]), capture_output=True, text=True)
+    result = subprocess.run(["mypy", target_file, "--verbose"] + settings, capture_output=True, text=True)
+    # if result.returncode == 2:
+    #     print("error: ", result.stderr)
+    #     sys.exit(2)
+
+    # "--verbose" -> stderr
+
+    sources = []
+    for line in result.stderr.splitlines():
+        if "Mypy Version:" in line:
+            version = line.split("Mypy Version:")[-1].strip()
+            text = text.replace("[version]", version)
+
+        if "Found source:" in line:
+            pattern = r"path='([^']*)'"
+            matches = re.search(pattern, line)
+            if matches:
+                path = matches.group(1).replace("\\\\", "/")
+                # if not path.endswith("__init__.py"):
+                sources.append(path)
+            continue
+
+        # if "Build finished" in line:
+        #     pattern = r"finished in ([\d\.]+) seconds.*with (\d+) modules"
+        #     matches = re.search(pattern, line)
+        #     if matches:
+        #         seconds = matches.group(1)
+        #         modules = matches.group(2)
+
+    text += "Source files:\n"
+    for source in sources:
+        text += f" - {source}\n"
+    text += "\n"
 
     summary = ""
     current_file = None
     for line in result.stdout.splitlines():
         if line.startswith("Found") or line.startswith("Success"):
             summary = line.strip()
+
         if line and not line.startswith(" "):
             file_path = line.split(":")[0]
             if file_path != current_file:
@@ -109,8 +144,9 @@ def run_mypy() -> None:
     with open(folder_path / f"mypy-{name}.txt", "w") as file:
         file.write(text)
 
-    print(f"[MyPy] {sys.argv[1:][0]}: {summary} -> {RESULT_FOLDER}/mypy-{name}.txt")
+    duration = time.time() - start
+    print(f"[MyPy {version} ({duration:.2f} sec)] {sys.argv[1:][0]}: {summary} -> {RESULT_FOLDER}/mypy-{name}.txt")
     sys.exit(result.returncode)
 
 if __name__ == "__main__":
-    run_mypy()
+    run_mypy(sys.argv[1])

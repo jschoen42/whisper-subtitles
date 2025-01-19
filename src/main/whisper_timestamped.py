@@ -14,7 +14,7 @@ import warnings
 from typing import Any, Dict
 from pathlib import Path
 
-import whisper_timestamped as whisper # type: ignore # mypy
+import whisper_timestamped as whisper # type: ignore [import-untyped]
 
 from main.whisper import search_model_path
 
@@ -180,7 +180,7 @@ def transcribe_whisper_timestamped(project_params: Dict[str, Any], media_params:
         result["segments"] = []
 
         start_time = time.time()
-        ret = whisper.transcribe(current_model, str(media_pathname), **param)
+        ret = whisper.transcribe(current_model, str(media_pathname), **param) # type: ignore[reportArgumentType]
         duration_cpu = time.time() - start_time
 
         result["cpuTime"]  = round(duration_cpu, 2)

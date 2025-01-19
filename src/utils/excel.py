@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 15.01.2025
+    © Jürgen Schoenemeyer, 19.01.2025
 
     src/utils/excel.py
 
@@ -17,7 +17,9 @@
      - check_single_quotes(wb_name: str, cell_text: str, line_number: int, function_name: str) -> Tuple[bool, str]
      - check_double_quotes(wb_name: str, cell_text: str, line_number: int, function_name: str) -> Tuple[bool, str]
 
-     - excel_date(date: datetime, time_zone_offset: tzoffset) -> float:
+     - excel_date(date: datetime, time_zone_offset: tzoffset) -> float
+     - convert_datetime( time_string: str ) -> int
+     - seconds_to_timecode_excel(x: float) -> str
 """
 
 import re
@@ -28,6 +30,7 @@ from typing import Tuple
 from pathlib import Path
 from datetime import datetime
 
+from dateutil import parser
 from dateutil.tz import tzoffset
 
 from openpyxl import load_workbook
@@ -44,6 +47,7 @@ from openpyxl.cell.cell import Cell, MergedCell
 
 from utils.trace import Trace
 from utils.file  import get_modification_timestamp, check_file_exists
+from utils.util  import format_timestamp
 
 # UserWarning: Data Validation extension is not supported and will be removed
 warnings.simplefilter("ignore")
@@ -203,3 +207,14 @@ def excel_date(date: datetime, time_zone_offset: tzoffset) -> float:
 
     delta = date - datetime(1899, 12, 30, tzinfo=time_zone_offset)
     return delta.days + delta.seconds / day_in_seconds
+
+def convert_datetime(time_string: str) -> int:
+    my_time_string = parser.parse(time_string.replace("UTC", ""))
+
+    my_timestamp = int(datetime.timestamp(my_time_string))
+
+    # Trace.debug( f"{time_string} -> {my_time_string} => epoch: {my_timestamp}" )
+    return my_timestamp
+
+def seconds_to_timecode_excel(x: float) -> str:
+    return format_timestamp(x, always_include_hours=False, decimal_marker=".")

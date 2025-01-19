@@ -1,5 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 19.01.2025
+
+    src/utils/audio.py
 
     PUBLIC:
      - split_audio(source_path: Path | str, dest_path: Path | str, filename: str, ffmpeg: str) -> None

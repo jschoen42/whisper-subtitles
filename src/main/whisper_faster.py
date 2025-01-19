@@ -114,10 +114,12 @@ def model_loaded_faster_whisper(model_name: str) -> None | WhisperModel:
             model = WhisperModel(model_size_or_path=model_path, device="cpu", compute_type="int8", cpu_threads=cpu_threads)           # int auf CPU, kein float möglich # cpu 7
             # model = WhisperModel(model_name, device="cuda", compute_type="int8_float16") # int auf GPU
             # model = WhisperModel(model_name, device="cuda", compute_type="float16")      # float auf GPU
-            duration = time.time() - start_time
             current_model_name = model_name
         except ValueError: #  as error:
+            model = None
             Trace.fatal(f"not found: {model_path}")
+        finally:
+            duration = time.time() - start_time
 
         Trace.info(f"{current_model_name} loaded: {duration:.2f} sec")
 

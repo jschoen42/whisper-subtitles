@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 15.01.2025
+    © Jürgen Schoenemeyer, 19.01.2025
 
     src/utils/util.py
 
@@ -23,7 +23,6 @@
     class ProcessLog (array cache)
       - add
       - get
-
 """
 
 import json
@@ -123,15 +122,19 @@ def export_text(folderpath: Path | str, filename: str, text: str, encoding: str=
     if ret_lf:
         text = text.replace("\n", "\r\n")
 
+    exist = False
     try:
         with open(filepath, "r", encoding=encoding) as file:
             text_old = file.read()
+            exist = True
     except OSError:
         text_old = ""
 
-    if text == text_old and show_message:
-        Trace.info(f"not changed '{filepath}'")
-        return str(filename)
+    if exist:
+        if text == text_old:
+            if show_message:
+                Trace.info(f"not changed '{filepath}'")
+            return str(filename)
 
     if create_new_folder:
         create_folder(folderpath)
@@ -167,6 +170,8 @@ class CacheJSON:
     name: str = ""
 
     def __init__(self, path: Path | str, name: str, model: str, reset: bool):
+        super().__init__()
+
         self.cache = {}
         self.path = Path(path)
         self.name = name + "-" + model + ".json"
@@ -195,6 +200,7 @@ class CacheJSON:
 
 class ProcessLog:
     def __init__(self) -> None:
+        super().__init__()
         self.log: List[str] = []
 
     def add(self, info: str) -> None:

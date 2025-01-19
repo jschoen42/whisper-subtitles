@@ -31,6 +31,7 @@ def analyse_results(model_id: str, model_name: str, media_type: str, media_name:
     filename     = f"{media_name} - ({model_id}) {model_name}"
     filename_two = f"{filename}-fast#{condition_on_previous_text}#beam-{beam_size}"
 
+    media_duration = 0.0
     try:
         with open(media_pathname, "rb") as media_file:
             media_data = media_file.read()

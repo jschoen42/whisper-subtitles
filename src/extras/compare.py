@@ -1,8 +1,7 @@
-# import sys
 import os
 
 from rapidfuzz import fuzz # Levenshtein
-import jaro                # Jaro-Winkler
+import jaro                # type: ignore [import-untyped] # Jaro-Winkler
 
 from utils.trace import Trace
 from utils.util import import_json
@@ -10,7 +9,7 @@ from utils.util import import_json
 def compare_file(folderpath: str, project: str, pattern: str) -> None:
     files = os.listdir(folderpath)
 
-    file_infos = []
+    file_infos: list[tuple[str, str]] = []
 
     Trace.info(f"{project} match: {pattern}")
 
@@ -21,13 +20,16 @@ def compare_file(folderpath: str, project: str, pattern: str) -> None:
                 file_infos.append((file, second))
 
     for file_info in file_infos:
-        first  = import_json(folderpath, file_info[0])
-        second = import_json(folderpath, file_info[1])
-        if first is None or second is None:
+        first_file = import_json(folderpath, file_info[0])
+        if first_file is None:
             continue
 
-        first_text  = first["text"]
-        second_text = second["text"]
+        second_file = import_json(folderpath, file_info[1])
+        if second_file is None:
+            continue
+
+        first_text  = first_file["text"]
+        second_text = second_file["text"]
         ret1 = fuzz.ratio(first_text, second_text)
 
         ret2 = 100 * jaro.jaro_winkler_metric(first_text, second_text)

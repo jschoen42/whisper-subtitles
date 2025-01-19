@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 15.01.2025
+    © Jürgen Schoenemeyer, 19.01.2025
 
     src/utils/trace.py
 
@@ -32,7 +32,6 @@
     class Color:
       - Color.<color_name>
       - Color.clear(text: str) -> str:
-
 """
 
 import platform
@@ -307,21 +306,21 @@ class Trace:
                 print(f"{Color.RED}{Color.BOLD} >>> Press Any key to continue or ESC to exit <<< {Color.RESET}", end="", flush=True)
 
                 if system == "Windows":
-                    key = msvcrt.getch()
+                    key = msvcrt.getch()                   # type: ignore[reportPossiblyUnboundVariable]
                     print()
                 else:
 
                     # unix terminal
 
                     fd: int = sys.stdin.fileno()
-                    old_settings: Any = term.tcgetattr(fd)  # type: ignore
+                    old_settings: Any = term.tcgetattr(fd) # type: ignore[attr-defined]
                     try:
-                        tty.setraw(sys.stdin.fileno())      # type: ignore
+                        tty.setraw(sys.stdin.fileno())     # type: ignore[attr-defined]
                         key = sys.stdin.buffer.read(1)
                     finally:
-                        term.tcsetattr(                     # type: ignore
+                        term.tcsetattr(                    # type: ignore[attr-defined]
                             fd,
-                            term.TCSADRAIN,                 # type: ignore
+                            term.TCSADRAIN,                # type: ignore[attr-defined]
                             old_settings
                         )
                         print()

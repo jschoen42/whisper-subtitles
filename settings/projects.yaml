@@ -28,4 +28,6 @@ projects:
 
    # - 'Chancen Digitalisierung Rechnungswesen'
    # - 'Branchenpaket Bau und Handwerk'
-   - '_Online-Seminar/OSR_2103_LuG_LODAS'                               # 78923, 78924: Gunther Schwanke + Uta Lange
+   # - '_Online-Seminar/OSR_2103_LuG_LODAS'                               # 78923, 78924: Gunther Schwanke + Uta Lange
+   # - 'Baulohnabrechnung/Baulohnabrechnung_Dachdecker_LuG'
+   - 'Unternehmen online'
