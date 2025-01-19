@@ -3,6 +3,7 @@
 # install: npm install --global pyright
 # update: npm update --global pyright
 
+import os
 import sys
 import subprocess
 import platform
@@ -93,8 +94,7 @@ def run_pyright(target_file: str) -> None:
     try:
         result = subprocess.run([npx_path, "pyright", target_file, "--verbose", "--project", config], capture_output=True, text=True, shell=True)
     finally:
-        pass
-        # os.remove(config)
+        os.remove(config)
 
     if result.returncode == 2:
         print(f"errorcode: {result.returncode}")
