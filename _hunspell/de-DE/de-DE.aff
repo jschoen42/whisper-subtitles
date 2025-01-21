@@ -268,45 +268,55 @@ SFX P Y 1
 SFX P   0       en         .
 
 # Plural mit Umlauten
-SFX p Y 38
-SFX p   auf     äufe      auf
-SFX p   auf     äufen     auf
-SFX p   aus     äuser     [hH]aus
-SFX p   aus     äusern    [hH]aus
-SFX p   arkt    ärkte     [mM]arkt
-SFX p   arkt    ärkten    [mM]arkt
-SFX p   ang     änge      ang
-SFX p   ang     ängen     ang
-SFX p   uß      üße       uß
-SFX p   uß      üßen      uß
-SFX p   oß      öße       oß
-SFX p   oß      ößen      oß
-SFX p   aum     äume      aum
-SFX p   aum     äumen     aum
-SFX p   ag      äge       ag
-SFX p   ag      ägen      ag
-SFX p   ug      üge       ug
-SFX p   ug      ügen      ug
-SFX p   all     älle      all
-SFX p   all     ällen     all
-SFX p   atz     ätze      atz # new 2024-11-03 (Satz -> Sätze)
-SFX p   atz     ätzen     atz # new 2024-11-03 (Satz -> Sätzen)
-SFX p   ab      äbe       ab  # new 2024-11-03 (Einstatzstab -> Einstatzstäbe)
-SFX p   ab      äben      ab  # new 2024-11-03 (Einstatzstab -> Einstatzstäben)
-SFX p   nal     näle      nal # new 2024-11-03 (Kanal -> Kanäle)
-SFX p   nal     nälen     nal # new 2024-11-03 (Kanal -> Kanälen)
-SFX p   lan     läne      lan # new 2024-11-03 (Ansparplan -> Ansparpläne)
-SFX p   lan     länen     lan # new 2024-11-03 (Ansparplan -> Ansparplänen)
-SFX p   aum     äume      aum # new 2024-11-03 (Raum -> Räume, Baum, Traum)
-SFX p   aum     äumen     aum # new 2024-11-03 (Raum -> Raumen)
-SFX p   und     ünde      und # new 2024-11-03 (Grund -> Gründe)
-SFX p   und     ünden     und # new 2024-11-03 (Grund -> Gründen)
-SFX p   ass     ässe      ass
-SFX p   ass     ässen     ass
-SFX p   uss     üsse      uss
-SFX p   uss     üssen     uss
-SFX p   oss     össe      oss
-SFX p   oss     össen     oss
+SFX p Y 45
+SFX p   ab      äbe       ab       # neu: Einstatzstab -> Einstatzstäbe
+SFX p   ab      äben      ab       # neu: Einstatzstab -> Einstatzstäben
+SFX p   ad      äder      ad       # neu: Bad -> Bäder, Rad -> Räder
+SFX p   ad      ädern     ad       # neu: Bad -> Bädern, Rad -> Rädern
+SFX p   ag      äge       ag       # Betrag -> Beträge
+SFX p   ag      ägen      ag       # Betrag -> Beträgen
+SFX p   lan     läne      [pP]lan  # neu: Plan -> Pläne
+SFX p   lan     länen     [pP]lan  # neu: Plan -> Plänen
+SFX p   all     älle      all      # Fall -> Fälle
+SFX p   all     ällen     all      # Fall -> Fällen
+SFX p   nal     näle      nal      # neu: Kanal -> Kanäle
+SFX p   nal     nälen     nal      # neu: Kanal -> Kanälen
+SFX p   and     ände      and      # neu: Abstand -> Abstände
+SFX p   and     änden     and      # neu: Abstand -> Abständen
+SFX p   ang     änge      ang      # Empfang -> Empfänge
+SFX p   ang     ängen     ang      # Empfang -> Empfängen
+SFX p   ann     änner     [mM]ann  # neu: Mann -> Männer
+SFX p   ann     ännern    [mM]ann  # neu: Mann -> Männern
+SFX p   arkt    ärkte     [mM]arkt # Markt -> Märkte
+SFX p   arkt    ärkten    [mM]arkt # Markt -> Märkten
+SFX p   ass     ässe      ass      # Anlass -> Anlässe
+SFX p   ass     ässen     ass      # Anlass -> Anlässen
+SFX p   atz     ätze      atz      # neu: Satz -> Sätze
+SFX p   atz     ätzen     atz      # neu: Satz -> Sätzen
+SFX p   auf     äufe      auf      # Verkauf -> Verkäuft
+SFX p   auf     äufen     auf      # Verkauf -> Verkäuften
+SFX p   aum     äume      aum      # Raum -> Räume
+SFX p   aum     äumen     aum      # Raum -> Raumen
+SFX p   aus     äuser     [hH]aus  # Haus -> Häuser
+SFX p   aus     äusern    [hH]aus  # Haus -> Häusern
+
+SFX p   oden    öden      oden     # neu: Boden -> Böden
+SFX p   oss     össe      oss      # Schloss -> Schlösser
+SFX p   oss     össen     oss      # Schloss -> Schlössern
+SFX p   oß      öße       oß       # Stoß -> Stöße
+SFX p   oß      ößen      oß       # Ston -> Stößen
+
+
+SFX p   ug      üge       ug       # Zug -> Züge
+SFX p   ug      ügen      ug       # Zug -> Zügen
+SFX p   und     ünde      und      # neu: Grund -> Gründe
+SFX p   und     ünden     und      # neu: Grund -> Gründen
+SFX p   uss     üsse      uss      # Nuss -> Nüsse
+SFX p   uss     üssen     uss      # Nuss -> Nüssen
+SFX p   uß      üße       uß       # Fuß -> Füße
+SFX p   uß      üßen      uß       # Fuß -> Füßen
+SFX p   ruch    rüche     ruch     # neu: Ausbruch -> Ausbrüche
+SFX p   ruch    ruchen    ruch     # neu: Ausbruch -> Ausbrüchen
 
 # last ...oss rules are for swiss de_CH only - but do not affect de_DE
 
