@@ -268,55 +268,75 @@ SFX P Y 1
 SFX P   0       en         .
 
 # Plural mit Umlauten
-SFX p Y 45
-SFX p   ab      äbe       ab       # neu: Einstatzstab -> Einstatzstäbe
-SFX p   ab      äben      ab       # neu: Einstatzstab -> Einstatzstäben
-SFX p   ad      äder      ad       # neu: Bad -> Bäder, Rad -> Räder
-SFX p   ad      ädern     ad       # neu: Bad -> Bädern, Rad -> Rädern
-SFX p   ag      äge       ag       # Betrag -> Beträge
-SFX p   ag      ägen      ag       # Betrag -> Beträgen
-SFX p   lan     läne      [pP]lan  # neu: Plan -> Pläne
-SFX p   lan     länen     [pP]lan  # neu: Plan -> Plänen
-SFX p   all     älle      all      # Fall -> Fälle
-SFX p   all     ällen     all      # Fall -> Fällen
-SFX p   nal     näle      nal      # neu: Kanal -> Kanäle
-SFX p   nal     nälen     nal      # neu: Kanal -> Kanälen
-SFX p   and     ände      and      # neu: Abstand -> Abstände
-SFX p   and     änden     and      # neu: Abstand -> Abständen
-SFX p   ang     änge      ang      # Empfang -> Empfänge
-SFX p   ang     ängen     ang      # Empfang -> Empfängen
-SFX p   ann     änner     [mM]ann  # neu: Mann -> Männer
-SFX p   ann     ännern    [mM]ann  # neu: Mann -> Männern
-SFX p   arkt    ärkte     [mM]arkt # Markt -> Märkte
-SFX p   arkt    ärkten    [mM]arkt # Markt -> Märkten
-SFX p   ass     ässe      ass      # Anlass -> Anlässe
-SFX p   ass     ässen     ass      # Anlass -> Anlässen
-SFX p   atz     ätze      atz      # neu: Satz -> Sätze
-SFX p   atz     ätzen     atz      # neu: Satz -> Sätzen
-SFX p   auf     äufe      auf      # Verkauf -> Verkäuft
-SFX p   auf     äufen     auf      # Verkauf -> Verkäuften
-SFX p   aum     äume      aum      # Raum -> Räume
-SFX p   aum     äumen     aum      # Raum -> Raumen
-SFX p   aus     äuser     [hH]aus  # Haus -> Häuser
-SFX p   aus     äusern    [hH]aus  # Haus -> Häusern
+SFX p Y 66
+SFX p   ab      äbe       ab       # der Einstatzstab -> die Einstatzstäbe
+SFX p   ab      äben      ab       # dem Einstatzstab -> den Einstatzstäben
+SFX p   ad      äder      ad       # das Rad -> die Räder
+SFX p   ad      ädern     ad       # dem Rad -> den Rädern
+SFX p   aden    äden      aden     # der/dem Faden -> die/den Fäden
+SFX p   adt     ädte      adt      # das Stadt -> die Städte
+SFX p   adt     äden      adt      # der Stadt -> den Städten
+SFX p   ag      äge       ag       # der Betrag -> die Beträge
+SFX p   ag      ägen      ag       # dem Betrag -> den Beträgen
+SFX p   al      äle       al       # der Kanal -> die Kanäle
+SFX p   al      älen      al       # dem Kanal -> den Kanälen
+SFX p   all     älle      all      # der Fall -> die Fälle
+SFX p   all     ällen     all      # dem Fall -> den Fällen
+SFX p   an      äne       an       # der Plan -> die Pläne
+SFX p   an      änen      an       # dem Plan -> den Plänen
+SFX p   and     ände      and      # der Abstand -> die Abstände
+SFX p   and     änden     and      # dem Abstand -> den Abständen
+SFX p   ang     änge      ang      # der Empfang -> die Empfänge
+SFX p   ang     ängen     ang      # dem Empfang -> den Empfängen
+SFX p   ann     änner     ann      # der Mann -> die Männer
+SFX p   ann     ännern    ann      # dem Mann -> den Männern
+SFX p   arkt    ärkte     arkt     # der Markt -> die Märkte
+SFX p   arkt    ärkten    arkt     # dem Markt -> den Märkten
+SFX p   ass     ässe      ass      # der Anlass -> die Anlässe
+SFX p   ass     ässen     ass      # dem Anlass -> den Anlässen
+SFX p   ater    äume      ater     # der Vater -> die Väter
+SFX p   ater    äumen     ater     # dem Vater -> den Vätern
+SFX p   atz     ätze      atz      # der Satz -> die Sätze
+SFX p   atz     ätzen     atz      # dem Satz -> den Sätzen
+SFX p   auf     äufe      auf      # der Verkauf -> die Verkäufe
+SFX p   auf     äufen     auf      # dem Verkauf -> den Verkäufen
+SFX p   aum     äume      aum      # der Raum -> die Räume
+SFX p   aum     äumen     aum      # dem Raum -> den Raumen
+SFX p   aus     äuser     [hH]aus  # das Haus -> die Häuser
+SFX p   aus     äusern    [hH]aus  # dem Haus -> den Häusern
+SFX p   aus     äuse      [Mm]aus  # die Maus -> die Mäuse
+SFX p   aus     äusen     [Mm]aus  # der Maus -> den Mäusen
 
-SFX p   oden    öden      oden     # neu: Boden -> Böden
-SFX p   oss     össe      oss      # Schloss -> Schlösser
-SFX p   oss     össen     oss      # Schloss -> Schlössern
-SFX p   oß      öße       oß       # Stoß -> Stöße
-SFX p   oß      ößen      oß       # Ston -> Stößen
+SFX p   oden    öden      oden     # der, den Boden -> die, den Böden
+SFX p   ogel    ögel      ogel     # der Vogel -> die Vögel
+SFX p   ogel    ögeln     ogel     # dem Vogel -> den Vögeln
+SFX p   ohn     öhne      ohn      # der Sohn -> die Söhne
+SFX p   ohn     öhnen     ohn      # dem Sohn -> den Söhnen
+SFX p   on      öne       on       # der Ton -> die Töne
+SFX p   on      önen      on       # dem Ton -> den Tönen
+SFX p   opf     öpfe      opf      # der Topf -> die Töpfe
+SFX p   opf     öpfen     opf      # dem Topf -> den Töpfen
+SFX p   oss     össe      oss      # das Schloss -> die Schlösser
+SFX p   oss     össen     oss      # dem Schloss -> den Schlössern
+SFX p   oß      öße       oß       # der Stoß -> die Stöße
+SFX p   oß      ößen      oß       # dem Stoß -> den Stößen
 
-
-SFX p   ug      üge       ug       # Zug -> Züge
-SFX p   ug      ügen      ug       # Zug -> Zügen
-SFX p   und     ünde      und      # neu: Grund -> Gründe
-SFX p   und     ünden     und      # neu: Grund -> Gründen
-SFX p   uss     üsse      uss      # Nuss -> Nüsse
-SFX p   uss     üssen     uss      # Nuss -> Nüssen
-SFX p   uß      üße       uß       # Fuß -> Füße
-SFX p   uß      üßen      uß       # Fuß -> Füßen
-SFX p   ruch    rüche     ruch     # neu: Ausbruch -> Ausbrüche
-SFX p   ruch    ruchen    ruch     # neu: Ausbruch -> Ausbrüchen
+SFX p   uch     üche      uch      # der Ausbruch -> die Ausbrüche
+SFX p   uch     üchen     uch      # dem Ausbruch -> den Ausbrüchen
+SFX p   ug      üge       ug       # der Zug -> die Züge
+SFX p   ug      ügen      ug       # dem Zug -> den Zügen
+SFX p   uh      ühe       uh       # die Milchkuh -> die Milchkühe
+SFX p   uh      ühen      uh       # der Milchkuh -> den Milchkühen
+SFX p   und     ünde      und      # der Grund -> die Gründe
+SFX p   und     ünden     und      # dem Grund -> den Gründen
+SFX p   urf     ürfe      urf      # der Fehlwurf -> die Fehlwürfe
+SFX p   urf     ürfen     urf      # dem Fehlwurf -> den Fehlwürfen
+SFX p   uss     üsse      uss      # die Nuss -> die Nüsse
+SFX p   uss     üssen     uss      # der Nuss -> den Nüssen
+SFX p   ut      üte       ut       # der Hut -> die Hüte
+SFX p   ut      üten      ut       # dem Hut -> den Hüten
+SFX p   uß      üße       uß       # der Fuß -> die Füße
+SFX p   uß      üßen      uß       # dem Fuß -> den Füßen
 
 # last ...oss rules are for swiss de_CH only - but do not affect de_DE
 
