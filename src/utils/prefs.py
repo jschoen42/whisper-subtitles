@@ -1,5 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 23.12.2024
+    © Jürgen Schoenemeyer, 19.01.2025
+
+    src/utils/prefs.py
 
     PUBLIC:
     class Prefs:
@@ -7,8 +9,8 @@
       - load(cls, pref_name: str) -> bool
       - get(cls, key_path: str) -> Any
 
-    merge_dicts(a: dict, b: dict) -> dict
-    build_tree(tree: list, in_key: str, value: str) -> dict
+     - merge_dicts(a: Dict, b: Dict) -> Dict
+     - build_tree(tree: List, in_key: str, value: str) -> Dict
 """
 
 import json
@@ -16,21 +18,20 @@ import re
 
 from json    import JSONDecodeError
 from pathlib import Path
-from typing  import Any, Tuple
+from typing  import Any, Dict, List, Tuple
 
 import yaml
 
 from utils.globals import BASE_PATH
 from utils.trace   import Trace
-from utils.file    import beautify_path
 
 class Prefs:
-    pref_path   = BASE_PATH / "prefs"
-    pref_prefix = ""
-    data = {}
+    pref_path: Path = BASE_PATH / "prefs"
+    pref_prefix: str = ""
+    data: Dict[Any, Any] = {}
 
     @classmethod
-    def init(cls, pref_path = None, pref_prefix = None ) -> None:
+    def init(cls, pref_path: Path | str | None = None, pref_prefix: str | None = None ) -> None:
         if pref_path is not None:
             cls.pref_path = BASE_PATH / pref_path
         if pref_prefix is not None:
@@ -55,11 +56,9 @@ class Prefs:
             cls.data = dict(merge_dicts(cls.data, data))
             # cls.data = merge(dict(cls.data), data) # -> Exception: Conflict at trainingCompany
 
-        except yaml.parser.ParserError as err:
-            Trace.fatal(f"ParserError '{pref_name}':\n{err}")
-
-        except yaml.scanner.ScannerError as err:
-            Trace.fatal(f"ScannerError '{pref_name}':\n{err}")
+        except yaml.YAMLError as err:
+            Trace.fatal(f"YAMLError '{pref_name}':\n{err}")
+            return False
 
         except OSError as err:
             Trace.error(f"{pref_name}: {err}")
@@ -68,24 +67,29 @@ class Prefs:
         return True
 
     @classmethod
-    def get_all(cls) -> dict:
+    def get_all(cls) -> Dict[Any, Any]:
         return cls.data
 
     @classmethod
-    def get(cls, key: str) -> Any:
+    def get(cls, key_path: str, default:Any = None) -> Any:
 
-        def get_pref_key(key_path: str) -> Any:
+        def get_pref_key(key_path: str) -> Any: # key_path = "one.two.three" -
             keys = key_path.split(".")
 
             data = cls.data
+
             for key in keys:
-                if key in data:
-                    data = data[key]
-                else:
-                    Trace.fatal(f"unknown pref: {key}")
+                if data is None or key not in data:
+                    if default is None:
+                        Trace.fatal(f"unknown pref '{key_path}'")
+
+                    Trace.info(f"unknown pref '{key_path}' -> {default}")
+                    return default
+
+                data = data[key]
             return data
 
-        result = get_pref_key(key)
+        result = get_pref_key(key_path)
 
         # pref.yaml
         #   filename:  'data.xlsx'
@@ -108,27 +112,32 @@ class Prefs:
         try:
             ret = json.loads(tmp)
         except JSONDecodeError as err:
-            Trace.error(f"json error: {key} -> {tmp} ({err})")
+            Trace.error(f"json error: {key_path} -> {tmp} ({err})")
             ret = ""
 
         return ret
 
 
-def get_pref_special(pref_path: Path, pref_prexix, pref_name: str, key: str) -> str:
+def get_pref_special(pref_path: Path, pref_prexix: str, pref_name: str, key: str) -> str:
     try:
         with open(Path(pref_path, pref_prexix + pref_name + ".yaml"), "r", encoding="utf-8") as file:
             pref = yaml.safe_load(file)
+
+    except yaml.YAMLError as err:
+        Trace.fatal(f"YAMLError '{pref_name}':\n{err}")
+        return ""
+
     except OSError as err:
-        Trace.error(f"{beautify_path(err)}")
+        Trace.error(f"{beautify_path(str(err))}")
         return ""
 
     if key in pref:
-        return pref[key]
+        return str(pref[key])
     else:
         Trace.error(f"unknown pref: {pref_name} / {key}")
         return ""
 
-def read_pref( pref_path: Path, pref_name: str ) -> Tuple[bool, dict]:
+def read_pref( pref_path: Path, pref_name: str ) -> Tuple[bool, Dict[Any, Any]]:
     try:
         with open( Path(pref_path, pref_name), "r", encoding="utf-8") as file:
             data = yaml.safe_load(file)
@@ -136,16 +145,23 @@ def read_pref( pref_path: Path, pref_name: str ) -> Tuple[bool, dict]:
         # Trace.wait( f"{pref_name}: {json.dumps(data, sort_keys=True, indent=2)}" )
         return False, data
 
-    except OSError as err:
-        Trace.error( f"{beautify_path(err)}" )
+    except yaml.YAMLError as err:
+        Trace.fatal(f"YAMLError '{pref_name}':\n{err}")
         return True, {}
+
+    except OSError as err:
+        Trace.error( f"{beautify_path(str(err))}" )
+        return True, {}
+
+def beautify_path( path: Path | str ) -> str:
+    return str( path ).replace("\\\\", "/")
 
 # https://stackoverflow.com/questions/7204805/deep-merge-dictionaries-of-dictionaries-in-python?page=1&tab=scoredesc#answer-7205672
 
-def merge_dicts(a: dict, b: dict) -> Any:
+def merge_dicts(a: Dict[Any, Any], b: Dict[Any, Any]) -> Any:
     for k in set(a.keys()).union(b.keys()):
         if k in a and k in b:
-            if isinstance(a[k], dict) and isinstance(b[k], dict):
+            if isinstance(a[k], dict) and isinstance(b[k], Dict):
                 yield (k, dict(merge_dicts(a[k], b[k])))
             else:
                 # If one of the values is not a dict, you can't continue merging it.
@@ -159,10 +175,24 @@ def merge_dicts(a: dict, b: dict) -> Any:
 
 # https://stackoverflow.com/questions/7204805/deep-merge-dictionaries-of-dictionaries-in-python?page=1&tab=scoredesc#answer-7205107
 
-def merge(a: dict, b: dict, path=[]) -> Any:
+# def merge(a: Dict[Any, Any], b: Dict[Any, Any], path: List[str] = []) -> Any:
+#     for key in b:
+#         if key in a:
+#             if isinstance(a[key], dict) and isinstance(b[key], Dict):
+#                 merge(a[key], b[key], path + [str(key)])
+#             elif a[key] != b[key]:
+#                 raise Exception("Conflict at " + ".".join(path + [str(key)]))
+#         else:
+#             a[key] = b[key]
+#     return a
+
+def merge(a: Dict[Any, Any], b: Dict[Any, Any], path: List[str] | None = None) -> Any:
+    if path is None:
+        path = []
+
     for key in b:
         if key in a:
-            if isinstance(a[key], dict) and isinstance(b[key], dict):
+            if isinstance(a[key], dict) and isinstance(b[key], Dict):
                 merge(a[key], b[key], path + [str(key)])
             elif a[key] != b[key]:
                 raise Exception("Conflict at " + ".".join(path + [str(key)]))
@@ -170,7 +200,7 @@ def merge(a: dict, b: dict, path=[]) -> Any:
             a[key] = b[key]
     return a
 
-def build_tree(tree: list, in_key: str, value: str) -> dict:
+def build_tree(tree: List[str], in_key: str, value: str) -> Dict[str, Any]:
     if tree:
         return {tree[0]: build_tree(tree[1:], in_key, value)}
 

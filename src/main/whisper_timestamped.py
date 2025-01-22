@@ -1,10 +1,9 @@
-
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 08.01.2025
 
     PUBLIC:
      - load_model_whisper(model_name: str) -> Any
-     - transcribe_whisper_timestamped(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict
+     - transcribe_whisper_timestamped(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> str | Dict
 """
 
 import io
@@ -12,10 +11,10 @@ import time
 import hashlib
 import warnings
 
+from typing import Any, Dict
 from pathlib import Path
-from typing import Any
 
-import whisper_timestamped as whisper
+import whisper_timestamped as whisper # type: ignore [import-untyped]
 
 from main.whisper import search_model_path
 
@@ -23,9 +22,8 @@ from utils.trace    import Trace
 from utils.util     import import_json, export_json, export_text, CacheJSON
 from utils.metadata import get_media_info
 
-from helper.captions import export_srt, export_vtt
-from helper.excel    import export_TextToSpeech_excel
-
+from helper.captions     import export_srt, export_vtt
+from helper.excel_write  import export_TextToSpeech_excel
 from helper.whisper_util import get_filename_parameter, prepare_words, split_to_lines, split_to_sentences
 
 # warnings.simplefilter("ignore", UserWarning)
@@ -63,7 +61,7 @@ def load_model_whisper(model_name: str) -> Any:
     else:
         return None
 
-def transcribe_whisper_timestamped(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict:
+def transcribe_whisper_timestamped(project_params: Dict[str, Any], media_params: Dict[str, Any], cache_nlp: CacheJSON) -> None | Dict[str, Any]:
     global current_model
 
     # inModelID     = project_params["modelNumber"]
@@ -129,14 +127,16 @@ def transcribe_whisper_timestamped(project_params: dict, media_params: dict, cac
 
     if not media_pathname.is_file():
         Trace.error(f"media not found '{media_pathname}'")
-        return f"{filename_two} - not found"
+        return None
     else:
-        with open(media_pathname, "rb") as file:
-            file = file.read()
+        with open(media_pathname, "rb") as f:
+            file = f.read()
             media_md5 = hashlib.md5(file).hexdigest()
             media_info = get_media_info(io.BytesIO(file))
+            if media_info is None:
+                return None
 
-    settings = {}
+    settings: Dict[str, Any] = {}
     settings["language"] = language
     settings["duration"] = media_info["duration"]
     settings["transcription_options"] = param
@@ -180,7 +180,7 @@ def transcribe_whisper_timestamped(project_params: dict, media_params: dict, cac
         result["segments"] = []
 
         start_time = time.time()
-        ret = whisper.transcribe(current_model, str(media_pathname), **param)
+        ret = whisper.transcribe(current_model, str(media_pathname), **param) # type: ignore[reportArgumentType]
         duration_cpu = time.time() - start_time
 
         result["cpuTime"]  = round(duration_cpu, 2)
@@ -218,7 +218,7 @@ def transcribe_whisper_timestamped(project_params: dict, media_params: dict, cac
     (  cc,
         text,
         text_combined,
-        scorrected_details,
+        corrected_details,
         spelling_result
    ) = split_to_lines(words, dictionary_data)
 
@@ -235,16 +235,16 @@ def transcribe_whisper_timestamped(project_params: dict, media_params: dict, cac
     export_text(Path(path_vtt, whisper_parameter + nlp_name, curr_subfolder), media_name + ".vtt", export_vtt(cc))
 
     sentence_data = split_to_sentences(words, dictionary_data)
-    export_TextToSpeech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx")
+    export_TextToSpeech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx") # type: ignore # SubtitleColumnFormat
 
     return {
         "text":            text_combined,
         "chars":           len(text_combined.replace(" ", "")),
         "words":           len(text_combined.split(" ")),
         "sentences":       sentences,
-        "duration":        result["duration"],
+        "duration":        media_info["duration"],
         "spelling":        spelling_result,
-        "corrected":       scorrected_details,
+        "corrected":       corrected_details,
         "lastSegment":     last_segment_text,
         "repetitionError": repetition_error,
         "pauseError":      pause_error,

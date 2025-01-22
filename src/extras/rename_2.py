@@ -4,6 +4,7 @@
 import os
 import sys
 
+from typing import List
 from pathlib import Path
 
 from utils.globals import BASE_PATH
@@ -71,7 +72,7 @@ models = {
     "(8) large-v2-de":       "07 large-v2-de",
 }
 
-def convert_foldername(folder):
+def convert_foldername(folder: str) -> str:
 
     # engine
 
@@ -124,7 +125,7 @@ def convert_foldername(folder):
 
     return f"[{engine}] [{model}] ({params})"
 
-def convert_filename(filename):
+def convert_filename(filename: str) -> str:
     suffix = Path(filename).suffix
     stem = Path(filename).stem
 
@@ -137,7 +138,7 @@ def convert_filename(filename):
 
 
 
-def rename_project(project_path):
+def rename_project(project_path: str) -> None:
 
     main_folders = ["04_settings", "05_json" ]
 
@@ -146,7 +147,7 @@ def rename_project(project_path):
 
         folders = get_folders_in_folder( path )
 
-        check_folder = []
+        check_folder: List[str] = []
         for folder in folders:
             if folder[0] == "[":
                 continue
@@ -154,7 +155,7 @@ def rename_project(project_path):
             new_foldername = convert_foldername(folder)
 
             if new_foldername in check_folder:
-                Trace.error( check_folder )
+                Trace.error( f"{check_folder}" )
                 Trace.fatal( f"{project_path}/{main_folder} duplicate folder '{new_foldername}'" )
             else:
                 check_folder.append(new_foldername)
@@ -173,11 +174,11 @@ def rename_project(project_path):
 
     Trace.result(f"rename '{project_path}'")
 
-def rename_folder( folder ):
+def rename_folder( folder: str ) -> None:
     Trace.info( f"{folder}")
 
 
-def main():
+def main() -> None:
     Prefs.init("settings")
     Prefs.load(PROJECTS)
 
@@ -185,7 +186,7 @@ def main():
         rename_project(project)
 
 if __name__ == "__main__":
-    Trace.set( debug_mode=True, show_timestamp=False )
+    Trace.set( debug_mode=True, timezone=False )
     Trace.action(f"Python version {sys.version}")
 
     main()

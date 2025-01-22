@@ -7,28 +7,21 @@ whisper-subtitles v0.1.0
 ├── ctranslate2 v4.5.0
 │   ├── numpy v2.0.2
 │   ├── pyyaml v6.0.2
-│   └── setuptools v75.6.0
-├── fsspec v2024.12.0
-├── huggingface-hub v0.27.0
+│   └── setuptools v75.8.0
+├── huggingface-hub v0.27.1
 │   ├── filelock v3.16.1
 │   ├── fsspec v2024.12.0
 │   ├── packaging v24.2
 │   ├── pyyaml v6.0.2
 │   ├── requests v2.32.3
 │   │   ├── certifi v2024.12.14
-│   │   ├── charset-normalizer v3.4.0
+│   │   ├── charset-normalizer v3.4.1
 │   │   ├── idna v3.10
-│   │   └── urllib3 v2.2.3
+│   │   └── urllib3 v2.3.0
 │   ├── tqdm v4.67.1
 │   │   └── colorama v0.4.6
 │   └── typing-extensions v4.12.2
-├── mkl v2025.0.1
-│   ├── intel-openmp v2025.0.4
-│   │   └── intel-cmplr-lib-ur v2025.0.4
-│   │       └── umf v0.9.1
-│   │           └── tcmlib v1.2.0
-│   └── tbb v2022.0.0
-│       └── tcmlib v1.2.0
+├── jaro-winkler v2.0.3
 ├── numba v0.60.0
 │   ├── llvmlite v0.43.0
 │   └── numpy v2.0.2
@@ -36,10 +29,10 @@ whisper-subtitles v0.1.0
 │   ├── coloredlogs v15.0.1
 │   │   └── humanfriendly v10.0
 │   │       └── pyreadline3 v3.5.4
-│   ├── flatbuffers v24.3.25
+│   ├── flatbuffers v24.12.23
 │   ├── numpy v2.0.2
 │   ├── packaging v24.2
-│   ├── protobuf v5.29.2
+│   ├── protobuf v5.29.3
 │   └── sympy v1.13.3
 │       └── mpmath v1.3.0
 ├── openai-whisper v20240930
@@ -52,73 +45,70 @@ whisper-subtitles v0.1.0
 │   ├── torch v2.4.1
 │   │   ├── filelock v3.16.1
 │   │   ├── fsspec v2024.12.0
-│   │   ├── jinja2 v3.1.4
+│   │   ├── jinja2 v3.1.5
 │   │   │   └── markupsafe v3.0.2
 │   │   ├── networkx v3.4.2
-│   │   ├── setuptools v75.6.0
+│   │   ├── setuptools v75.8.0
 │   │   ├── sympy v1.13.3 (*)
 │   │   └── typing-extensions v4.12.2
 │   └── tqdm v4.67.1 (*)
 ├── openpyxl v3.1.5
 │   └── et-xmlfile v2.0.0
-├── openpyxl-stubs v0.1.25
-│   ├── mypy v1.14.0
-│   │   ├── mypy-extensions v1.0.0
-│   │   └── typing-extensions v4.12.2
-│   ├── openpyxl v3.1.5 (*)
-│   └── typing-extensions v4.12.2
 ├── pymediainfo v6.1.0
+├── python-calamine v0.3.1
+│   └── packaging v24.2
 ├── pyyaml v6.0.2
-├── spacy v3.8.3
+├── rapidfuzz v3.11.0
+├── spacy v3.8.4
 │   ├── catalogue v2.0.10
 │   ├── cymem v2.0.10
-│   ├── jinja2 v3.1.4 (*)
+│   ├── jinja2 v3.1.5 (*)
 │   ├── langcodes v3.5.0
 │   │   └── language-data v1.3.0
 │   │       └── marisa-trie v1.2.1
-│   │           └── setuptools v75.6.0
+│   │           └── setuptools v75.8.0
 │   ├── murmurhash v1.0.11
 │   ├── numpy v2.0.2
 │   ├── packaging v24.2
 │   ├── preshed v3.0.9
 │   │   ├── cymem v2.0.10
 │   │   └── murmurhash v1.0.11
-│   ├── pydantic v2.10.4
+│   ├── pydantic v2.10.5
 │   │   ├── annotated-types v0.7.0
 │   │   ├── pydantic-core v2.27.2
 │   │   │   └── typing-extensions v4.12.2
 │   │   └── typing-extensions v4.12.2
 │   ├── requests v2.32.3 (*)
-│   ├── setuptools v75.6.0
+│   ├── setuptools v75.8.0
 │   ├── spacy-legacy v3.0.12
 │   ├── spacy-loggers v1.0.5
 │   ├── srsly v2.5.0
 │   │   └── catalogue v2.0.10
-│   ├── thinc v8.3.3
-│   │   ├── blis v1.1.0
+│   ├── thinc v8.3.4
+│   │   ├── blis v1.2.0
 │   │   │   └── numpy v2.0.2
 │   │   ├── catalogue v2.0.10
 │   │   ├── confection v0.1.5
-│   │   │   ├── pydantic v2.10.4 (*)
+│   │   │   ├── pydantic v2.10.5 (*)
 │   │   │   └── srsly v2.5.0 (*)
 │   │   ├── cymem v2.0.10
 │   │   ├── murmurhash v1.0.11
 │   │   ├── numpy v2.0.2
 │   │   ├── packaging v24.2
 │   │   ├── preshed v3.0.9 (*)
-│   │   ├── pydantic v2.10.4 (*)
-│   │   ├── setuptools v75.6.0
+│   │   ├── pydantic v2.10.5 (*)
+│   │   ├── setuptools v75.8.0
 │   │   ├── srsly v2.5.0 (*)
 │   │   └── wasabi v1.1.3
 │   │       └── colorama v0.4.6
 │   ├── tqdm v4.67.1 (*)
 │   ├── typer v0.15.1
-│   │   ├── click v8.1.7
+│   │   ├── click v8.1.8
 │   │   │   └── colorama v0.4.6
 │   │   ├── rich v13.9.4
 │   │   │   ├── markdown-it-py v3.0.0
 │   │   │   │   └── mdurl v0.1.2
-│   │   │   └── pygments v2.18.0
+│   │   │   └── pygments v2.19.1
 │   │   ├── shellingham v1.5.4
 │   │   └── typing-extensions v4.12.2
 │   ├── wasabi v1.1.3 (*)
@@ -126,7 +116,7 @@ whisper-subtitles v0.1.0
 │       ├── cloudpathlib v0.20.0
 │       ├── confection v0.1.5 (*)
 │       ├── packaging v24.2
-│       ├── pydantic v2.10.4 (*)
+│       ├── pydantic v2.10.5 (*)
 │       ├── requests v2.32.3 (*)
 │       ├── smart-open v7.1.0
 │       │   └── wrapt v1.17.0
@@ -140,17 +130,24 @@ whisper-subtitles v0.1.0
 │   │   └── torch v2.4.1 (*)
 │   └── torch v2.4.1 (*)
 ├── spylls v0.1.7
-├── tbb v2022.0.0 (*)
 ├── tokenizers v0.21.0
-│   └── huggingface-hub v0.27.0 (*)
+│   └── huggingface-hub v0.27.1 (*)
 ├── torch v2.4.1 (*)
 ├── tzdata v2024.2
 ├── webvtt-py v0.5.1
-└── whisper-timestamped v1.15.8
-    ├── cython v3.0.11
-    ├── dtw-python v1.5.3
-    │   ├── numpy v2.0.2
-    │   └── scipy v1.14.1
-    │       └── numpy v2.0.2
-    └── openai-whisper v20240930 (*)
+├── whisper-timestamped v1.15.8
+│   ├── cython v3.0.11
+│   ├── dtw-python v1.5.3
+│   │   ├── numpy v2.0.2
+│   │   └── scipy v1.15.0
+│   │       └── numpy v2.0.2
+│   └── openai-whisper v20240930 (*)
+├── xlsxwriter v3.2.0
+├── mypy v1.14.1 (group: dev)
+│   ├── mypy-extensions v1.0.0
+│   └── typing-extensions v4.12.2
+├── types-openpyxl v3.1.5.20241225 (group: dev)
+├── types-pyyaml v6.0.12.20241230 (group: dev)
+└── types-requests v2.32.0.20241016 (group: dev)
+    └── urllib3 v2.3.0
 (*) Package tree already displayed

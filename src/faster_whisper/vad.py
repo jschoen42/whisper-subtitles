@@ -3,12 +3,13 @@ import functools
 import os
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
 from faster_whisper.utils import get_assets_path
 
+print("VAD PATCH (01.01.2025)")
 
 # The code below is adapted from https://github.com/snakers4/silero-vad.
 @dataclass
@@ -35,16 +36,16 @@ class VadOptions:
     """
 
     threshold: float = 0.5
-    neg_threshold: float = threshold - 0.15
+    neg_threshold: float = None
     min_speech_duration_ms: int = 0
     max_speech_duration_s: float = float("inf")
     min_silence_duration_ms: int = 2000
-    speech_pad_ms: int = 400
-
+    speech_pad_ms: Tuple[int, int] = (400, 400)   #JS (pad start, pad end)
+    # speech_pad_ms: int = 400
 
 def get_speech_timestamps(
     audio: np.ndarray,
-    vad_options: Optional[VadOptions] = None,
+    vad_options: Optional[Union[dict, VadOptions]] = None,
     sampling_rate: int = 16000,
     **kwargs,
 ) -> List[dict]:
@@ -63,17 +64,22 @@ def get_speech_timestamps(
         vad_options = VadOptions(**kwargs)
 
     threshold = vad_options.threshold
+    neg_threshold = vad_options.neg_threshold
     min_speech_duration_ms = vad_options.min_speech_duration_ms
     max_speech_duration_s = vad_options.max_speech_duration_s
     min_silence_duration_ms = vad_options.min_silence_duration_ms
     window_size_samples = 512
-    speech_pad_ms = vad_options.speech_pad_ms
+    speech_pad_ms = vad_options.speech_pad_ms      # JS tuple
     min_speech_samples = sampling_rate * min_speech_duration_ms / 1000
-    speech_pad_samples = sampling_rate * speech_pad_ms / 1000
+    speech_pad_samples = (                         # JS
+        sampling_rate * speech_pad_ms[0] / 1000,   # JS
+        sampling_rate * speech_pad_ms[1] / 1000    # JS
+    )                                              # JS
     max_speech_samples = (
         sampling_rate * max_speech_duration_s
         - window_size_samples
-        - 2 * speech_pad_samples
+        - speech_pad_samples[0]                    # JS
+        - speech_pad_samples[1]                    # JS
     )
     min_silence_samples = sampling_rate * min_silence_duration_ms / 1000
     min_silence_samples_at_max_speech = sampling_rate * 98 / 1000
@@ -90,7 +96,8 @@ def get_speech_timestamps(
     triggered = False
     speeches = []
     current_speech = {}
-    neg_threshold = vad_options.neg_threshold
+    if neg_threshold is None:
+        neg_threshold = max(threshold - 0.15, 0.01)
 
     # to save potential segment end (and tolerate some silence)
     temp_end = 0
@@ -158,24 +165,24 @@ def get_speech_timestamps(
 
     for i, speech in enumerate(speeches):
         if i == 0:
-            speech["start"] = int(max(0, speech["start"] - speech_pad_samples))
+            speech["start"] = int(max(0, speech["start"] - speech_pad_samples[0]))   # JS
         if i != len(speeches) - 1:
             silence_duration = speeches[i + 1]["start"] - speech["end"]
-            if silence_duration < 2 * speech_pad_samples:
+            if silence_duration < speech_pad_samples[0] + speech_pad_samples[1]:     # JS
                 speech["end"] += int(silence_duration // 2)
                 speeches[i + 1]["start"] = int(
                     max(0, speeches[i + 1]["start"] - silence_duration // 2)
                 )
             else:
                 speech["end"] = int(
-                    min(audio_length_samples, speech["end"] + speech_pad_samples)
+                    min(audio_length_samples, speech["end"] + speech_pad_samples[1])  # JS
                 )
                 speeches[i + 1]["start"] = int(
-                    max(0, speeches[i + 1]["start"] - speech_pad_samples)
+                    max(0, speeches[i + 1]["start"] - speech_pad_samples[0])          # JS
                 )
         else:
             speech["end"] = int(
-                min(audio_length_samples, speech["end"] + speech_pad_samples)
+                min(audio_length_samples, speech["end"] + speech_pad_samples[1])      # JS
             )
 
     return speeches
@@ -332,7 +339,10 @@ def merge_segments(segments_list, vad_options: VadOptions, sampling_rate: int = 
     curr_end = 0
     seg_idxs = []
     merged_segments = []
-    edge_padding = vad_options.speech_pad_ms * sampling_rate // 1000
+    edge_padding = (                                                    # JS
+        vad_options.speech_pad_ms[0] * sampling_rate // 1000,           # JS
+        vad_options.speech_pad_ms[1] * sampling_rate // 1000            # JS
+    )                                                                   # JS
     chunk_length = vad_options.max_speech_duration_s * sampling_rate
 
     curr_start = segments_list[0]["start"]
@@ -342,10 +352,10 @@ def merge_segments(segments_list, vad_options: VadOptions, sampling_rate: int = 
         # reset the edge padding. Similarly for end timing.
         if idx > 0:
             if seg["start"] < segments_list[idx - 1]["end"]:
-                seg["start"] += edge_padding
+                seg["start"] += edge_padding[0]                         # JS
         if idx < len(segments_list) - 1:
             if seg["end"] > segments_list[idx + 1]["start"]:
-                seg["end"] -= edge_padding
+                seg["end"] -= edge_padding[1]                           # JS
 
         if seg["end"] - curr_start > chunk_length and curr_end - curr_start > 0:
             merged_segments.append(

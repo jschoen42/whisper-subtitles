@@ -5,7 +5,7 @@ import sys
 import json
 import time
 
-from typing import Tuple
+from typing import Any, Dict
 from pathlib import Path
 
 from utils.globals import BASE_PATH
@@ -16,10 +16,10 @@ from utils.file    import check_file_exists
 from utils.log     import log_clear, log_add, log_get_data
 from utils.log     import DictionaryLog
 
-from helper.excel    import import_project_excel, import_dictionary_excel
-from helper.captions import seconds_to_timecode_vtt
-from helper.spelling import hunspell_dictionary_init
-from helper.whisper_util import are_inner_prompts_possible, prompt_main_normalize, prompt_normalize, get_filename_parameter
+from helper.excel_read   import import_project_excel, import_dictionary_excel
+from helper.captions     import seconds_to_timecode_vtt
+from helper.spelling     import hunspell_dictionary_init, getSpellStatistic
+from helper.whisper_util import init_special_text, are_inner_prompts_possible, prompt_main_normalize, prompt_normalize, get_filename_parameter
 
 from main.spacy import get_modelname_spacy
 
@@ -28,7 +28,7 @@ from main.whisper_faster import precheck_models, transcribe_fasterwhisper
 from main.whisper import transcribe_whisper
 from main.whisper_timestamped import transcribe_whisper_timestamped
 
-PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
+PROJECTS: str = "projects_all.yaml"  # "projects.yaml", "projects_all.yaml"
 
 data_path = BASE_PATH / "../data"
 
@@ -39,31 +39,32 @@ data_path = BASE_PATH / "../data"
 # ("05", "large-v1")
 
 # ("06", "large-v2")
-# ("06", "large-v2•distil")
+# ("06", "large-v2-de")
+# ("06", "large-v2•distil-en")
 
 # ("07", "large-v3")
 # ("07", "large-v3•crisper")
-# ("07", "large-v3•distil")
-# ("07", "large-v3•turbo-de")
 # ("07", "large-v3•turbo")
+# ("07", "large-v3•turbo-de") # fast ohne 'ß'
+# ("07", "large-v3•distil-en")
 
-models: list[ Tuple[str, str] ] = [("01", "tiny")] # [("06", "large-v2")] # [("07", "large-v3")]
+models = [ ("06", "large-v2") ]
 
-beams: list = [5] # [1, 3, 5, 7, 9] -> keinen signifikater Unterschied zw. 3 ... 9
+beams = [5] # [1, 3, 5, 7, 9] -> keinen signifikater Unterschied zw. 3 ... 9
 
 trace_file_default = ["info", "update", "proof", "warning", "error"]
 trace_file_reduced = ["warning"]
 
-force_condition_on_previous_text: bool = False  # default v3: False, otherwise True
-
 reset_cache_spacy: bool = False
 
-def main():
+def main() -> None:
     Prefs.init("settings")
     Prefs.load("base.yaml")
     Prefs.load("whisper.yaml")
+    Prefs.load("hallucination.yaml")
     Prefs.load("spacy.yaml")
     Prefs.load("hunspell.yaml")
+    Prefs.load("format_sentence.yaml")
     Prefs.load(PROJECTS)
 
     whisper_type = Prefs.get("whisper.whisper_type")
@@ -78,6 +79,8 @@ def main():
 
     Trace.action(f"Whisper type '{whisper_type}' ==> '{PROJECTS}' ({language})")
 
+    init_special_text( language )
+
     no_prompt  = not Prefs.get("whisper.use_initial_prompt")
 
     # read details from Excel
@@ -87,7 +90,7 @@ def main():
 
     start = time.perf_counter()
 
-    projects: dict = {}
+    projects: Dict[str, Any] = {}
     for project in Prefs.get("projects"):
         parts = project.split("/")
         folder = parts[-1]
@@ -115,8 +118,8 @@ def main():
             path_media = data_path / path_project / "03_audio" /  media_type
         elif media_type == "mp4":
             path_media = data_path / path_project / "02_video"
-
         else:
+            path_media = ""
             Trace.fatal( f"unknown type '{media_type}'")
 
         Trace.info(f"check media file exist '{path_project}'")
@@ -145,8 +148,9 @@ def main():
     Trace.info()
 
     for model in models:
-        log_dictionary = DictionaryLog(names_dictionary_sheet)
+        log_dictionary = DictionaryLog( names_dictionary_sheet )
 
+        settings       = ""
         project_all    = 0
         file_count_all = 0
         duration_all   = 0
@@ -163,7 +167,7 @@ def main():
             files    = []
             speakers = []
 
-            prompt_main = prompt_main_normalize(data_project["prompt"])
+            prompt_main = prompt_main_normalize(data_project["prompt"]).strip()
 
             for parts in data_project["parts"]:
                 files.append(parts["files"])
@@ -173,6 +177,9 @@ def main():
                 path_media = data_path / path_project / "03_audio" / media_type
             elif media_type == "mp4":
                 path_media = data_path / path_project / "02_video"
+            else:
+                path_media = ""
+                Trace.fatal( f"unknown type '{media_type}'")
 
             path_settings  = data_path / path_project / "04_settings"
             path_json      = data_path / path_project / "05_json"
@@ -198,7 +205,7 @@ def main():
                     "modelName":     model[1],
                     "language":      language,
                     "noPrompt":      no_prompt,
-                    "innerPrompt":   are_inner_prompts_possible(model[1]) or force_condition_on_previous_text,
+                    "innerPrompt":   are_inner_prompts_possible(model[1]),
 
                     "beam":          beam,
                     "VAD":           Prefs.get("whisper.faster_whisper.use_vad"),
@@ -236,14 +243,15 @@ def main():
 
                         media_file = file_info["file"]
                         if len(file_info["prompt"]) > 0:
-                            prompt = prompt_normalize(file_info["prompt"])
+                            prompt = prompt_normalize(file_info["prompt"]).strip()
 
                             file_prompt = prompt + " " + prompt_main
                         else:
                             file_prompt = prompt_main
 
                         if file_prompt != "":
-                            file_prompt += ";"
+                            if file_prompt[-1] not in ".,;:?!":
+                                file_prompt += "."
 
                         tmp = media_file.split(".")
                         tmp.pop()
@@ -261,7 +269,6 @@ def main():
                         if whisper_type == "faster-whisper":
                             result = transcribe_fasterwhisper(whisper_params, media_params, nlp)
 
-
                         elif whisper_type == "whisper":
                             result = transcribe_whisper(whisper_params, media_params, nlp)
 
@@ -269,25 +276,32 @@ def main():
                             result = transcribe_whisper_timestamped(whisper_params, media_params, nlp)
 
                         else:
+                            result = None
                             Trace.fatal(f"unknown whisper type >{whisper_type}<")
 
-                        duration  += result["duration"]
-                        chars     += result["chars"]
-                        words     += result["words"]
-                        sentences += result["sentences"]
+                        if result:
+                            duration  += result["duration"]
+                            chars     += result["chars"]
+                            words     += result["words"]
+                            sentences += result["sentences"]
 
-                        log_add(
-                            media_file,
-                            result["text"],
-                            result["corrected"],
-                            result["lastSegment"],
-                            result["repetitionError"],
-                            result["pauseError"],
-                            result["spelling"],
-                        )
-                        log_dictionary.add(result["corrected"], result["spelling"])
-                        time.sleep(0)
-                        Trace.info()
+                            log_add(
+                                media_file,
+                                result["text"],
+                                result["corrected"],
+                                result["lastSegment"],
+                                result["repetitionError"],
+                                result["pauseError"],
+                                result["spelling"],
+                            )
+                            log_dictionary.add(
+                                result["corrected"],
+                                result["spelling"]
+                            )
+                            time.sleep(0)
+                            # Trace.info()
+                        print()
+                        print()
 
                 nlp.flush()
 
@@ -303,7 +317,7 @@ def main():
                 sentences_all  += sentences
 
                 Trace.info()
-                Trace.info(f"'{project}' files: {file_count}, duration: {seconds_to_timecode_vtt(duration, None)}, chars: {chars}, words: {words}, sentences: {sentences}")
+                Trace.info(f"'{project}' files: {file_count}, duration: {seconds_to_timecode_vtt(duration)}, chars: {chars}, words: {words}, sentences: {sentences}")
 
                 Trace.file_save(path_trace, project_name)
                 Trace.set(show_timestamp=True, show_caller=True)
@@ -341,13 +355,14 @@ def main():
 
         d = time.perf_counter() - start
 
-        Trace.result(f"projects: {project_all}, filesAll: {file_count_all}, durationAll: {seconds_to_timecode_vtt(duration_all, None)}, charsAll: {chars_all}, wordsAll: {words_all}, sentencesAll: {sentences_all} ({d:,.2f} sec)")
+        getSpellStatistic()
+
+        Trace.result(f"projects: {project_all}, filesAll: {file_count_all}, durationAll: {seconds_to_timecode_vtt(duration_all)}, charsAll: {chars_all}, wordsAll: {words_all}, sentencesAll: {sentences_all} ({d:,.2f} sec)")
 
 
 if __name__ == "__main__":
-    Trace.set( debug_mode=False, timezone=False )
+    Trace.set( debug_mode=True, timezone=False )
     Trace.action(f"Python version {sys.version}")
-    # Trace.action(f"base path: '{BASE_PATH}'")
 
     try:
         main()

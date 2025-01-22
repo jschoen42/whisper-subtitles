@@ -1,14 +1,14 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 08.01.2025
 
     PUBLIC:
-     - get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, list]:
+     - get_settings_transcribe_faster(info: Dict, media_type: str, media_info: Dict, vad_sampling_rate: int, speech_chunks: List) -> Tuple[Dict[str, Any], List[Dict[str, Any]]]:
 """
 
-from typing import Tuple
+from typing import Any, Dict, List, Tuple
 
-from utils.trace import Trace
-from utils.util  import format_timestamp
+from utils.trace  import Trace
+from utils.util   import format_timestamp
 
 """
 TranscriptionInfo(
@@ -53,36 +53,46 @@ TranscriptionInfo(
 )
 """
 
-def get_settings_transcribe_faster(info: dict, media_type: str, media_info: dict, vad_sampling_rate: int, speech_chunks: list) -> Tuple[dict, list]:
-    settings: dict = {}
+def get_settings_transcribe_faster(info: Dict[str, Any], media_type: str, media_info: Dict[str, Any], vad_sampling_rate: int, speech_chunks: List[Dict[str, Any]]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+
+    # dataclass: TranscriptionInfo
+
+    settings: Dict[str, Any] = {}
 
     try:
-        props = ["language", "language_probability", "duration", "duration_after_vad", "all_language_probs"]  # , "transcription_options", "vad_options" ]
-        settings = {p: getattr(info, p) for p in props}  # dict([(p,getattr(info,p)) for p in props])
+        props = [
+            "language",
+            "language_probability",
+            "duration",
+            "duration_after_vad",
+            "all_language_probs"
+        ]
+        settings = {p: getattr(info, p) for p in props}
     except Exception as error:
         settings["duration"] = -1
         Trace.error(f"{error}")
 
-    try:
-        props = ["beam_size", "best_of", "patience", "length_penalty", "repetition_penalty", "no_repeat_ngram_size", "log_prob_threshold", "no_speech_threshold", "compression_ratio_threshold", "condition_on_previous_text", "prompt_reset_on_temperature", "temperatures", "initial_prompt", "prefix", "suppress_blank", "suppress_tokens", "without_timestamps", "max_initial_timestamp", "word_timestamps", "prepend_punctuations", "append_punctuations"]
-        settings["transcription_options"] = {p: getattr(info.transcription_options, p) for p in props}
-    except Exception as error:
-        settings["duration"] = -1
-        Trace.error(f"{error}")
+    # transcription_options: TranscriptionOptions
 
     try:
-        if info.vad_options is None:
-            settings["vad_options"] = None
-        else:
-            # props = ["threshold", "min_speech_duration_ms", "max_speech_duration_s", "min_silence_duration_ms", "window_size_samples", "speech_pad_ms", "speech_pad_offset_ms"]
-            props = ["threshold", "min_speech_duration_ms", "max_speech_duration_s", "min_silence_duration_ms", "speech_pad_ms"]
-            settings["vad_options"] = {p: getattr(info.vad_options, p) for p in props}
+        settings["transcription_options"] = {
+            prop: value for prop, value in info.transcription_options.__dict__.items() # type: ignore [attr-defined]
+        }
+    except Exception as error:
+        settings["transcription_options"] = None
+        Trace.error(f"{error}")
+
+    # vad_options: Optional[VadOptions]
+
+    try:
+        settings["vad_options"] = {
+            prop: value for prop, value in info.vad_options.__dict__.items() # type: ignore [attr-defined]
+        }
     except Exception as error:
         settings["vad_options"] = None
         Trace.error(f"{error}")
 
     settings["source"] = {}
-    # settings["source"]["type"]          = media_type
     settings["source"]["channels"]      = media_info["channels"]
     settings["source"]["sampling_rate"] = media_info["samplingRate"]
 

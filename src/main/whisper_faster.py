@@ -1,12 +1,11 @@
-
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 08.01.2025
 
     PUBLIC:
-     - precheck_models(models: list) -> bool
+     - precheck_models(models: List) -> bool
      - search_model_path(model_name: str) -> str
      - model_loaded_faster_whisper(model_name: str) -> None | WhisperModel
-     - transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict
+     - transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> str | Dict
 """
 
 import sys
@@ -16,7 +15,7 @@ import hashlib
 import logging
 import platform
 
-from typing import Any
+from typing import Any, Dict, List, Tuple
 from pathlib import Path
 
 import arrow
@@ -27,12 +26,12 @@ from faster_whisper import WhisperModel
 from utils.globals  import BASE_PATH
 from utils.prefs    import Prefs
 from utils.trace    import Trace
-from utils.file     import get_file_infos #, set_modification_timestamp
+from utils.file     import get_file_infos, get_modification_timestamp, set_modification_timestamp
 from utils.util     import import_json_timestamp, export_json, export_text, format_subtitle, CacheJSON
 from utils.metadata import get_media_info
 
-from helper.captions import export_srt, export_vtt
-from helper.excel import export_TextToSpeech_excel
+from helper.captions    import export_srt, export_vtt
+from helper.excel_write import export_TextToSpeech_excel
 
 from helper.whisper_util import get_filename_parameter, are_prompts_allowed, prepare_words, split_to_lines, split_to_sentences
 from helper.whisper_faster_util import get_settings_transcribe_faster
@@ -45,7 +44,7 @@ current_model: Any = None
 logging.basicConfig()
 logging.getLogger("faster_whisper").setLevel(logging.DEBUG)
 
-def precheck_models(models: list) -> bool:
+def precheck_models(models: List[Tuple[str, str]]) -> bool:
     error = False
     for model in models:
         if search_model_path( model[1] ) is None:
@@ -56,7 +55,7 @@ def precheck_models(models: list) -> bool:
     else:
         return True
 
-def search_model_path(model_name: str) -> str:
+def search_model_path(model_name: str) -> None | str:
     model_path_all = Prefs.get("whisper.faster_whisper.models.path")
     if model_name not in model_path_all:
         Trace.error(f"'{model_name}' not in defined in 'model_path_all'" )
@@ -115,10 +114,12 @@ def model_loaded_faster_whisper(model_name: str) -> None | WhisperModel:
             model = WhisperModel(model_size_or_path=model_path, device="cpu", compute_type="int8", cpu_threads=cpu_threads)           # int auf CPU, kein float möglich # cpu 7
             # model = WhisperModel(model_name, device="cuda", compute_type="int8_float16") # int auf GPU
             # model = WhisperModel(model_name, device="cuda", compute_type="float16")      # float auf GPU
-            duration = time.time() - start_time
             current_model_name = model_name
         except ValueError: #  as error:
+            model = None
             Trace.fatal(f"not found: {model_path}")
+        finally:
+            duration = time.time() - start_time
 
         Trace.info(f"{current_model_name} loaded: {duration:.2f} sec")
 
@@ -126,7 +127,7 @@ def model_loaded_faster_whisper(model_name: str) -> None | WhisperModel:
     else:
         return None
 
-def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp: CacheJSON) -> str | dict:
+def transcribe_fasterwhisper(project_params: Dict[str, Any], media_params: Dict[str, Any], cache_nlp: CacheJSON) -> None | Dict[str, Any]:
     global current_model
 
     # inModelID     = project_params["modelNumber"]
@@ -172,30 +173,25 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
     start_time = time.time()
     if not media_pathname.is_file():
         Trace.error(f"media not found '{media_pathname}'")
-        return f"{filename_two} - not found"
+        return None
     else:
         file_info = get_file_infos( path_media, media_name + "." + media_type,  media_type )
+        if file_info is None:
+            return None
 
-        with open(media_pathname, "rb") as file:
-            file = file.read()
+        with open(media_pathname, "rb") as f:
+            file = f.read()
             media_md5 = hashlib.md5(file).hexdigest()
             media_info = get_media_info(io.BytesIO(file))
+            if media_info is None:
+                return None
 
     duration = time.time() - start_time
 
-    result = {
+    result: Dict[str, Any] = {
         "version": {
             "python": sys.version,
             "faster-whisper": faster_whisper.__version__,
-        },
-        "cpu": {
-            "system": platform.system(),
-            "processor": platform.processor(),
-            "threads": Prefs.get("whisper.faster_whisper.cpu_threads"),
-            "timeMedia": round(duration, 2),
-            "timeLoadModel": 0,
-            "timeInitTranscribe": 0,
-            "timeTranscribe": 0,
         },
         "settings": {
             "model": model_name,
@@ -205,6 +201,15 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
             "condition_on_previous_text": condition_on_previous_text,
             "no_speech_threshold": None,
             "max_initial_timestamp": 0,
+        },
+        "cpu": {
+            "system": platform.system(),
+            "processor": platform.processor(),
+            "threads": Prefs.get("whisper.faster_whisper.cpu_threads"),
+            "timeMedia": round(duration, 2),
+            "timeLoadModel": 0,
+            "timeInitTranscribe": 0,
+            "timeTranscribe": 0,
         },
         "media": {
             "md5": file_info["md5"],
@@ -225,42 +230,68 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
 
     vad_parameter = None
     if vad_enabled:
+
         # Attributes:
-        # threshold (default 0.5): Speech threshold. Silero VAD outputs speech probabilities for each audio chunk,
+        #   threshold: Speech threshold. Silero VAD outputs speech probabilities for each audio chunk,
         #     probabilities ABOVE this value are considered as SPEECH. It is better to tune this
         #     parameter for each dataset separately, but "lazy" 0.5 is pretty good for most datasets.
-        # min_speech_duration_ms (default 250): Final speech chunks shorter min_speech_duration_ms are thrown out.
-        # max_speech_duration_s (default "inf"): Maximum duration of speech chunks in seconds. Chunks longer
+        #   neg_threshold: Silence threshold for determining the end of speech. If a probability is lower
+        #     than neg_threshold, it is always considered silence. Values higher than neg_threshold
+        #     are only considered speech if the previous sample was classified as speech; otherwise,
+        #     they are treated as silence. This parameter helps refine the detection of speech
+        #      transitions, ensuring smoother segment boundaries.
+        #   min_speech_duration_ms: Final speech chunks shorter min_speech_duration_ms are thrown out.
+        #   max_speech_duration_s: Maximum duration of speech chunks in seconds. Chunks longer
         #     than max_speech_duration_s will be split at the timestamp of the last silence that
         #     lasts more than 100ms (if any), to prevent aggressive cutting. Otherwise, they will be
         #     split aggressively just before max_speech_duration_s.
-        # min_silence_duration_ms (default 2000 - faster, 100 original): In the end of each speech chunk wait for min_silence_duration_ms
+        #   min_silence_duration_ms: In the end of each speech chunk wait for min_silence_duration_ms
         #     before separating it
-        # window_size_samples (default 1024 - faster, 1536 original): Audio chunks of window_size_samples size are fed to the silero VAD model.
-        #     WARNING! Silero VAD models were trained using 512, 1024, 1536 samples for 16000 sample rate.
-        #     Values other than these may affect model performance!!
-        # speech_pad_ms (default 400 - faster, 30 original): Final speech chunks are padded by speech_pad_ms each side
+        #   speech_pad_ms: Final speech chunks are padded by speech_pad_ms each side
+        #
+        # default:
+        #  - threshold               = 0.5
+        #  - neg_threshold           = threshold - 0.15
+        #  - min_speech_duration_ms  = 0
+        #  - max_speech_duration_s   = float("inf")
+        #  - min_silence_duration_ms = 2000
+        #  - speech_pad_ms           = 400
 
         vad_parameter = dict(
-            threshold               = 0.5,   # default: 0.5
-            min_speech_duration_ms  = 250,   # default: 250
-            max_speech_duration_s   = float("inf"),
-            min_silence_duration_ms = 2000,  # default: 2000 bisher 1000 war zu kurz
-            # window_size_samples     = 1024,  # default: 1024 / 512 = fein, 1024 = mittel, 1536 = grob
-            speech_pad_ms           = 400,   # 600 ist kompatibler mit prompts - default: 400  / 250 ist zuwenig für den Start, wenn mit prompts
-
-            # speech_pad_offset_ms    = 200,   # 200 FMG neu: asymetrisch Auschnitt 200 ms zurück, d.h. [600, 600] -> [800, 400]
-            # speech_pad_first        = False  # deactivated, was: not is_intro,
-       )
+            min_speech_duration_ms = 250,
+            speech_pad_ms          = (600, 100),
+        )
 
     cached, timestamp = import_json_timestamp(path_json, filename_two + ".json", show_error=False)
 
     if cached:
-        md5 = None
-        if "media" in cached and "md5" in cached["media"]: #v2
-            md5 = cached["media"]["md5"]
+        md5: str = ""
+        if "md5" in cached:  # header v1
+            md5 = cached["md5"] # type: ignore
 
-        if md5 is None:
+            if md5 == media_md5: # migrate from v1 -> v2 (b)
+
+                file_name = filename_two + ".json"
+                file_path = Path( path_json, file_name )
+
+                file_info = get_file_infos( path_json, file_name, "json" )
+                if file_info is None:
+                    return None
+
+                timestamp = get_modification_timestamp(file_path)
+
+                result["created"]  = file_info["date"]
+                result["language"] = str(cached["language"]).split("-")[0]
+                result["text"]     = cached["text"]
+                result["segments"] = cached["segments"]
+
+                export_json(path_json, file_name, result)
+                set_modification_timestamp(file_path, timestamp)
+
+        if "media" in cached and "md5" in cached["media"]: # type: ignore # header v2
+            md5 = cached["media"]["md5"]                   # type: ignore
+
+        if md5 == "":
             Trace.fatal(f"unknown cache format {Path(path_json, filename_two + ".json")}")
 
         if md5 == media_md5:
@@ -300,6 +331,7 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
             word_timestamps = True,
 
             temperature = [0.0, 0.1, 0.2, 0.4, 0.6, 0.8, 1],  # new 0.1 => delete prompt
+            # temperature = [0.0, 0.2, 0.4, 0.6, 0.8, 1],
 
             prompt_reset_on_temperature = 0.3,
 
@@ -379,7 +411,7 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
 
     nlp_name = " [" + modelname_nlp + "]"
 
-    text = result["text"].strip() + "\n" + text_combined + "\n\n" + text
+    text = str(result["text"]).strip() + "\n" + text_combined + "\n\n" + text
     export_text(Path(path_text, whisper_parameter + nlp_name), filename_two + ".txt", text, timestamp = timestamp)
 
     curr_subfolder = ""
@@ -390,7 +422,7 @@ def transcribe_fasterwhisper(project_params: dict, media_params: dict, cache_nlp
     export_text(Path(path_vtt, whisper_parameter + nlp_name, curr_subfolder), media_name + ".vtt", export_vtt(cc), timestamp = timestamp)
 
     sentence_data = split_to_sentences(words, dictionary_data)
-    export_TextToSpeech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx")
+    export_TextToSpeech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx") # type: ignore # SubtitleColumnFormat
 
     return {
         "text":            text_combined,

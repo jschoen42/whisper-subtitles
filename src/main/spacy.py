@@ -1,16 +1,16 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 08.01.2025
 
     PUBLIC:
      - init_spacy(language: str) -> None
      - get_modelname_spacy(language: str) -> str
-     - analyse_sentences_spacy(text: str, language: str = "de-DE") -> tuple[list, list]:
+     - analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[List, List]:
 """
 
 import re
 import warnings
 
-from typing import Any
+from typing import Any, Dict, List, Tuple
 from pathlib import Path
 from importlib.metadata import version
 
@@ -60,7 +60,7 @@ def get_modelname_spacy(language: str) -> str:
     if language.split("-")[0] == "en":
         model_name = Prefs.get("spacy." + spacy_version + ".model_name.en")
 
-    return model_name
+    return str(model_name)
 
 ###########################################################################
 #
@@ -68,8 +68,34 @@ def get_modelname_spacy(language: str) -> str:
 #
 ###########################################################################
 
+def split_sentences(text: str) -> List[Tuple[str, str]]:
+    doc = nlp(text)
+    result: List[Tuple[str, str]] = []
+    main_clause = ""
+
+    for token in doc:
+        Trace.info(f"{token.text =} {token.pos_ =} {token.dep_ =}")
+
+        if token.pos_ == "SCONJ" or token.dep_ == "mark":
+            if main_clause:
+                result.append((main_clause.strip(), "main"))
+                main_clause = ""
+            result.append((token.head.text_with_ws + " ".join([t.text_with_ws for t in token.head.subtree]), "sub"))
+        elif token.dep_ in ("cc", "punct") and token.head.dep_ == "ROOT":
+            if main_clause:
+                result.append((main_clause.strip(), "main"))
+                main_clause = ""
+            main_clause = token.head.text_with_ws + " ".join([t.text_with_ws for t in token.head.subtree])
+        else:
+            main_clause += token.text_with_ws
+
+    if main_clause:
+        result.append((main_clause.strip(), "main"))
+
+    return result
+
 @duration("spacy - analyse sentences")
-def analyse_sentences_spacy(text: str, language: str = "de-DE") -> list:
+def analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[List[int], List[int]]:
     # global nlp
 
     if text == "":
@@ -99,7 +125,7 @@ def analyse_sentences_spacy(text: str, language: str = "de-DE") -> list:
     if text[0] == " ":
         min_idx = 1
 
-    for i, token in enumerate(tokens):
+    for _i, token in enumerate(tokens):
         token_info = {
             "idx":      token.idx,
             "text":     token.text,
@@ -119,7 +145,6 @@ def analyse_sentences_spacy(text: str, language: str = "de-DE") -> list:
         if token.is_sent_start != token.is_sent_end:
 
             if token.is_sent_start:
-                Trace.debug()
                 sentence_start.append(max(min_idx, token.idx)) # word starts with a visible char (not with a space)
 
             if token.is_sent_end:
@@ -154,7 +179,7 @@ def analyse_sentences_spacy(text: str, language: str = "de-DE") -> list:
 # token.shape --> '.', ',', 'xx', 'xxx', 'xxxx', 'Xx', 'Xxx', 'Xxxx', 'Xxxxx', 'Xxxxx-Xxxxx', '§', 'd', 'dd'
 
 
-def analyse_noun_nlp(text: str, language: str = "de-DE") -> dict:
+def analyse_noun_nlp(text: str, language: str = "de-DE") -> Dict[str, Any]:
     # global nlp
 
     if not nlp:
@@ -189,7 +214,7 @@ def analyse_noun_nlp(text: str, language: str = "de-DE") -> dict:
     return warn_list
 
 
-def analyse_nlp(_string_id: str, text: str, language: str = "de-DE") -> list:
+def analyse_nlp(_string_id: str, text: str, language: str = "de-DE") -> List[Dict[str, Any]]:
     # global nlp
 
     if not nlp:

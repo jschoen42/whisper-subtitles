@@ -1,12 +1,12 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 08.01.2025
 
     PUBLIC:
-     - prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: dict, media_filename: str) -> Tuple[list, int, float, float, str, list, list]:
-     - split_to_lines(words: list, dictionary: list) -> Tuple[dict, str, str, dict, dict, list]:
-     - split_to_sentences(words: dict, dictionary: dict) -> list:
+     - prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: Dict, media_filename: str) -> Tuple[list, int, float, float, str, List, List]:
+     - split_to_lines(words: List, Dictionary: List) -> Tuple[Dict, str, str, Dict, Dict, List]:
+     - split_to_sentences(words: Dict, Dictionary: Dict) -> List:
 
-     - get_filename_parameter(params: dict) -> str:
+     - get_filename_parameter(params: Dict) -> str:
      - are_prompts_allowed(model_name) -> bool:
      - are_inner_prompts_possible(model_name) -> bool:
      - prompt_main_normalize(text: str) -> str:
@@ -18,14 +18,15 @@
 import re
 import hashlib
 
+from typing import Any, Dict, List, Set, Tuple
 import numpy
-from typing import Tuple
 
 from main.spacy import analyse_sentences_spacy
 
 from utils.trace import Trace
 from utils.prefs import Prefs
 from utils.util  import format_timestamp, CacheJSON
+
 from helper.spelling import spellcheck
 
 #################################################################################################################
@@ -38,31 +39,35 @@ from helper.spelling import spellcheck
 #
 #   format_euro(text: str, thousand_separator: str = ".", float_separator: str = ",", euro: str = "€") -> str:
 #
-#   def get_filename_parameter(params: dict) -> str:
+#   def get_filename_parameter(params: Dict) -> str:
 #
 #   PASS 1
-#   def prepare_words(data: dict[dict], is_faster_whisper: bool, is_intro: bool, type_v3: bool, language: str,
-#                      cache_md5: dict, media_filename: str) -> Tuple[list[dict], int, float, float, str, list[dict]]:
+#   def prepare_words(data: Dict[Dict], is_faster_whisper: bool, is_intro: bool, type_v3: bool, language: str,
+#                      cache_md5: Dict, media_filename: str) -> Tuple[list[Dict], int, float, float, str, List[Dict]]:
 #   PASS 2
-#   def split_to_lines(words: list[dict], dictionary: list[list]) -> Tuple[dict, str, str, dict, dict, list]:
+#   def split_to_lines(words: List[Dict], Dictionary: List[list]) -> Tuple[Dict, str, str, Dict, Dict, List]:
 #
 #   export in sentences -> TextToSpeech
-#   def split_to_sentences(words: dict, dictionary: dict) -> list:
+#   def split_to_sentences(words: Dict, Dictionary: Dict) -> List:
 #
 #################################################################################################################
 
-def are_inner_prompts_possible(model_name) -> bool: # -> check repetitions
+def are_inner_prompts_possible(model_name: str) -> bool: # -> check repetitions
     return model_name not in Prefs.get("whisper.faster_whisper.models.no_condition_on_previous_text")
 
-def are_prompts_allowed(model_name) -> bool: # ->
+def are_prompts_allowed(model_name: str) -> bool: # ->
     return model_name != "large-v3-de"
 
 SPLIT_DEBUG: bool = False
 
-prompt_replace: dict = {
+prompt_replace: Dict[str, str] = {
     '"': "'",
-    "„": "»",
-    "“": "«",
+
+    # "„": "»",
+    # "“": "«",
+
+    "»": "„",
+    "«": "“",
 
     "..": ".",
 }
@@ -78,7 +83,7 @@ def prompt_main_normalize(text: str) -> str:
         if i == 0:
             prompt = line.strip()
         else:
-            prompt += "; " + line.strip()
+            prompt += ", " + line.strip() ### no ";" !!!
 
     for source, dest in prompt_replace.items():
         prompt = prompt.replace(source, dest)
@@ -100,7 +105,7 @@ def prompt_normalize(text: str) -> str:
             prompt += re.sub(r"^[\d\.]+\s", "", line.strip())
 
         if prompt[-1] not in ".:,;!?…":
-            prompt += ";"  # ; "," / "." macht Probleme beim ersten Satz im Video
+            prompt += "," ### no ";" and "."!!!
 
         prompt += " "
 
@@ -154,7 +159,12 @@ def format_euro(text: str, thousand_separator: str = ".", float_separator: str =
             else:
                 result = pre + " " + euro
 
-        results.append({"start": match.start(), "end": match.end(), "result": result})
+        entry: Dict[str, Any] = {
+            "start":  match.start(),
+            "end":    match.end(),
+            "result": result
+        }
+        results.append(entry)
 
     if len(results) == 0:
         ret = text
@@ -167,23 +177,21 @@ def format_euro(text: str, thousand_separator: str = ".", float_separator: str =
 
         ret += text[pos:]
 
-    # if text != ret:
-    #    Trace.warning(f"[{text}] => [{ret}]")
-
     return ret
 
-split_words: list = [
+"""
+split_words: List = [
     " und",
     " oder",
     " sowie",
 ]
 
-dont_split: list = [
+dont_split: List = [
     "-",         # xxx- und xxxyyy
 
     # und
 
-    " Arbeitnehmer" # Arbeitnehmer und ANgestellten
+    " Arbeitnehmer" # Arbeitnehmer und Angestellten
     " Beratung",    # Beratung und Schulung
     " Lohn",        # Lohn und Gehalt
     " Löhne",       # Löhne und Gehälter
@@ -212,10 +220,11 @@ dont_split: list = [
     " so",         # so oder so
 ]
 
-dont_split_two: list = [
+dont_split_two: List = [
     " heißt,", # das heißt
     " heißt",
 ]
+"""
 
 #
 # https://github.com/openai/whisper/discussions/928
@@ -224,7 +233,8 @@ dont_split_two: list = [
 #
 # not used anymore -> last segment: no_speech_prob>0.9
 
-silence_text: list = [
+"""
+silence_text: List = [
     " Mehr Informationen auf www.sas-medien.de",
     " Mehr Informationen auf www.bundestag.de",
 
@@ -266,8 +276,25 @@ silence_text: list = [
     " Gut.",
     " Amen.",
 ]
+"""
 
-def get_filename_parameter(params: dict) -> str:
+silence_text:   List[str] = []
+split_words:    List[str] = []
+dont_split:     List[str] = []
+dont_split_two: List[str] = []
+
+def init_special_text( language: str ) -> None:
+    global silence_text, split_words, dont_split, dont_split_two
+
+    language = language[:2]
+
+    silence_text   = Prefs.get(f"silence_hallucination.{language}")
+    split_words    = Prefs.get(f"split_words.{language}")
+    dont_split     = Prefs.get(f"dont_split.{language}")
+    dont_split_two = Prefs.get(f"dont_split_two.{language}")
+
+
+def get_filename_parameter(params: Dict[str, Any]) -> str:
     engine      = params["whisper"]
     model_id    = params["modelNumber"]
     model_name  = params["modelName"]
@@ -284,38 +311,38 @@ def get_filename_parameter(params: dict) -> str:
 
     # VAD on/off
 
-    params = ""
+    params_text = ""
     if engine == "faster-whisper":
-        if vad_used:
+        if vad_used is True:
             vad = "VAD on"
         else:
             vad = "VAD off"
-        params = f"{vad}, "
+        params_text = f"{vad}, "
 
     # condition_on_previous on/off
 
-    if condition_on_previous_text:
+    if condition_on_previous_text is True:
         inner_prompt = "inner-prompt on"
     else:
         inner_prompt = "inner-prompt off"
-    params += f"{inner_prompt}, "
+    params_text += f"{inner_prompt}, "
 
     if no_prompt:
-        params += "no-prompt, "
+        params_text += "no-prompt, "
 
-    params += f"beam-{beam_size}"
+    params_text += f"beam-{beam_size}"
 
-    return f"[{engine}] [{model}] ({params})"
+    return f"[{engine}] [{model}] ({params_text})"
 
 ######################
 #   Pass 1
 ######################
 
-def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: CacheJSON, media_filename: str) -> Tuple[list, int, float, float, str, list, list]:
-    words: list = []
-    probability: list = []
+def prepare_words(data: Dict[str, Any], is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: CacheJSON, media_filename: str) -> Tuple[List[Dict[str, Any]], int, float, float, str, List[Dict[str, Any]], Dict[str, Any]]:
 
-    words_new: list = []
+    words:       List[Dict[str, Any]] = []
+    probability: List[float] = []
+    words_new:   List[Dict[str, Any]] = []
 
     segments = data["segments"]
 
@@ -345,9 +372,9 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
     last_segment_end  = 0
     last_segment_text = ""
 
-    corrected = set()
-    repetition_error = []
-    pause_error: dict = {
+    corrected: Set[str] = set()
+    repetition_error: List[Dict[str, Any]] = []
+    pause_error: Dict[str, Any] = {
         "introStart":  [],
         "normalStart": [],
         "innerPause":  [],
@@ -438,7 +465,7 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
 
         for i, word_info_original in enumerate(segment_words):
 
-            word_info = {
+            word_info: Dict[str, Any] = {
                 "word":           "",
 
                 "sentence_start": 0,
@@ -457,14 +484,14 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
 
             curr_word = ""
             if is_faster_whisper:
-                if isinstance(word_info_original, dict):
+                if isinstance(word_info_original, Dict):
 
                     # faster-whisper 1.1.x
 
                     curr_word                  = word_info_original["word"]
                     word_info["start"]         = word_info_original["start"]
                     word_info["end"]           = word_info_original["end"]
-                    word_info["duration"]      = word_info_original["end"] - word_info_original["start"]
+                    word_info["duration"]      = round(word_info_original["end"] - word_info_original["start"], 3)
                     word_info["pause"]         = -1
                     word_info["probability"]   = word_info_original["probability"]
                 else:
@@ -474,13 +501,13 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
                     curr_word                  = word_info_original[2]
                     word_info["start"]         = word_info_original[0]
                     word_info["end"]           = word_info_original[1]
-                    word_info["duration"]      = word_info_original[1] - word_info_original[0]
+                    word_info["duration"]      = round(word_info_original[1] - word_info_original[0], 3)
                     word_info["pause"]         = -1
                     word_info["probability"]   = word_info_original[3]
             else:
                 word_info["start"]         = word_info_original["start"]
                 word_info["end"]           = word_info_original["end"]
-                word_info["duration"]      = word_info_original["end"] - word_info_original["start"]
+                word_info["duration"]      = round(word_info_original["end"] - word_info_original["start"], 3)
                 word_info["pause"]         = -1
 
                 if "word" in word_info_original:
@@ -512,7 +539,7 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
             words.append(word_info)
             probability.append(word_info["probability"])
 
-            if len(words_new)>1 and word_info["word"].lower() == words_new[-1]["word"].lower(): # [1:] [1:]
+            if len(words_new)>1 and str(word_info["word"]).lower() == str(words_new[-1]["word"]).lower(): # [1:] [1:]
                 error_segment = f"{segment_id} / {(i + 1)}"
                 error_text    = f"'{words_new[-1]['word']}' / '{word_info['word']}'"
 
@@ -535,7 +562,7 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
             # dual word repetition
             # LODAS Modul 3 Bauhauptgewerbe: 78945_V3_Kap_03_03: an dieser An dieser
 
-            if len(words_new)>2 and word_info["word"].lower() == words_new[-2]["word"].lower() and words_new[-1]["word"].lower() == words_new[-3]["word"].lower():
+            if len(words_new)>2 and str(word_info["word"]).lower() == str(words_new[-2]["word"]).lower() and str(words_new[-1]["word"]).lower() == str(words_new[-3]["word"]).lower():
                 error_segment = f"{segment_id} / {i}-{i+1}"
                 error_text    = f"'{words_new[-3]['word']}{words_new[-2]['word']}' / '{words_new[-1]['word']}{word_info['word']}'"
 
@@ -574,6 +601,8 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
 
     if corrected:
         Trace.warning(f"corrected: {corrected}")
+
+    # Tuple[list, int, float, float, str, List, List]:
 
     return (
         words_new,
@@ -622,7 +651,7 @@ def prepare_words(data: dict, is_faster_whisper: bool, is_intro: bool, model_nam
 #
 ####################################################
 
-def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list, dict]:
+def split_to_lines(words: List[Dict[str, Any]], dictionary: Dict[str, Any]) -> Tuple[List[Dict[str, Any]], str, str, Dict[str, Any], Dict[str, Any]]:
     line  = ""
     lines = ""
 
@@ -630,18 +659,18 @@ def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list,
     end   = 0
     count = 0
 
-    corrected_details = {}
+    corrected_details: Dict[str, Any] = {}
 
-    captions = []
+    captions: List[Dict[str, Any]] = []
     section = 0
 
     def check_any_runctuation(word: str) -> bool:
         return word[-1] in ".:,;?!"
 
-    def check_comma(word):
+    def check_comma(word: str) -> bool:
         return word[-1] in ","
 
-    def predict(words: list, index: int, limit: int) -> bool:
+    def predict(words: List[Dict[str, Any]], index: int, limit: int) -> bool:
         split = False
         for j in range(index + 1, len(words)):
             # print(j, words[j]["word"], "sentence_end", words[j]["sentence_end"])
@@ -763,7 +792,7 @@ def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list,
             lines += line
 
             section += 1
-            caption = {}
+            caption: Dict[str, Any] = {}
             caption["section"] = section
             caption["start"]   = start
             caption["end"]     = end
@@ -799,11 +828,12 @@ def split_to_lines(words: list, dictionary: list) -> Tuple[list, str, str, list,
     return captions, text, lines.strip(), corrected_details, spelling_result
 
 
+
 # export in sentences -> TextToSpeech
 
-def split_to_sentences(words: dict, dictionary: dict) -> list:
+def split_to_sentences(words: List[Dict[str, Any]], dictionary: Dict[str, Any]) -> List[Dict[str, Any]]:
 
-    result = []
+    result: List[Dict[str, Any]] = []
     text = ""
     start = 0
 
@@ -832,20 +862,20 @@ def split_to_sentences(words: dict, dictionary: dict) -> list:
                 pause = next_start - word_info["end"]
 
             result.append({
-                "pause": last_pause,
                 "start": start,
                 "end":   end,
                 "text":  text.strip(),
-            })
+                "pause": last_pause,
+           })
 
             if pause > 0:
                 last_pause = round(pause, 2)
 
                 result.append({
-                    "pause": -1,
                     "start": end,
                     "end":   next_start,
                     "text":  f"[pause: {last_pause} sec]",
+                    "pause": -1,
                 })
             else:
                 last_pause = 0

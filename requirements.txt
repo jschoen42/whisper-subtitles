@@ -20,7 +20,7 @@ onnxruntime>=1.14,<2
 openai-whisper==20240930                 #
 whisper-timestamped==1.15.6              # 2024-04-22: todo remove (GPLv2+)
 
-spylls                                   # 2022-01-23 hunspell compete in Python
+spylls                                   # 2022-01-23 hunspell complete in Python
 
 spacy>=3.8.2,<3.9
 spacy_curated_transformers>=0.2.0,<2     # 2024-09-29 (-> 'de_dep_news_trf') [2.0.0 not compatible to german models]

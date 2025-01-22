@@ -1,33 +1,35 @@
 """
-    © Jürgen Schoenemeyer, 20.12.2024
+    © Jürgen Schoenemeyer, 12.01.2025
 
     PUBLIC:
      - second_to_timecode_srt(x: float, fps: float) -> str
      - seconds_to_timecode_vtt(x: float, fps: float) -> str
-     - seconds_to_timecode_excel(x: float) -> str
+     # - seconds_to_timecode_excel(x: float) -> str
      - parse_timecode(text: str) -> float
-     - export_srt(captions: list[dict], fps: float = 30) -> str
-     - export_vtt(captions: list[dict],  fps: float = 30) -> str
-     - import_caption(dirname: Path|str, basename: str) -> None | tuple[dict, int, list]
-     - writefile_srt(data_captions: list, dirname: Path | str, basename: str)
-     - writefile_vtt(data_captions: list, dirname: Path | str, basename: str)
+     - export_srt(captions: List[Dict], fps: float = 30) -> str
+     - export_vtt(captions: List[Dict],  fps: float = 30) -> str
+     - import_caption(dirname: Path|str, basename: str) -> None | Tuple[Dict, int, List]
+     - writefile_srt(data_captions: List, dirname: Path | str, basename: str)
+     - writefile_vtt(data_captions: List, dirname: Path | str, basename: str)
 """
 
+from typing  import Any, Dict, List, Tuple
 from pathlib import Path
 
-import webvtt
+import webvtt # type: ignore # mypy
+# from webvtt.structures import Caption
 
 from utils.trace import Trace
 from utils.util import export_text, format_timestamp
 
-def second_to_timecode_srt(x: float, fps: float) -> str:
+def second_to_timecode_srt(x: float, fps: float = 30) -> str:
     return format_timestamp(x, always_include_hours=True, decimal_marker=",", fps=fps)
 
-def seconds_to_timecode_vtt(x: float, fps: float) -> str:
+def seconds_to_timecode_vtt(x: float, fps: float = 30) -> str:
     return format_timestamp(x, always_include_hours=True, decimal_marker=".", fps=fps)
 
-def seconds_to_timecode_excel(x: float) -> str:
-    return format_timestamp(x, always_include_hours=False, decimal_marker=".")
+# def seconds_to_timecode_excel(x: float) -> str:
+#     return format_timestamp(x, always_include_hours=False, decimal_marker=".")
 
 # vtt: 00:01:06.680
 # srt: 00:01:06,680
@@ -41,7 +43,7 @@ def parse_timecode(text: str) -> float:
 
     return h * 3600 + m * 60 + s
 
-def export_srt(captions: list[dict], fps: float = 30) -> str:
+def export_srt(captions: List[Dict[str, Any]], fps: float = 30) -> str:
     text = ""
 
     for caption in captions:
@@ -55,7 +57,7 @@ def export_srt(captions: list[dict], fps: float = 30) -> str:
 
     return text
 
-def export_vtt(captions: list[dict],  fps: float = 30) -> str:
+def export_vtt(captions: List[Dict[str, Any]], fps: float = 30) -> str:
     text = "WEBVTT\n\n"
 
     for caption in captions:
@@ -68,51 +70,59 @@ def export_vtt(captions: list[dict],  fps: float = 30) -> str:
 
     return text
 
-def import_caption(dirname: Path|str, basename: str) -> None | tuple[dict, int, list]:
-    filepath = Path(dirname, basename)
+def import_caption(dirname: Path|str, basename: str) -> None | Tuple[List[Dict[str, Any]], int, List[int]]:
+    dirname = Path(dirname)
 
-    extention = filepath.suffix
-    if extention.lower() == ".vtt":
-        ret = webvtt.read(str(filepath))
-    elif extention.lower() == ".srt":
+    filepath = dirname / basename
+    extension = filepath.suffix
+
+    if extension == ".vtt":
         try:
-            ret = webvtt.from_srt(str(filepath))
+            captions = webvtt.read(str(filepath))
+        except OSError as error:
+            Trace.error(f"[import_caption] {basename}: {error}")
+            return None
+
+    elif extension == ".srt":
+        try:
+            captions = webvtt.from_srt(str(filepath))
         except OSError as error:
             Trace.error(f"[import_caption] {basename}: {error}")
             return None
     else:
-        Trace.error(f"unknown extention '{extention}'")
-        ret = None
+        Trace.error(f"unknown extension '{extension}'")
+        return None
 
-    segments:  list[dict] = []
+    segments:  List[Dict[str, Any]] = []
     words:     int = 0
-    line_type: list = [0, 0]
+    line_type: List[int] = [0, 0]
 
-    if ret:
-        for i, caption in enumerate(ret):
-            start = parse_timecode(caption.start)
-            end   = parse_timecode(caption.end)
-            text  = caption.text
+    for i, caption in enumerate(captions):    # type: ignore[reportUnknownVariableType]
+        start = parse_timecode(caption.start)
+        end   = parse_timecode(caption.end)
+        text  = str(caption.text)
 
-            tmp = text.replace("\n", " ")
-            words += len(tmp.split(" "))
+        tmp = text.replace("\n", " ")
+        words += len(tmp.split(" "))
 
-            if "\n" in text:
-                line_type[1] += 1
-            else:
-                line_type[0] += 1
+        if "\n" in text:
+            line_type[1] += 1
+        else:
+            line_type[0] += 1
 
-            segment = {}
-            segment["section"] = i+1
-            segment["start"]   = start
-            segment["end"]     = end
-            segment["text"]    = text
-            segments.append(segment)
+        segment: Dict[str, Any] = {
+            "section": i + 1,
+            "start": start,
+            "end":   end,
+            "text":  text
+        }
+
+        segments.append(segment)
 
     return segments, words, line_type
 
-def writefile_srt(data_captions: list, dirname: Path | str, basename: str):
+def writefile_srt(data_captions: List[Dict[str, Any]], dirname: Path | str, basename: str) -> None:
     export_text(dirname, basename, export_srt(data_captions, 30), ret_lf = True)
 
-def writefile_vtt(data_captions: list, dirname: Path | str, basename: str):
+def writefile_vtt(data_captions: List[Dict[str, Any]], dirname: Path | str, basename: str) -> None:
     export_text(dirname, basename, export_vtt(data_captions, 30 ), ret_lf = True)

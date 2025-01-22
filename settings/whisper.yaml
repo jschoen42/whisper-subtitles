@@ -9,7 +9,7 @@ whisper:
     use_initial_prompt: True
 
     faster_whisper:
-        cpu_threads: 7
+        cpu_threads: 2
         use_vad: true
 
         model_base: ../models/faster-whisper
@@ -21,47 +21,44 @@ whisper:
                 small: Systran--faster-whisper-small
                 medium: Systran--faster-whisper-medium
                 large-v1: Systran--faster-whisper-large-v1
+
                 large-v2: Systran--faster-whisper-large-v2
-                large-v3: Systran--faster-whisper-large-v3
-
                 large-v2•de: Bofenghuang--faster-whisper-large-v2-de
+                large-v2•distil-en: Systran--faster-distil-whisper-large-v2-en
 
-                large-v2•distil: Systran--faster-distil-whisper-large-v2
-                large-v3•distil: Systran--faster-distil-whisper-large-v3
-                large-v3•destil-de: Primeline--faster-whisper-large-v3-distil-de
-
-                large-v3•turbo: OpenAI--faster-whisper-large-v3-turbo
+                large-v3: Systran--faster-whisper-large-v3
+                large-v3•turbo: Deepdml--faster-whisper-large-v3-turbo
                 large-v3•turbo-de: Primeline--faster-whisper-large-v3-turbo-de
-                large-v3•turbo-deepdml: Deepdml--faster-whisper-large-v3-turbo
-
-                large-v3•crisper: Nyrahealth--faster-CrisperWhisper-v3
+                large-v3•distil-en: Systran--faster-distil-whisper-large-v3-en
+                large-v3•crisper: Nyrahealth--faster-whisper-large-v3-crisper
 
             files:
-            - config.json
-            - model.bin
-            - tokenizer.json
+              - config.json
+              - model.bin
+              - tokenizer.json
 
             no_condition_on_previous_text:
-            - large-v3
-           # - large-v3•turbo
-           # - large-v3•turbo-de
-            - large-v3•distil
-            - large-v3•destil-de
-            - large-v3•crisper
+              - large-v3
+            # - large-v3•turbo
+            # - large-v3•turbo-de
+              - large-v3•distil
+              - large-v3•destil-de
+              - large-v3•crisper
 
     whisper:
         model_base: ../models/whisper
         models:
             types:
-            - tiny
-            - small
-            - base
-            - medium
-            - large-v1
-            - large-v2
-            - large-v3
-            - large-v3-turbo
+              - tiny
+              - small
+              - base
+              - medium
+              - large-v1
+              - large-v2
+              - large-v3
+              - large-v3-turbo
 
             no_condition_on_previous_text:
-            - large-v3
-            - large-v3-turbo
+              - large-v3
+              - large-v3-turbo
+

@@ -1,6 +1,7 @@
 # python rename.py
 
 import os
+import sys
 import shutil
 from pathlib import Path
 
@@ -11,9 +12,9 @@ base_path = BASE_PATH / "../data"
 
 replace = ["-fast#", "-faster#"]
 
-def main():
+def main() -> None:
 
-    def check_dirs( path: Path ):
+    def check_dirs( path: Path ) -> None:
         for mypath in path.iterdir():
             if mypath.is_dir():
                 if replace[0] in str(mypath):
@@ -23,7 +24,7 @@ def main():
                 else:
                     check_dirs( mypath )
 
-    def check_files( path: Path ):
+    def check_files( path: Path ) -> None:
         for mypath in path.iterdir():
             if mypath.is_file():
                 if replace[0] in str(mypath):
@@ -37,4 +38,6 @@ def main():
     # check_files( Path(base_path) )
 
 if __name__ == "__main__":
+    Trace.set( debug_mode=True, timezone=False )
+    Trace.action(f"Python version {sys.version}")
     main()

@@ -6,7 +6,7 @@ import sys
 from utils.prefs import Prefs
 from utils.trace import Trace
 
-def main():
+def main() -> None:
     Prefs.init("settings")
     Prefs.load("base.yaml")
     Prefs.load("projects.yaml")
@@ -24,6 +24,7 @@ def main():
     # Trace.info( f"projects: {projects}" )
 
 if __name__ == "__main__":
+    Trace.set( debug_mode=True, timezone=False )
     Trace.action(f"Python version {sys.version}")
 
     main()

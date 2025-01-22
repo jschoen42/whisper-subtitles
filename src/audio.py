@@ -25,7 +25,7 @@ PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
 
 data_path = BASE_PATH / "../data"
 
-def main():
+def main() -> None:
     Prefs.init("settings")
     Prefs.load("base.yaml")
     Prefs.load(PROJECTS)
@@ -53,4 +53,9 @@ if __name__ == "__main__":
     Trace.set( debug_mode=True, timezone=False )
     Trace.action(f"Python version {sys.version}")
 
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        Trace.exception("KeyboardInterrupt")
+        sys.exit()
+

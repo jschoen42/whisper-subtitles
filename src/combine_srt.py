@@ -2,18 +2,19 @@
 # python src/combine_srt.py
 
 import sys
+from typing import Any, Dict, List
 
 from utils.globals import BASE_PATH
 from utils.prefs   import Prefs
 from utils.trace   import Trace
 
-from helper.excel    import import_project_excel
-from helper.analyse  import get_video_length
-from helper.captions import import_caption, writefile_srt
+from helper.excel_read import import_project_excel
+from helper.analyse    import get_video_length
+from helper.captions   import import_caption, writefile_srt
 
 data_path = BASE_PATH / "../data"
 
-def main():
+def main() -> None:
     Prefs.init("settings")
     Prefs.load("projects_combine.yaml")
 
@@ -31,8 +32,10 @@ def main():
             mainfolder = parts[0]
             folder     = parts[1]
 
-        videos: list = []
+        videos: List[str] = []
         ret = import_project_excel( data_path / mainfolder / folder, folder + ".xlsx" )
+        if ret is None:
+            return None
 
         for part in ret["parts"]:
             for entry in part["files"]:
@@ -42,8 +45,8 @@ def main():
 
         duration_one = get_video_length( dirname, basename )
 
-        video_infos: dict = {}
-        duration_sum: int = 0
+        video_infos: Dict[str, float] = {}
+        duration_sum: float = 0.0
         for video in videos:
             duration = get_video_length( dirname, video )
             if duration:
@@ -56,26 +59,31 @@ def main():
 
         captions_info = {}
         for filename, duration in video_infos.items():
-            tmp = {}
-            tmp["duration"] = duration
-            tmp["cc"], _words, _line_types = import_caption( dirname, filename.replace(".mp4", ".srt" ) )
+            result = import_caption( dirname, filename.replace(".mp4", ".srt" ) )
+            if result is None:
+                return None
 
-            captions_info[filename] = tmp
+            result_cc: Dict[str, Any] = {
+                "duration": duration,
+                "cc": result[0]
+            }
+
+            captions_info[filename] = result_cc
 
         # Step 3 combine values and create new file
 
-        offset = 0
+        offset = 0.0
         section_number = 0
         captions_new = []
 
         for part, _value in captions_info.items():
-            duration      = captions_info[part]["duration"]
+            duration      = float(captions_info[part]["duration"])
             caption_infos = captions_info[part]["cc"]
 
             for caption_info in caption_infos:
                 section_number += 1
 
-                caption_modified = {}
+                caption_modified: Dict[str, Any] = {}
                 caption_modified["section"] = section_number
                 caption_modified["start"]   = offset + caption_info["start"]
                 caption_modified["end"]     = offset + caption_info["end"]
