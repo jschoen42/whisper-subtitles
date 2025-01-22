@@ -3,14 +3,18 @@
 used packages
 
 ```console
-  SpeechToText faster-whisper (1.0.2 optimized)
+  SpeechToText faster-whisper (1.1.1 optimized)
   SpeechToText whisper (only for tests)
   SpeechToText whisper timestamp (only for tests)
 
-  NLP spaCy (3.8.2)
+  NLP spaCy (3.8.4)
 
-  check spelling: spylls (hunspell in pure python)
+  Hunspell (-> Firefox/LibreOffice/...) to check spelling: spylls (hunspell in pure python)
    - with >>2000 new german entries
+   - german rules from 2017
+   - de-DE.dic: refactor
+   - de-DE.aff: add new rules (-> Plural Umlaute)
+   - toDo: adapt to Rechtschreibreform 2024
 ```
 
 ```console
