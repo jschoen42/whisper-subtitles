@@ -18,7 +18,7 @@ from utils.log     import DictionaryLog
 
 from helper.excel_read   import import_project_excel, import_dictionary_excel
 from helper.captions     import seconds_to_timecode_vtt
-from helper.spelling     import hunspell_dictionary_init
+from helper.spelling     import hunspell_dictionary_init, getSpellStatistic
 from helper.whisper_util import init_special_text, are_inner_prompts_possible, prompt_main_normalize, prompt_normalize, get_filename_parameter
 
 from main.spacy import get_modelname_spacy
@@ -28,7 +28,7 @@ from main.whisper_faster import precheck_models, transcribe_fasterwhisper
 from main.whisper import transcribe_whisper
 from main.whisper_timestamped import transcribe_whisper_timestamped
 
-PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
+PROJECTS: str = "projects_all.yaml"  # "projects.yaml", "projects_all.yaml"
 
 data_path = BASE_PATH / "../data"
 
@@ -48,7 +48,7 @@ data_path = BASE_PATH / "../data"
 # ("07", "large-v3•turbo-de") # fast ohne 'ß'
 # ("07", "large-v3•distil-en")
 
-models = [ ("07", "large-v3•turbo") ]
+models = [ ("06", "large-v2") ]
 
 beams = [5] # [1, 3, 5, 7, 9] -> keinen signifikater Unterschied zw. 3 ... 9
 
@@ -354,6 +354,8 @@ def main() -> None:
         Trace.set(show_timestamp=True, show_caller=True)
 
         d = time.perf_counter() - start
+
+        getSpellStatistic()
 
         Trace.result(f"projects: {project_all}, filesAll: {file_count_all}, durationAll: {seconds_to_timecode_vtt(duration_all)}, charsAll: {chars_all}, wordsAll: {words_all}, sentencesAll: {sentences_all} ({d:,.2f} sec)")
 

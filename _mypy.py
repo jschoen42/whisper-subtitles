@@ -100,6 +100,7 @@ def run_mypy(target_file: str) -> None:
     # "--verbose" -> stderr
 
     sources = []
+    version = ""
     for line in result.stderr.splitlines():
         if "Mypy Version:" in line:
             version = line.split("Mypy Version:")[-1].strip()

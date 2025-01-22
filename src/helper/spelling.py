@@ -13,8 +13,11 @@ from pathlib import Path
 
 from spylls.hunspell import Dictionary # type: ignore # mypy
 
+from utils.globals   import BASE_PATH
 from utils.trace     import Trace
 from utils.decorator import duration
+from utils.prefs     import Prefs
+from utils.util      import export_json
 
 from helper.excel_read import import_hunspell_PreCheck_excel
 
@@ -25,6 +28,9 @@ global_dictionary_data: Dictionary | None = None
 global_special_dot_words: List[str] = []             # 'Abs.', 'bspw.', 'bzw.', 'Bzw.', ...
 global_precheck_single_words: List[str] = []         # 'AAG', 'AfA', 'AG' ... 'www.datev.de' ... 'und/oder' ...
 global_precheck_multiple_words: List[List[str]] = [] # ['Corporate', 'Design'], ['summa', 'summarum'], ['Stock', 'Appreciation', 'Rights'], ... (ws 'multiple')
+
+global_success: Dict[str, int] = {}
+global_failure: Dict[str, int] = {}
 
 @duration("Hunspell Dictionary loaded")
 def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "de-DE") -> None:
@@ -56,6 +62,8 @@ def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "d
                 Trace.fatal( f"'{filename}' not found" )
         else:
             Trace.fatal(f"unsupported language '{language}'")
+
+# returns not found words: {'Erwerbstatus': 2}
 
 def spellcheck(words: List[str], debug: bool=False) -> Dict[str, int]:
     if global_dictionary_data is None:
@@ -99,6 +107,8 @@ def spellcheck(words: List[str], debug: bool=False) -> Dict[str, int]:
     i = 0
 
     while i < len(words):
+        print( f"\r{i}", end="")
+
         word = words[i]
 
         if pattern_number.fullmatch(word) or pattern_paragraph.fullmatch(word):
@@ -116,27 +126,56 @@ def spellcheck(words: List[str], debug: bool=False) -> Dict[str, int]:
                     word = word.strip(".':,;!?…\"()<>")  # e.g. " 'Beim Speichern sofort festschreiben'."
 
                     if word not in global_precheck_single_words:
+                        i += 1
+                        try:
+                            checked = global_dictionary_data.lookup(word)
+                        except Exception as err:
+                            Trace.error( f"{i}: {word} -> {err}" )
+                            continue
 
-                        # .lookup() endless loop for "-health-the-vis--pict-in-the--act-the-act-a-the-the-the-------------------------------------------------------------------------"
-
-                        w = word.split("-")
-                        if len(w)>6:
-                            Trace.error(f"failed: '{word}' ({len(w)} x '-')")
-                            if word in result:
-                                result[word] += 1
+                        if checked:
+                            if word in global_success:
+                                global_success[word] += 1
                             else:
-                                result[word] = 1
+                                global_success[word] = 1
 
-                        elif not global_dictionary_data.lookup(word):
+                            if debug:
+                                Trace.info(f"ok: '{word}'")
+
+                        else:
+                            if word in global_failure:
+                                global_failure[word] += 1
+                            else:
+                                global_failure[word] = 1
+
                             Trace.error(f"failed: '{word}'")
                             if word in result:
                                 result[word] += 1
                             else:
                                 result[word] = 1
 
-                        elif debug:
-                            Trace.info(f"ok: '{word}'")
-
-                    i += 1
 
     return result
+
+@duration("Hunspell Dictionary result")
+def getSpellStatistic():
+    path = Prefs.get("trace_all.path")
+
+    # success
+
+    sorted_data = dict(sorted(global_success.items()))
+    export_json( BASE_PATH / path, "spelling-unsorted.json", sorted_data )
+
+    sorted_data = dict(sorted(global_success.items(), key=lambda item: item[0].casefold()))
+    export_json( BASE_PATH / path, "spelling-casefold.json", sorted_data )
+
+    sorted_data = dict(sorted(global_success.items(), key=lambda item: (-item[1], item[0].casefold())))
+    export_json( BASE_PATH / path, "spelling-num_sorted.json", sorted_data )
+
+    # failure
+
+    sorted_data = dict(sorted(global_failure.items(), key=lambda item: item[0].casefold()))
+    export_json( BASE_PATH / path, "spelling-failure_casefold.json", sorted_data )
+
+    sorted_data = dict(sorted(global_failure.items(), key=lambda item: (-item[1], item[0].casefold())))
+    export_json( BASE_PATH / path, "spelling-failure_num_sorted.json", sorted_data )

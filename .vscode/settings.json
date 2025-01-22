@@ -14,6 +14,9 @@
   "editor.autoSurround": "never",
 
   "terminal.integrated.minimumContrastRatio": 7,
+  "terminal.integrated.fontWeight": "normal",
+  "terminal.integrated.fontFamily": "Consolas Nerd Font",
+
   "[html]": {
       "editor.formatOnSave": true,
       "editor.tabSize": 2,

@@ -178,6 +178,7 @@ git diff origin/main
 
 git rebase -i HEAD~3
 git rebase -i --root
+git rebase --abort
 
 local branch -> https://www.youtube.com/watch?v=qY6IooRlNGI
 ------------

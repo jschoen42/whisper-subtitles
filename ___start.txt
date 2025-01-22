@@ -20,3 +20,6 @@ python _pyright.py src/main
 python _pyright.py src/helper
 python _pyright.py src/utils
 
+
+
+projects: 94, filesAll: 1964, durationAll: 150:28:44.164, charsAll: 5809022, wordsAll: 905348, sentencesAll: 58816
