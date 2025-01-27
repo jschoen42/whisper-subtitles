@@ -40,7 +40,6 @@ def run_pyright(target_file: str) -> None:
 
         # extra rules
         "enableExperimentalFeatures":          True,
-        "reportCallInDefaultInitializer":      True,
         "reportImplicitOverride":              True,
         "reportImplicitStringConcatenation":   True,
         "reportImportCycles":                  True,
@@ -49,6 +48,7 @@ def run_pyright(target_file: str) -> None:
         "reportShadowedImports":               True,
         "reportUninitializedInstanceVariable": True,
 
+        "reportCallInDefaultInitializer":      False,
         "reportUnnecessaryTypeIgnoreComment":  False, # mypy <-> pyright
 
         "deprecateTypingAliases": False,       # always False -> typing: List, Dict, ...

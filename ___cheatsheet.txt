@@ -236,6 +236,29 @@ git effort
 Remove the latest 3 commits
 git undo 3
 
+--- merge branch to main
+
+git checkout main
+git pull origin main
+git merge <branch name>
+
+--- merge branch to main (ours & theirs)
+
+branch will overwrite main without merge
+
+git checkout main
+git merge -s ours your-branch
+git checkout your-branch .    <- "." is important!
+git commit -m "Merging branch 'your-branch' with priority"
+
+or
+
+git checkout your-branch
+git merge -s ours your-branch
+git checkout main
+git merge your-branch
+git commit -m "Merging branch 'your-branch' with priority"
+
 ###################### mypy ########################
 
 https://github.com/python/typeshed/tree/main/stubs
