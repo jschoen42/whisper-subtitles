@@ -1,13 +1,14 @@
 """
-    © Jürgen Schoenemeyer, 19.01.2025
+    © Jürgen Schoenemeyer, 27.01.2025
 
     src/utils/metadata.py
+
     PUBLIC:
-     - get_media_info(filepath: str | BytesIO) -> None | Dict
-     - get_audio_duration(filepath: str) -> float
-     - get_media_trackinfo(filepath: str) -> None | Dict
-     - get_video_metadata(filepath: str) -> None | Dict
-     - get_audio_metadata(filepath: str) -> None | Dict
+     - get_media_info(filepath: str | BytesIO) -> None | Dict[str, int | float]
+     - get_audio_duration(filepath: str | BytesIO) -> float
+     - get_media_trackinfo(filepath: str | BytesIO) -> None | Dict[str, Any]
+     - get_video_metadata(filepath: str | BytesIO) -> None | Dict[str, Any]
+     - get_audio_metadata(filepath: str | BytesIO) -> None | Dict[str, Any]
 """
 
 from typing import Any, Dict, Protocol, cast

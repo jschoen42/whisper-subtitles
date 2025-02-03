@@ -158,7 +158,7 @@ def spellcheck(words: List[str], debug: bool=False) -> Dict[str, int]:
     return result
 
 @duration("Hunspell Dictionary result")
-def getSpellStatistic():
+def getSpellStatistic() -> None:
     path = Prefs.get("trace_all.path")
 
     # success

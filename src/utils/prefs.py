@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 19.01.2025
+    © Jürgen Schoenemeyer, 03.02.2025
 
     src/utils/prefs.py
 
@@ -42,7 +42,7 @@ class Prefs:
     def load(cls, pref_name: str) -> bool:
         ext = Path(pref_name).suffix
         if ext not in [".yaml", ".yml"]:
-            Trace.error(f"'{ext}' not supported")
+            Trace.error(f"'{pref_name}' not supported (use .yaml or .yml)")
             return False
 
         pref_name = cls.pref_prefix + pref_name

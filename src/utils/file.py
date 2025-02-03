@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 19.01.2025
+    © Jürgen Schoenemeyer, 29.01.2025
 
     src/utils/file.py
 
@@ -269,7 +269,16 @@ def export_binary_file(filepath: Path | str, filename: str, data: bytes, _timest
     with open(Path(filepath, filename), "wb") as binary_file:
         binary_file.write(data)
 
-def export_file(filepath: Path|str, filename: str, text: str, in_type: str | None = None, timestamp: float=0, create_new_folder: bool=True, encoding: str ="utf-8", overwrite: bool=True) -> None | str:
+def export_file(
+    filepath: Path | str,
+    filename: str,
+    text: str,
+    in_type: str | None = None,
+    timestamp: float=0.0,
+    create_new_folder: bool=True,
+    encoding: str ="utf-8",
+    overwrite: bool=True
+) -> None | str:
     trace_export_path_folder = get_trace_path(Path(filepath))
     trace_export_path        = get_trace_path(Path(filepath, filename))
 

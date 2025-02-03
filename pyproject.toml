@@ -43,12 +43,4 @@ dev = [
 
 [tool.mypy]
 python_version = "3.12"
-mypy_path = "src"
-explicit_package_bases = true
-namespace_packages = true
-
-[[tool.mypy.overrides]]
-module = "faster_whisper.*"
-ignore_errors = true
-ignore_missing_imports = true
 

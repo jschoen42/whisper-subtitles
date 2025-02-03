@@ -1,4 +1,4 @@
-##################   uv   ######################
+#####################   uv   ######################
 
 uv self update
 
@@ -9,7 +9,15 @@ uv init -p 3.13
 ├── hello.py
 └── pyproject.toml
 
-------------- define cache drive ---------------
+------------------ pyproject.toml -----------------
+...
+authors = [
+  { name="Jürgen Schoenemeyer", email="js007@web.de" },
+]
+license = {file = "LICENSE"}
+...
+
+---------------- define cache drive ---------------
 
 "warning: Failed to hardlink files" =>
 
@@ -24,7 +32,7 @@ uv cache dir
 
 echo $env:UV_CACHE_DIR
 
--------------------- uv venv -------------------
+--------------------- uv venv ---------------------
 
 uv venv .venv -p 3.13 --prompt .venv
 .venv\Scripts\activate
@@ -42,11 +50,11 @@ deactivate
 
 .venv/pyenv.cfg -> 'prompt = xyz' -> terminal -> (xyz)
 
----------- uv dependencies -> uv pip  -----------
+----------- uv dependencies -> uv pip  ------------
 
 uv pip install -r requirements.txt
 
------ uv dependencies -> uv add, uv remove  -----
+------ uv dependencies -> uv add, uv remove  ------
 
 uv add result orjson arrow xmltodict dicttoxml
 uv remove ...
@@ -55,26 +63,26 @@ uv add --dev ...
 
 uv add torch<2.5
 
--------------- upgrade packages ---------------
+----------------------
 
 uv lock --upgrade
 uv lock --upgrade-package <package>
 uv sync
 
------------------- licenses  -------------------
+------------------- licenses  ---------------------
 
 uv add pip-licenses
 pip-licenses > __licenses.txt
 uv remove pip-licenses
 
----------------- install Python ----------------
+----------------- install Python ------------------
 
 uv python list
 
 uv python install 3.11 3.12 3.13
 uv python uninstall 3.9
 
------------------- helper: uv -------------------
+------------------- helper: uv --------------------
 
 uv add -U ...
 uv sync
@@ -85,9 +93,10 @@ uv lock
 uv pip list
 uv pip list --outdated > __outdated.txt
 
-uv pip tree > __tree.txt
+uv tree > __tree.txt
+uv tree --no-dev > __tree.txt
 
------------------- upgrade Python -------------------
+----------------- upgrade Python ------------------
 
 uv python list --all-versions
 uv python install 3.13.1
@@ -132,24 +141,24 @@ pip install -r requirements.txt
 
 pip list --outdated
 
-####################################################
+###################################################
 
 pip install pip-licenses
 pip-licenses > __licenses.txt
 pip uninstall pip-licenses
 
-################# start with py ####################
+################# start with py ###################
 
 py -3.10
 py -3.11
 py -3.12
 py -3.13
 
-##################### vscode #######################
+##################### vscode ######################
 
 %APPDATA%\Code\User\settings.json
 
-###################### git #########################
+###################### git ########################
 
 git init
 git remote add origin https://github.com/ ...
@@ -259,9 +268,11 @@ git checkout main
 git merge your-branch
 git commit -m "Merging branch 'your-branch' with priority"
 
-###################### mypy ########################
+###################### mypy #######################
 
 https://github.com/python/typeshed/tree/main/stubs
+
+----------------- pyproject.toml ------------------
 
 [dependency-groups]
 dev = [
@@ -291,9 +302,10 @@ python _mypy.py src/main.py
 # type: ignore
 # type: ignore[attr-defined]
 
-###################### pyright ########################
+##################### pyright #####################
 
 npm install --global pyright
+npm update --global pyright
 
 [tool.pyright]
 include = ["src"]

@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 19.01.2025
+    © Jürgen Schoenemeyer, 02.02.2025
 
     src/utils/util.py
 
@@ -12,7 +12,7 @@
      - import_json(folderpath: Path | str, filename: str, show_error: bool=True) -> Dict | None
 
      - export_text(folderpath: Path | str, filename: str, text: str, encoding: str = "utf-8", timestamp: float=0, ret_lf: bool=False, create_new_folder: bool=True, show_message: bool=True) -> str | None
-     - export_json(folderpath: Path | str, filename: str, data: Dict | List, timestamp = None) -> str | None
+     - export_json(folderpath: Path | str, filename: str, data: Dict | List, timestamp = None, show_message: bool=True) -> str | None
 
     class CacheJSON:
       - def __init__(self, path: Path | str, name: str, model: str, reset: bool)
@@ -159,10 +159,10 @@ def export_text(folderpath: Path | str, filename: str, text: str, encoding: str=
         Trace.error(f"{error_msg} - {filepath}")
         return None
 
-def export_json(folderpath: Path | str, filename: str, data: Dict[Any, Any] | List[Any], timestamp: float | None = None) -> str | None:
+def export_json(folderpath: Path | str, filename: str, data: Dict[Any, Any] | List[Any], timestamp: float | None = None, show_message: bool=True) -> str | None:
     text = json.dumps(data, ensure_ascii=False, indent=2)
 
-    return export_text(folderpath, filename, text, encoding = "utf-8", timestamp = timestamp)
+    return export_text(folderpath, filename, text, encoding = "utf-8", timestamp = timestamp, show_message = show_message)
 
 class CacheJSON:
     cache: Dict[Any, Any] = {}

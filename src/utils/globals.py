@@ -1,12 +1,12 @@
 """
-    © Jürgen Schoenemeyer, 15.01.2025
+    © Jürgen Schoenemeyer, 27.01.2025
 
     src/utils/globals.py
 
     PUBLIC:
      - DRIVE: Path
      - BASE_PATH: Path
-     - SYSTEM_ENV_PATHS: List
+     - SYSTEM_ENV_PATHS: List[str]
 """
 
 import os

@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 19.01.2025
+    © Jürgen Schoenemeyer, 02.02.2025
 
     src/utils/trace.py
 
@@ -47,13 +47,6 @@ from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from zoneinfo import ZoneInfoNotFoundError
-
-system = platform.system()
-if system == "Windows":
-    import msvcrt
-else:
-    import tty
-    import termios as term
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 
@@ -305,22 +298,26 @@ class Trace:
             try:
                 print(f"{Color.RED}{Color.BOLD} >>> Press Any key to continue or ESC to exit <<< {Color.RESET}", end="", flush=True)
 
-                if system == "Windows":
-                    key = msvcrt.getch()                   # type: ignore[reportPossiblyUnboundVariable]
-                    print()
-                else:
+                if platform.system() == "Windows":
+                    import msvcrt
 
-                    # unix terminal
+                    key = msvcrt.getch()
+                    print()
+
+                else: # unix terminal
+
+                    import tty
+                    import termios
 
                     fd: int = sys.stdin.fileno()
-                    old_settings: Any = term.tcgetattr(fd) # type: ignore[attr-defined]
+                    old_settings: Any = termios.tcgetattr(fd)  # type: ignore[attr-defined]
                     try:
-                        tty.setraw(sys.stdin.fileno())     # type: ignore[attr-defined]
+                        tty.setraw(sys.stdin.fileno())         # type: ignore[attr-defined]
                         key = sys.stdin.buffer.read(1)
                     finally:
-                        term.tcsetattr(                    # type: ignore[attr-defined]
+                        termios.tcsetattr(                     # type: ignore[attr-defined]
                             fd,
-                            term.TCSADRAIN,                # type: ignore[attr-defined]
+                            termios.TCSADRAIN,                 # type: ignore[attr-defined]
                             old_settings
                         )
                         print()

@@ -62,7 +62,7 @@ def run_pyright(target_file: str) -> None:
 
     filepath = Path(sys.argv[1])
     if not filepath.exists():
-        print(f"Error: '{filepath}' not found ")
+        print(f"Error: '{filepath}' not found")
         return
 
     folder_path = BASE_PATH / RESULT_FOLDER
