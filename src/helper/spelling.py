@@ -11,13 +11,13 @@ import re
 from typing import Dict, List
 from pathlib import Path
 
-from spylls.hunspell import Dictionary # type: ignore # mypy
+from spylls.hunspell import Dictionary # type: ignore[import-untyped]
 
 from utils.globals   import BASE_PATH
 from utils.trace     import Trace
 from utils.decorator import duration
 from utils.prefs     import Prefs
-from utils.util      import export_json
+from utils.file      import export_json
 
 from helper.excel_read import import_hunspell_PreCheck_excel
 
@@ -107,8 +107,6 @@ def spellcheck(words: List[str], debug: bool=False) -> Dict[str, int]:
     i = 0
 
     while i < len(words):
-        print( f"\r{i}", end="")
-
         word = words[i]
 
         if pattern_number.fullmatch(word) or pattern_paragraph.fullmatch(word):
@@ -154,6 +152,7 @@ def spellcheck(words: List[str], debug: bool=False) -> Dict[str, int]:
                             else:
                                 result[word] = 1
 
+                    i += 1
 
     return result
 
