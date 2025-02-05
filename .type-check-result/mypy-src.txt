@@ -1,0 +1,72 @@
+Python:   3.12.8 (main, Dec  6 2024, 18:10:20) [MSC v.1942 64 bit (AMD64)]
+Platform: Windows-11-10.0.22631-SP0
+Date:     05.02.2025 17:14:43
+Path:     G:\Python\Whisper\whisper-subtitles-github
+
+MyPy 1.15.0 settings:
+ - Python version 3.12
+ --namespace-packages
+ --explicit-package-bases
+ --disallow-untyped-calls
+ --disallow-untyped-defs
+ --disallow-incomplete-defs
+ --disallow-untyped-decorators
+ --warn-redundant-casts
+ --warn-no-return
+ --warn-unreachable
+ --allow-redefinition
+ --extra-checks
+ --force-uppercase-builtins
+ --sqlite-cache
+ --strict-equality
+
+Source files:
+ - src/__init__.py
+ - src/extras/__init__.py
+ - src/extras/_test_prefs.py
+ - src/extras/compare.py
+ - src/extras/rename_1.py
+ - src/extras/rename_2.py
+ - src/faster_whisper/__init__.py
+ - src/faster_whisper/assets/__init__.py
+ - src/faster_whisper/audio.py
+ - src/faster_whisper/feature_extractor.py
+ - src/faster_whisper/tokenizer.py
+ - src/faster_whisper/transcribe.py
+ - src/faster_whisper/transcribe-new.py
+ - src/faster_whisper/utils.py
+ - src/faster_whisper/vad.py
+ - src/faster_whisper/version.py
+ - src/helper/__init__.py
+ - src/helper/analyse.py
+ - src/helper/captions.py
+ - src/helper/excel_read.py
+ - src/helper/excel_update.py
+ - src/helper/excel_write.py
+ - src/helper/spelling.py
+ - src/helper/whisper_faster_util.py
+ - src/helper/whisper_util.py
+ - src/main/__init__.py
+ - src/main/spacy.py
+ - src/main/whisper.py
+ - src/main/whisper_faster.py
+ - src/main/whisper_timestamped.py
+ - src/utils/__init__.py
+ - src/utils/audio.py
+ - src/utils/decorator.py
+ - src/utils/excel.py
+ - src/utils/file.py
+ - src/utils/format.py
+ - src/utils/globals.py
+ - src/utils/log.py
+ - src/utils/metadata.py
+ - src/utils/prefs.py
+ - src/utils/trace.py
+ - src/utils/util.py
+ - src/audio.py
+ - src/combine_srt.py
+ - src/final_srt_vtt.py
+ - src/reset.py
+ - src/update_excel.py
+
+Success: no issues found in 47 source files

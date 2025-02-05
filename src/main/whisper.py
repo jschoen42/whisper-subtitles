@@ -15,12 +15,13 @@ import hashlib
 from typing import Any, Dict
 from pathlib import Path
 
-import whisper # type: ignore [import-untyped]
+import whisper # type: ignore[import-untyped]
 
 from utils.globals  import BASE_PATH
 from utils.prefs    import Prefs
 from utils.trace    import Trace
-from utils.util     import import_json, export_json, export_text, CacheJSON
+from utils.file     import import_json, export_json, export_text
+from utils.util     import CacheJSON
 from utils.metadata import get_media_info
 
 from helper.captions     import export_srt, export_vtt
@@ -245,7 +246,7 @@ def transcribe_whisper(project_params: Dict[str, Any], media_params: Dict[str, A
     export_text(Path(path_vtt, whisper_parameter + nlp_name, curr_subfolder), media_name + ".vtt", export_vtt(cc))
 
     sentence_data = split_to_sentences(words, dictionary_data)
-    export_TextToSpeech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx") # type: ignore # SubtitleColumnFormat
+    export_TextToSpeech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx")
 
     return {
         "text":            text_combined,

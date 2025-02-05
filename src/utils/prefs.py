@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 03.02.2025
+    © Jürgen Schoenemeyer, 04.02.2025
 
     src/utils/prefs.py
 
@@ -161,7 +161,7 @@ def beautify_path( path: Path | str ) -> str:
 def merge_dicts(a: Dict[Any, Any], b: Dict[Any, Any]) -> Any:
     for k in set(a.keys()).union(b.keys()):
         if k in a and k in b:
-            if isinstance(a[k], dict) and isinstance(b[k], Dict):
+            if isinstance(a[k], dict) and isinstance(b[k], dict):
                 yield (k, dict(merge_dicts(a[k], b[k])))
             else:
                 # If one of the values is not a dict, you can't continue merging it.
@@ -178,7 +178,7 @@ def merge_dicts(a: Dict[Any, Any], b: Dict[Any, Any]) -> Any:
 # def merge(a: Dict[Any, Any], b: Dict[Any, Any], path: List[str] = []) -> Any:
 #     for key in b:
 #         if key in a:
-#             if isinstance(a[key], dict) and isinstance(b[key], Dict):
+#             if isinstance(a[key], dict) and isinstance(b[key], dict):
 #                 merge(a[key], b[key], path + [str(key)])
 #             elif a[key] != b[key]:
 #                 raise Exception("Conflict at " + ".".join(path + [str(key)]))
@@ -192,7 +192,7 @@ def merge(a: Dict[Any, Any], b: Dict[Any, Any], path: List[str] | None = None) -
 
     for key in b:
         if key in a:
-            if isinstance(a[key], dict) and isinstance(b[key], Dict):
+            if isinstance(a[key], dict) and isinstance(b[key], dict):
                 merge(a[key], b[key], path + [str(key)])
             elif a[key] != b[key]:
                 raise Exception("Conflict at " + ".".join(path + [str(key)]))

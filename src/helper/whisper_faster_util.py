@@ -76,7 +76,7 @@ def get_settings_transcribe_faster(info: Dict[str, Any], media_type: str, media_
 
     try:
         settings["transcription_options"] = {
-            prop: value for prop, value in info.transcription_options.__dict__.items() # type: ignore [attr-defined]
+            prop: value for prop, value in info.transcription_options.__dict__.items() # type: ignore[attr-defined]
         }
     except Exception as error:
         settings["transcription_options"] = None
@@ -86,7 +86,7 @@ def get_settings_transcribe_faster(info: Dict[str, Any], media_type: str, media_
 
     try:
         settings["vad_options"] = {
-            prop: value for prop, value in info.vad_options.__dict__.items() # type: ignore [attr-defined]
+            prop: value for prop, value in info.vad_options.__dict__.items() # type: ignore[attr-defined]
         }
     except Exception as error:
         settings["vad_options"] = None

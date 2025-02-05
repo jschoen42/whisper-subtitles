@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 27.01.2025
+    © Jürgen Schoenemeyer, 05.02.2025
 
     src/utils/metadata.py
 
@@ -14,7 +14,7 @@
 from typing import Any, Dict, Protocol, cast
 from io import BytesIO
 
-from pymediainfo import MediaInfo          # type: ignore [import-untyped] # mypy + pyright
+from pymediainfo import MediaInfo          # type: ignore[import-untyped]
 
 from utils.trace import Trace
 
@@ -130,12 +130,12 @@ def get_media_trackinfo(filepath: str | BytesIO) -> None | Dict[str, Any]:
          return None
 
     if isinstance(media_info, MediaInfo):
-        for track in media_info.tracks: # type: ignore [reportUnknownVariableType]
+        for track in media_info.tracks: # type: ignore[reportUnknownVariableType]
             if track.track_type == "Audio":
-                ret = track             # type: ignore [reportUnknownVariableType]
+                ret = track             # type: ignore[reportUnknownVariableType]
                 break
 
-    return ret                          # type: ignore [reportUnknownVariableType]
+    return ret                          # type: ignore[reportUnknownVariableType]
 
 def get_audio_duration(filepath: str | BytesIO) -> float:
     duration: float = -1
@@ -154,7 +154,7 @@ def get_audio_duration(filepath: str | BytesIO) -> float:
          return -1
 
     if isinstance(media_info, MediaInfo):
-        for track in media_info.tracks: # type: ignore [reportUnknownVariableType]
+        for track in media_info.tracks: # type: ignore[reportUnknownVariableType]
             if track.track_type == "Audio":
                 duration = round(int(track.duration) / 1000, 3)
                 break
@@ -201,7 +201,7 @@ def get_video_metadata(filepath: str | BytesIO) -> None | Dict[str, Any]:
          return None
 
     if isinstance(media_info, MediaInfo):
-        for track in media_info.tracks: # type: ignore [reportUnknownVariableType]
+        for track in media_info.tracks: # type: ignore[reportUnknownVariableType]
             if track.track_type == "Video":
 
                 info["width"]  = track.width
@@ -270,7 +270,7 @@ def get_audio_metadata(filepath: str | BytesIO) -> None | Dict[str, Any]:
          return None
 
     if isinstance(media_info, MediaInfo):
-        for track in media_info.tracks: # type: ignore [reportUnknownVariableType]
+        for track in media_info.tracks: # type: ignore[reportUnknownVariableType]
             if track.track_type == "Audio":
                 if track.bit_rate:
                     info["bitrate"] = track.bit_rate / 1000

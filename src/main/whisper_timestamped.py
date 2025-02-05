@@ -14,12 +14,13 @@ import warnings
 from typing import Any, Dict
 from pathlib import Path
 
-import whisper_timestamped as whisper # type: ignore [import-untyped]
+import whisper_timestamped # type: ignore[import-untyped]
 
 from main.whisper import search_model_path
 
 from utils.trace    import Trace
-from utils.util     import import_json, export_json, export_text, CacheJSON
+from utils.file     import import_json, export_json, export_text
+from utils.util     import CacheJSON
 from utils.metadata import get_media_info
 
 from helper.captions     import export_srt, export_vtt
@@ -52,7 +53,7 @@ def load_model_whisper(model_name: str) -> Any:
         Trace.info(f"load '{model_path}\\{model_name}.pt'")
 
         start_time = time.time()
-        model = whisper.load_model(model_name, download_root=model_path)
+        model = whisper_timestamped.load_model(model_name, download_root=model_path)
         duration = time.time() - start_time
         current_model_name = model_name
 
@@ -180,7 +181,7 @@ def transcribe_whisper_timestamped(project_params: Dict[str, Any], media_params:
         result["segments"] = []
 
         start_time = time.time()
-        ret = whisper.transcribe(current_model, str(media_pathname), **param) # type: ignore[reportArgumentType]
+        ret = whisper_timestamped.transcribe(current_model, str(media_pathname), **param) # type: ignore[reportArgumentType]
         duration_cpu = time.time() - start_time
 
         result["cpuTime"]  = round(duration_cpu, 2)

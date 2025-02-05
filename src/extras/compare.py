@@ -1,15 +1,17 @@
+
 import os
+from typing import Any, Dict, List, Tuple
 
 from rapidfuzz import fuzz # Levenshtein
-import jaro                # type: ignore [import-untyped] # Jaro-Winkler
+import jaro                # type: ignore[import-untyped] # Jaro-Winkler
 
 from utils.trace import Trace
-from utils.util import import_json
+from utils.file import import_json
 
 def compare_file(folderpath: str, project: str, pattern: str) -> None:
     files = os.listdir(folderpath)
 
-    file_infos: list[tuple[str, str]] = []
+    file_infos: List[Tuple[str, str]] = []
 
     Trace.info(f"{project} match: {pattern}")
 
@@ -20,12 +22,12 @@ def compare_file(folderpath: str, project: str, pattern: str) -> None:
                 file_infos.append((file, second))
 
     for file_info in file_infos:
-        first_file = import_json(folderpath, file_info[0])
-        if first_file is None:
+        first_file: Dict[str, Any] | List[Any] | None = import_json(folderpath, file_info[0])
+        if isinstance(first_file, list) or first_file is None:
             continue
 
-        second_file = import_json(folderpath, file_info[1])
-        if second_file is None:
+        second_file: Dict[str, Any] | List[Any] | None = import_json(folderpath, file_info[1])
+        if isinstance(second_file, list) or second_file is None:
             continue
 
         first_text  = first_file["text"]

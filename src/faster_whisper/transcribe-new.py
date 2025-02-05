@@ -948,7 +948,7 @@ class WhisperModel:
             condition_on_previous_text=condition_on_previous_text,
             prompt_reset_on_temperature=prompt_reset_on_temperature,
             temperatures=(
-                temperature if isinstance(temperature, (List, Tuple)) else [temperature]
+                temperature if isinstance(temperature, (list, tuple)) else [temperature]
             ),
             initial_prompt=initial_prompt,
             prefix=prefix,

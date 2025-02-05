@@ -484,7 +484,7 @@ def prepare_words(data: Dict[str, Any], is_faster_whisper: bool, is_intro: bool,
 
             curr_word = ""
             if is_faster_whisper:
-                if isinstance(word_info_original, Dict):
+                if isinstance(word_info_original, dict):
 
                     # faster-whisper 1.1.x
 

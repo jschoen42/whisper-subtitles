@@ -26,8 +26,8 @@ from faster_whisper import WhisperModel
 from utils.globals  import BASE_PATH
 from utils.prefs    import Prefs
 from utils.trace    import Trace
-from utils.file     import get_file_infos, get_modification_timestamp, set_modification_timestamp
-from utils.util     import import_json_timestamp, export_json, export_text, format_subtitle, CacheJSON
+from utils.file     import get_file_infos, get_modification_timestamp, set_modification_timestamp, import_json_timestamp, export_json, export_text
+from utils.util     import CacheJSON, format_subtitle
 from utils.metadata import get_media_info
 
 from helper.captions    import export_srt, export_vtt
@@ -267,7 +267,7 @@ def transcribe_fasterwhisper(project_params: Dict[str, Any], media_params: Dict[
     if cached:
         md5: str = ""
         if "md5" in cached:  # header v1
-            md5 = cached["md5"] # type: ignore
+            md5 = cached["md5"]
 
             if md5 == media_md5: # migrate from v1 -> v2 (b)
 

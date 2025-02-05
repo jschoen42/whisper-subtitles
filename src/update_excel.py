@@ -5,7 +5,7 @@ import sys
 
 from utils.prefs import Prefs
 from utils.trace import Trace
-from utils.util  import import_json
+from utils.file  import import_json
 
 from helper.excel_update import update_dictionary_excel
 

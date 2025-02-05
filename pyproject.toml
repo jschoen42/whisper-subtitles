@@ -31,6 +31,7 @@ dependencies = [
     "xlsxwriter>=3.2.0",
     "rapidfuzz>=3.11.0",
     "jaro-winkler>=2.0.3",
+    "mypy>=1.15.0",
 ]
 
 [dependency-groups]
@@ -40,7 +41,3 @@ dev = [
     "types-pyyaml>=6.0.12.20241230",
     "types-requests>=2.32.0.20241016",
 ]
-
-[tool.mypy]
-python_version = "3.12"
-

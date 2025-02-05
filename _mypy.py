@@ -14,18 +14,28 @@ from datetime import datetime
 BASE_PATH = Path(sys.argv[0]).parent.parent.resolve()
 RESULT_FOLDER = ".type-check-result"
 
+# temp.toml
+
 CONFIG: str = \
 """
 [tool.mypy]
 mypy_path = "src"
+python_version = "[version]"
 
 [[tool.mypy.overrides]]
 module = "faster_whisper.*"
 ignore_errors = true
-ignore_missing_imports = true
 """
 
 def run_mypy(target_file: str) -> None:
+
+    try:
+        with open(".python-version", "r") as f:
+            version = f.read().strip()
+    except OSError:
+        version = f"{sys.version_info.major}.{sys.version_info.minor}"
+
+    configuration = CONFIG.replace("[version]", version )
 
     # https://mypy.readthedocs.io/en/stable/command_line.html
     # https://gist.github.com/Michael0x2a/36c5948a7ea571b722686226639b0859
@@ -72,7 +82,7 @@ def run_mypy(target_file: str) -> None:
         "--warn-redundant-casts",         # default: False
         # "--warn-unused-ignores",        # default: False
         "--warn-no-return",               # default: False
-        "--warn-return-any",              # default: False
+        # "--warn-return-any",            # default: False
         "--warn-unreachable",             # default: False
 
         ### Suppressing errors
@@ -181,13 +191,14 @@ def run_mypy(target_file: str) -> None:
     text += "\n"
 
     text += "MyPy [version] settings:\n"
+    text += f" - Python version {version}\n"
     for setting in settings:
         text += f" {setting}\n"
     text += "\n"
 
     config = "tmp.toml"
     with open(config, "w") as config_file:
-        config_file.write(CONFIG)
+        config_file.write(configuration)
 
     result = subprocess.run(["mypy", target_file, "--config-file", "tmp.toml", "--verbose"] + settings, capture_output=True, text=True)
     # if result.returncode == 2:
