@@ -3,7 +3,6 @@ PyYAML
 python-dotenv
 arrow
 openpyxl
-openpyxl-stubs
 webvtt-py
 pymediainfo
 mutagen # todo remove (GPLv2+)

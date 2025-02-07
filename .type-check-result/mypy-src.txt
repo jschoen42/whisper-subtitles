@@ -1,10 +1,11 @@
-Python:   3.12.8 (main, Dec  6 2024, 18:10:20) [MSC v.1942 64 bit (AMD64)]
+Python:   3.12.9 (main, Feb  5 2025, 19:15:20) [MSC v.1942 64 bit (AMD64)]
 Platform: Windows-11-10.0.22631-SP0
-Date:     05.02.2025 17:14:43
+Date:     07.02.2025 22:02:03
 Path:     G:\Python\Whisper\whisper-subtitles-github
 
 MyPy 1.15.0 settings:
  - Python version 3.12
+ --sqlite-cache
  --namespace-packages
  --explicit-package-bases
  --disallow-untyped-calls
@@ -17,16 +18,10 @@ MyPy 1.15.0 settings:
  --allow-redefinition
  --extra-checks
  --force-uppercase-builtins
- --sqlite-cache
  --strict-equality
 
 Source files:
  - src/__init__.py
- - src/extras/__init__.py
- - src/extras/_test_prefs.py
- - src/extras/compare.py
- - src/extras/rename_1.py
- - src/extras/rename_2.py
  - src/faster_whisper/__init__.py
  - src/faster_whisper/assets/__init__.py
  - src/faster_whisper/audio.py
@@ -69,4 +64,4 @@ Source files:
  - src/reset.py
  - src/update_excel.py
 
-Success: no issues found in 47 source files
+Success: no issues found in 42 source files

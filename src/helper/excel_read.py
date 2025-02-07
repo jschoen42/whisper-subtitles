@@ -166,7 +166,7 @@ def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple
         if sheet_name.startswith("-"):
             continue
 
-        data: List[Any]	 = workbook.get_sheet_by_name(sheet_name).to_python(skip_empty_area=False)
+        data: List[Any]  = workbook.get_sheet_by_name(sheet_name).to_python(skip_empty_area=False)
 
         for i, row in enumerate(data):
             if i == 0:

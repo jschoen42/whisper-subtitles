@@ -1,6 +1,6 @@
-Python:   3.12.8 (main, Dec  6 2024, 18:10:20) [MSC v.1942 64 bit (AMD64)]
+Python:   3.12.9 (main, Feb  5 2025, 19:15:20) [MSC v.1942 64 bit (AMD64)]
 Platform: Windows-11-10.0.22631-SP0
-Date:     05.02.2025 17:14:15
+Date:     07.02.2025 21:50:56
 Path:     G:\Python\Whisper\whisper-subtitles-github
 
 PyRight 1.1.393 settings:

@@ -11,8 +11,8 @@ from pathlib import Path
 from utils.globals import BASE_PATH
 from utils.prefs   import Prefs
 from utils.trace   import Trace
-from utils.util    import CacheJSON
 from utils.file    import check_file_exists, export_text
+from utils.util    import CacheJSON
 from utils.log     import log_clear, log_add, log_get_data
 from utils.log     import DictionaryLog
 
@@ -28,7 +28,7 @@ from main.whisper_faster import precheck_models, transcribe_fasterwhisper
 from main.whisper import transcribe_whisper
 from main.whisper_timestamped import transcribe_whisper_timestamped
 
-PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
+PROJECTS: str = "projects_all.yaml"  # "projects.yaml", "projects_all.yaml"
 
 data_path = BASE_PATH / "../data"
 

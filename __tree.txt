@@ -22,9 +22,6 @@ whisper-subtitles v0.1.0
 │   │   └── colorama v0.4.6
 │   └── typing-extensions v4.12.2
 ├── jaro-winkler v2.0.3
-├── mypy v1.15.0
-│   ├── mypy-extensions v1.0.0
-│   └── typing-extensions v4.12.2
 ├── numba v0.61.0
 │   ├── llvmlite v0.44.0
 │   └── numpy v2.1.3

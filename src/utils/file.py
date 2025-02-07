@@ -286,7 +286,7 @@ def import_text( folderpath: Path | str, filename: Path | str, encoding: str="ut
 
     else:
         if show_error:
-            Trace.error(f"file not exist {filepath}")
+            Trace.error(f"file not exist {filepath.resolve()}")
         return None
 
 def import_json( folderpath: Path | str, filename: str, show_error: bool=True ) -> Any | None:

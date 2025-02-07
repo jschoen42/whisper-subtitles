@@ -21,6 +21,9 @@ CONFIG: str = \
 [tool.mypy]
 mypy_path = "src"
 python_version = "[version]"
+exclude = [
+    "/extras/*"
+]
 
 [[tool.mypy.overrides]]
 module = "faster_whisper.*"
@@ -41,6 +44,8 @@ def run_mypy(target_file: str) -> None:
     # https://gist.github.com/Michael0x2a/36c5948a7ea571b722686226639b0859
 
     settings: List[str] = [
+
+        "--sqlite-cache",                 # default: False
 
         ### Import discovery
         "--namespace-packages",           # default: True
@@ -110,14 +115,6 @@ def run_mypy(target_file: str) -> None:
         # "--show-absolute-path",         # default: False
         "--force-uppercase-builtins",     # default: False
         # "--force-union-syntax",         # default: False
-
-        ### Incremental mode
-        # "--incremental",                # default: True
-        # "--cache-dir",                  # default: str
-        "--sqlite-cache",                 # default: False
-        # "--cache-fine-grained",         # default: False
-        # "--skip-version-check",         # default: False
-        # "--skip-cache-mtime-checks",    # default: False
 
         ### Advanced options
         # "--plugins",                    # default: [str] plugin, plugin, ...
@@ -259,4 +256,12 @@ def run_mypy(target_file: str) -> None:
     sys.exit(result.returncode)
 
 if __name__ == "__main__":
-    run_mypy(sys.argv[1])
+    if len(sys.argv) != 2:
+        print("Usage: _mypy.py <dir_or_file>")
+        sys.exit(1)
+
+    try:
+        run_mypy(sys.argv[1])
+    except KeyboardInterrupt:
+        print(" --> KeyboardInterrupt")
+        sys.exit(1)

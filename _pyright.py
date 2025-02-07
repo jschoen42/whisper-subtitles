@@ -151,7 +151,11 @@ def run_pyright(target_file: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: _pyright.py <target_file>")
+        print("Usage: _pyright.py <dir_or_file>")
         sys.exit(1)
 
-    run_pyright(sys.argv[1])
+    try:
+        run_pyright(sys.argv[1])
+    except KeyboardInterrupt:
+        print(" --> KeyboardInterrupt")
+        sys.exit(1)
