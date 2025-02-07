@@ -124,11 +124,11 @@ def spellcheck(words: List[str], debug: bool=False) -> Dict[str, int]:
                     word = word.strip(".':,;!?…\"()<>")  # e.g. " 'Beim Speichern sofort festschreiben'."
 
                     if word not in global_precheck_single_words:
-                        i += 1
                         try:
                             checked = global_dictionary_data.lookup(word)
                         except Exception as err:
                             Trace.error( f"{i}: {word} -> {err}" )
+                            i += 1
                             continue
 
                         if checked:
