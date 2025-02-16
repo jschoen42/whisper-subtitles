@@ -1,34 +1,46 @@
-# python _pyright.py src
+# uv run _pyright.py src
 
 # install: npm install --global pyright
-# update: npm update --global pyright
+# update:  npm update --global pyright
 
-import os
-import sys
-import subprocess
-import platform
 import json
+import os
+import platform
 import shutil
+import subprocess
+import sys
 import time
+import locale
 
-from pathlib import Path
+from typing import Dict, List
+from argparse import ArgumentParser
+from collections import Counter
 from datetime import datetime
+from pathlib import Path
+from subprocess import CompletedProcess
 
 BASE_PATH = Path(sys.argv[0]).parent.parent.resolve()
 RESULT_FOLDER = ".type-check-result"
 
-def run_pyright(target_file: str) -> None:
+LINEFEET = "\n"
 
-    try:
-        with open(".python-version", "r") as f:
-            version = f.read().strip()
-    except OSError:
-        version = f"{sys.version_info.major}.{sys.version_info.minor}"
+def run_pyright(src_path: Path, python_version: str) -> None:
+
+    if python_version == "":
+        try:
+            with open(".python-version", "r") as f:
+                python_version = f.read().strip()
+        except OSError:
+            python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
 
     # https://microsoft.github.io/pyright/#/configuration?id=diagnostic-settings-defaults
 
-    settings = {
-        "pythonVersion": version,
+    settings: Dict[str, str | bool | List[str]] = {
+        "pythonVersion": python_version,
+        # "pythonPlatform": "Linux", # "Windows", "Darwin"
+
+        "venvPath": ".",
+        "venv": ".venv",
 
         # "typeCheckingMode": "off",
         # "typeCheckingMode": "basic",
@@ -57,30 +69,34 @@ def run_pyright(target_file: str) -> None:
         "reportUnusedCallResult": False,       # always False -> _vars
 
         "exclude": [
+            ".venv/*",
             "src/faster_whisper/*",
             "src/extras/*",
         ]
     }
 
-    filepath = Path(sys.argv[1])
-    if not filepath.exists():
-        print(f"Error: '{filepath}' not found")
+    if not src_path.exists():
+        print(f"Error: path '{src_path}' not found")
         return
+
+    start = time.time()
 
     folder_path = BASE_PATH / RESULT_FOLDER
     if not folder_path.exists():
         folder_path.mkdir(parents=True, exist_ok=True)
 
-    name = filepath.stem
+    name = src_path.stem
+    if name == "":
+        name = "."
 
     npx_path = shutil.which("npx")
     if not npx_path:
         print("Error: 'npx' not found")
         return
 
-    text =  f"Python:   {sys.version}\n"
+    text  = f"Python:   {sys.version.replace(LINEFEET, ' ')}\n"
     text += f"Platform: {platform.platform()}\n"
-    text += f"Date:     {datetime.now().strftime("%d.%m.%Y %H:%M:%S")}\n"
+    text += f"Date:     {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}\n"
     text += f"Path:     {BASE_PATH}\n"
     text += "\n"
 
@@ -89,73 +105,120 @@ def run_pyright(target_file: str) -> None:
         text += f" - {key}: {value}\n"
 
     config = "tmp.json"
-    with open(config, "w") as config_file:
+    with open(config, mode="w") as config_file:
         json.dump(settings, config_file, indent=2)
 
-    start = time.time()
     try:
-        result = subprocess.run([npx_path, "pyright", target_file, "--verbose", "--project", config], capture_output=True, text=True, shell=True)
+        result: CompletedProcess[str] = subprocess.run([npx_path, "pyright", src_path, "--project", config, "--outputjson"], capture_output=True, text=True)
+    except Exception as err:
+        print(f"error: {err} - pyright")
+        sys.exit(1)
     finally:
         os.remove(config)
 
-    if result.returncode == 2:
+    if result.stderr != "":
         print(f"errorcode: {result.returncode}")
         print(result.stderr)
         sys.exit(result.returncode)
 
-    stdout = result.stdout.encode("cp1252").decode("utf-8").replace("\xa0", " ")
+    codepage = locale.getpreferredencoding() # cp1252 ...
+    stdout = result.stdout.encode(encoding=codepage).decode(encoding="utf-8").replace("\xa0", " ")
+    data = json.loads(stdout)
 
-    path = str(BASE_PATH)[0].lower() + str(BASE_PATH)[1:]
-    version = ""
-    num_files = 0
-    summary = "no summary"
+    # {
+    #   "version": "1.1.394",
+    #   "time": "1739984210930",
+    #   "generalDiagnostics": [
+    #     {
+    #       "file": "g:\\Python\\Whisper\\whisper-datev-gitlab\\src\\combine_srt.py",
+    #       "severity": "error",
+    #       "message": "Type \"float\" is not assignable to declared type \"int\"\n  \"float\" is not assignable to \"int\"",
+    #       "range": {
+    #           "start": {
+    #           "line": 49,
+    #           "character": 32
+    #         },
+    #           "end": {
+    #           "line": 49,
+    #           "character": 40
+    #         }
+    #       },
+    #       "rule": "reportAssignmentType"
+    #     }
+    #   ],
+    #   "summary": {
+    #     "filesAnalyzed": 1,
+    #     "errorCount": 0,
+    #     "warningCount": 0,
+    #     "informationCount": 0,
+    #     "timeInSec": 2.583
+    #   }
+    # }
 
-    verbose_info = False
-    for line in stdout.splitlines():
-        if line.startswith("Loading configuration"):
-            verbose_info = True
-            continue
+    version     = data["version"]
+    diagnostics = data["generalDiagnostics"]
+    summary     = data["summary"]
 
-        if line.startswith("pyright"):
-            version = line.split(" ")[1]
-            text = text.replace("[version]", version)
-            verbose_info = False
-            continue
+    text = text.replace("[version]", version )
 
-        if verbose_info:
-            # print( "****", line )
+    footer: str =  f"files: {summary['filesAnalyzed']}, "
+    footer += f"errors: {summary['errorCount']}, "
+    footer += f"warnings: {summary['warningCount']}, "
+    footer += f"informations: {summary['informationCount']}, "
+    footer += f"duration: {summary['timeInSec']} sec"
 
-            if "Found" in line:
-                num_files = int(line.split(" ")[1])
-            continue
+    n = len(str(Path(".").absolute())) + 1
 
-        if line.startswith("  "):
-            if path in line:
-                text += line[3 + len(str(BASE_PATH)):] + "\n"
-            else:
-                text += " - " + line[4:] + "\n"
-        else:
-            if "informations" in line:
-                summary = line.strip()
-                text += f"\n'{target_file}' {num_files} source file(s): {summary}"
+    last_file = ""
+    error_types: Counter[str] = Counter()
+    for diagnostic in diagnostics:
+        file       = Path(diagnostic["file"]).as_posix()
+        error_type = diagnostic["rule"]
+        error      = diagnostic["severity"]
+        range      = diagnostic["range"]["start"]
 
-            text += "\n"
+        error_types[error_type] += 1
 
-    with open(folder_path / f"pyright-{name}.txt", "w") as file:
-        file.write(text)
+        msg = file[n:]
+        msg += f":{range['line']+1}:{range['character']+1} - {error}: " # 0-based
+        msg += diagnostic["message"]
+        msg += f" ({error_type})"
+
+        if last_file != file:
+            if last_file != "":
+                text += "\n"
+            text += "\n### " + file[n:] + " ###\n"
+            last_file = file
+
+        text += "\n" + msg
+
+    text += "\n"
+
+    if len(error_types)>0:
+        text += "\nError types (sorted)"
+        for error_type in error_types.most_common():
+            text += f"\n - {error_type[0]}: {error_type[1]}"
+        text += "\n\n"
+
+    text += footer + "\n"
+
+    result_filename = f"PyRight-{python_version}-'{name}'.txt"
+    with open(folder_path / result_filename, mode="w", newline="\n") as f:
+        f.write(text)
 
     duration = time.time() - start
-    print(f"[PyRight {version} ({duration:.2f} sec)] '{target_file}' - {num_files} source file(s): {summary} -> {RESULT_FOLDER}/pyright-{name}.txt")
-
+    print(f"[PyRight {version} ({duration:.2f} sec)] {footer} -> {RESULT_FOLDER}/{result_filename}")
     sys.exit(result.returncode)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: _pyright.py <dir_or_file>")
-        sys.exit(1)
+    parser = ArgumentParser(description="static type check with PyRight")
+    parser.add_argument("path", nargs="?", type=str, default=".", help="relative path to a file or folder")
+    parser.add_argument("-v", "--version", type=str, default="",  help="Python version 3.10/3.11/...")
+
+    args = parser.parse_args()
 
     try:
-        run_pyright(sys.argv[1])
+        run_pyright(Path(args.path), args.version)
     except KeyboardInterrupt:
         print(" --> KeyboardInterrupt")
         sys.exit(1)

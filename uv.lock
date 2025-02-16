@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.12"
 
 [[package]]
@@ -41,6 +42,18 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/99/8b/71e2e6c943f4a784d675190d8be9df531026989259a36aae7b1049771079/av-14.1.0-cp313-cp313-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:f110133c762f310e03f101986ca16f81c5bda80a839969dddeb0c400f8a73c8d", size = 35578890 },
     { url = "https://files.pythonhosted.org/packages/a8/f8/e888e7a583e2dbe12bb710ae4474e189b86b399cdb380ab1e9a311cd9959/av-14.1.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:222303728d59edfbc241d7e944d5479d3bdfe98d33574a5e60aa7a23d54568fa", size = 39539552 },
     { url = "https://files.pythonhosted.org/packages/3d/6a/a111a144ca52b67e0553437185f081cbe62bec0d7211ff38d33665985ff5/av-14.1.0-cp313-cp313-win_amd64.whl", hash = "sha256:f59d91f2dad90683db55c66e98113bb28a87f4e113eec103756d51ad05db3d8a", size = 30595292 },
+]
+
+[[package]]
+name = "basedpyright"
+version = "1.27.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "nodejs-wheel-binaries" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c6/62/c70698c616854639c23e7462276789dc6f42040f6abca39eb71cdcee9374/basedpyright-1.27.1.tar.gz", hash = "sha256:ddbe226c154c973a954626ce9ecb3b3a59df9d68bbab0e3f82a6c2c7b29616df", size = 21418646 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/50/d1/bb5ea12225b1104d7b24e4c9d6a02298d1ed2352a7e5a80bc62e7d56b177/basedpyright-1.27.1-py3-none-any.whl", hash = "sha256:9f3647c1c8a0fc3d0a08b2156768ff717322f1e78d1b45686597093824a8f0d3", size = 11462483 },
 ]
 
 [[package]]
@@ -593,6 +606,22 @@ wheels = [
 ]
 
 [[package]]
+name = "nodejs-wheel-binaries"
+version = "22.14.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d7/c7/4fd3871d2b7fd5122216245e273201ab98eda92bbd6fe9ad04846b758c56/nodejs_wheel_binaries-22.14.0.tar.gz", hash = "sha256:c1dc43713598c7310d53795c764beead861b8c5021fe4b1366cb912ce1a4c8bf", size = 8055 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/61/b6/66ef4ef75ea7389ea788f2d5505bf9a8e5c3806d56c7a90cf46a6942f1cf/nodejs_wheel_binaries-22.14.0-py2.py3-none-macosx_11_0_arm64.whl", hash = "sha256:d8ab8690516a3e98458041286e3f0d6458de176d15c14f205c3ea2972131420d", size = 50326597 },
+    { url = "https://files.pythonhosted.org/packages/7d/78/023d91a293ba73572a643bc89d11620d189f35f205a309dd8296aa45e69a/nodejs_wheel_binaries-22.14.0-py2.py3-none-macosx_11_0_x86_64.whl", hash = "sha256:b2f200f23b3610bdbee01cf136279e005ffdf8ee74557aa46c0940a7867956f6", size = 51158258 },
+    { url = "https://files.pythonhosted.org/packages/af/86/324f6342c79e5034a13319b02ba9ed1f4ac8813af567d223c9a9e56cd338/nodejs_wheel_binaries-22.14.0-py2.py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d0877832abd7a9c75c8c5caafa37f986c9341ee025043c2771213d70c4c1defa", size = 57180264 },
+    { url = "https://files.pythonhosted.org/packages/6d/9f/42bdaab26137e31732bff00147b9aca2185d475b5752b57a443e6c7ba93f/nodejs_wheel_binaries-22.14.0-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8fded5a70a8a55c2135e67bd580d8b7f2e94fcbafcc679b6a2d5b92f88373d69", size = 57693251 },
+    { url = "https://files.pythonhosted.org/packages/ab/d7/94f8f269aa86cf35f9ed2b70d09aca48dc971fb5656fdc4a3b69364b189f/nodejs_wheel_binaries-22.14.0-py2.py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:c1ade6f3ece458b40c02e89c91d5103792a9f18aaad5026da533eb0dcb87090e", size = 58841717 },
+    { url = "https://files.pythonhosted.org/packages/2d/a0/43b7316eaf22b4ee9bfb897ee36c724efceac7b89d7d1bedca28057b7be1/nodejs_wheel_binaries-22.14.0-py2.py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:34fa5ed4cf3f65cbfbe9b45c407ffc2fc7d97a06cd8993e6162191ff81f29f48", size = 59808791 },
+    { url = "https://files.pythonhosted.org/packages/10/0a/814491f751a25136e37de68a2728c9a9e3c1d20494aba5ff3c230d5f9c2d/nodejs_wheel_binaries-22.14.0-py2.py3-none-win_amd64.whl", hash = "sha256:ca7023276327455988b81390fa6bbfa5191c1da7fc45bc57c7abc281ba9967e9", size = 40478921 },
+    { url = "https://files.pythonhosted.org/packages/f4/5c/cab444afaa387dceac8debb817b52fd00596efcd2d54506c27311c6fe6a8/nodejs_wheel_binaries-22.14.0-py2.py3-none-win_arm64.whl", hash = "sha256:fd59c8e9a202221e316febe1624a1ae3b42775b7fb27737bf12ec79565983eaf", size = 36206637 },
+]
+
+[[package]]
 name = "numba"
 version = "0.61.0"
 source = { registry = "https://pypi.org/simple" }
@@ -916,13 +945,15 @@ wheels = [
 
 [[package]]
 name = "pymediainfo"
-version = "6.1.0"
+version = "7.0.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/0f/ed/a02b18943f9162644f90354fe6445410e942c857dd21ded758f630ba41c0/pymediainfo-6.1.0.tar.gz", hash = "sha256:186a0b41a94524f0984d085ca6b945c79a254465b7097f2560dc0c04e8d1d8a5", size = 446466 }
+sdist = { url = "https://files.pythonhosted.org/packages/4d/80/80a6fb21005b81e30f6193d45cba13857df09f5d483e0551fa6fbb3aaeed/pymediainfo-7.0.1.tar.gz", hash = "sha256:0d5df59ecc615e24c56f303b8f651579c6accab7265715e5d429186d7ba21514", size = 441563 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/20/47/675bac72d4ab5031f69179b1b8e617a57f766ba063b724a82023da06b9c9/pymediainfo-6.1.0-py3-none-macosx_10_15_x86_64.whl", hash = "sha256:69d5d3cac056c24a68a1129216aec82a222e804a35f88567c08585e8ae7ef2b3", size = 6322766 },
-    { url = "https://files.pythonhosted.org/packages/62/13/e3938e187a0c48057ffecc031d473b5739d13056d3eefb8b14b7652c27e1/pymediainfo-6.1.0-py3-none-win32.whl", hash = "sha256:19e6baeca3db71f12ed568f056de899fd02f380990fb10f43a26c32b67362dd3", size = 2762429 },
-    { url = "https://files.pythonhosted.org/packages/61/36/369234e2f568e11ed3195292cd89c60e7444346eb1dd25bf5d996dc5d78a/pymediainfo-6.1.0-py3-none-win_amd64.whl", hash = "sha256:f3f6bad666c65ac993dd8d64f45a2b26ba2acd50f9875f74cebb624dbf2f8da0", size = 2963468 },
+    { url = "https://files.pythonhosted.org/packages/a6/4a/d895646df3d3ff617b54d7f06a02ed9d6f5b86673030a543927310e0f7ed/pymediainfo-7.0.1-py3-none-macosx_10_10_universal2.whl", hash = "sha256:286f3bf6299be0997093254e0f371855bc5cf2aaf8641d19455a011e3ee3a84d", size = 6983332 },
+    { url = "https://files.pythonhosted.org/packages/77/df/bc6b5a08e908c64a81f6ff169716d408ce7380ceff44e1eceb095f49e0dc/pymediainfo-7.0.1-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:3648e2379fa67bd02433d1e28c707df3a53834dd480680615a9fefd2266f1182", size = 5768082 },
+    { url = "https://files.pythonhosted.org/packages/02/10/a9bc1446a48d3a15940eb1af79a71978f368f27e2cc86f9ec3ec2d206a20/pymediainfo-7.0.1-py3-none-manylinux_2_27_x86_64.whl", hash = "sha256:cde98112f1ce486589b17a12e5da42085faea996224f7c67fa45b8c1dca719c6", size = 6001553 },
+    { url = "https://files.pythonhosted.org/packages/ed/7f/c48f8514cb60c9ff9be81b6f383e73e66c7461ef854a1b62628e3c823f13/pymediainfo-7.0.1-py3-none-win32.whl", hash = "sha256:01bcaf82b72cefbf4b96f13b2547e1b2e0e734bab7173d7c33f7f01acc07c98b", size = 3125046 },
+    { url = "https://files.pythonhosted.org/packages/e7/26/9d50c2a330541bc36c0ea7ce29eeff5b0c35c2624139660df8bcfa9ae3ce/pymediainfo-7.0.1-py3-none-win_amd64.whl", hash = "sha256:13224fa7590e198763b8baf072e704ea81d334e71aa32a469091460e243893c7", size = 3271232 },
 ]
 
 [[package]]
@@ -1581,6 +1612,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "basedpyright" },
     { name = "mypy" },
     { name = "types-openpyxl" },
     { name = "types-pyyaml" },
@@ -1598,7 +1630,7 @@ requires-dist = [
     { name = "onnxruntime", specifier = "<2" },
     { name = "openai-whisper", specifier = ">=20240930" },
     { name = "openpyxl", specifier = ">=3.1.5" },
-    { name = "pymediainfo", specifier = ">=6.1.0" },
+    { name = "pymediainfo", specifier = ">=7.0.1" },
     { name = "python-calamine", specifier = ">=0.3.1" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "rapidfuzz", specifier = ">=3.11.0" },
@@ -1615,6 +1647,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "basedpyright", specifier = ">=1.27.1" },
     { name = "mypy", specifier = ">=1.15.0" },
     { name = "types-openpyxl", specifier = ">=3.1.5.20241225" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20241230" },

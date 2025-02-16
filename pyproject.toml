@@ -1,7 +1,7 @@
 [project]
 name = "whisper-subtitles"
 version = "0.1.0"
-description = "Add your description here"
+description = "..."
 authors = [
   { name="Jürgen Schoenemeyer", email="js007@web.de" },
 ]
@@ -21,7 +21,6 @@ dependencies = [
     "arrow>=1.3.0",
     "openpyxl>=3.1.5",
     "webvtt-py>=0.5.1",
-    "pymediainfo>=6.1.0",
     "av>=13.1.0",
     "ctranslate2<5",
     "huggingface-hub>=0.26.2",
@@ -31,12 +30,25 @@ dependencies = [
     "xlsxwriter>=3.2.0",
     "rapidfuzz>=3.11.0",
     "jaro-winkler>=2.0.3",
+    "pymediainfo>=7.0.1",
 ]
 
 [dependency-groups]
 dev = [
+    "basedpyright>=1.27.1",
     "mypy>=1.15.0",
     "types-openpyxl>=3.1.5.20241225",
     "types-pyyaml>=6.0.12.20241230",
     "types-requests>=2.32.0.20241016",
 ]
+
+[tool.basedpyright]
+deprecateTypingAliases =  false
+reportAny = false
+reportExplicitAny = false
+reportImplicitRelativeImport = false
+reportMissingTypeStubs = false
+reportUnusedCallResult = false
+reportUnknownArgumentType = false
+reportUnknownVariableType = false
+reportUnknownMemberType = false

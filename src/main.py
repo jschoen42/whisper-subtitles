@@ -21,14 +21,12 @@ from helper.captions     import seconds_to_timecode_vtt
 from helper.spelling     import hunspell_dictionary_init, getSpellStatistic
 from helper.whisper_util import init_special_text, are_inner_prompts_possible, prompt_main_normalize, prompt_normalize, get_filename_parameter
 
-from main.spacy import get_modelname_spacy
+from primary.spacy import get_modelname_spacy
+from primary.whisper_faster import precheck_models, transcribe_fasterwhisper
+from primary.whisper import transcribe_whisper
+from primary.whisper_timestamped import transcribe_whisper_timestamped
 
-from main.whisper_faster import precheck_models, transcribe_fasterwhisper
-
-from main.whisper import transcribe_whisper
-from main.whisper_timestamped import transcribe_whisper_timestamped
-
-PROJECTS: str = "projects_all.yaml"  # "projects.yaml", "projects_all.yaml"
+PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
 
 data_path = BASE_PATH / "../data"
 

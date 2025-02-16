@@ -1,5 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 18.01.2025
+    © Jürgen Schoenemeyer, 31.01.2025
+
+    src/helper/excel_write.py (xlsxwriter)
 
     PUBLIC:
       - export_TextToSpeech_excel(data: List[ColumnSubtitleInfo], pathname: Path | str, filename: str) -> bool:
@@ -206,7 +208,7 @@ def export_TextToSpeech_excel(data: List[SubtitleColumnFormat], pathname: Path |
 
 # https://xlsxwriter.readthedocs.io/page_setup.html
 
-def page_setup_print(worksheet: Any) -> None:
+def page_setup_print(worksheet: Any, fit_to_width: int=1) -> None:
 
     def inch_to_mm(inch: float) -> float:
         return inch / 2.54
@@ -214,7 +216,7 @@ def page_setup_print(worksheet: Any) -> None:
     # Page Setup -> Page
     worksheet.set_landscape()
     worksheet.set_paper(9)       # A4
-    worksheet.fit_to_pages(1, 0)
+    worksheet.fit_to_pages(fit_to_width, 0)
 
     # Page Setup -> Margins
     margin_left   = inch_to_mm(1.5)

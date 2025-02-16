@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 05.02.2025
+    © Jürgen Schoenemeyer, 12.02.2025
 
     src/utils/metadata.py
 
@@ -14,7 +14,7 @@
 from typing import Any, Dict, Protocol, cast
 from io import BytesIO
 
-from pymediainfo import MediaInfo          # type: ignore[import-untyped]
+from pymediainfo import MediaInfo, Track
 
 from utils.trace import Trace
 
@@ -115,7 +115,7 @@ def get_media_info(filepath: str | BytesIO) -> None | Dict[str, int | float]:
     }
 
 
-def get_media_trackinfo(filepath: str | BytesIO) -> None | Dict[str, Any]:
+def get_media_trackinfo(filepath: str | BytesIO) -> Track | None:
     ret = None
 
     try:
@@ -129,22 +129,18 @@ def get_media_trackinfo(filepath: str | BytesIO) -> None | Dict[str, Any]:
          Trace.error(f"MediaInfo: {error}")
          return None
 
-    if isinstance(media_info, MediaInfo):
-        for track in media_info.tracks: # type: ignore[reportUnknownVariableType]
-            if track.track_type == "Audio":
-                ret = track             # type: ignore[reportUnknownVariableType]
-                break
+    for track in media_info.tracks:
+        if track.track_type == "Audio":
+            ret = track
+            break
 
-    return ret                          # type: ignore[reportUnknownVariableType]
+    return ret
 
 def get_audio_duration(filepath: str | BytesIO) -> float:
     duration: float = -1
 
     try:
         media_info = MediaInfo.parse(filepath)
-        if media_info is None:
-            return -1
-
     except FileNotFoundError as error:
         Trace.error(f"FileNotFoundError '{error}'")
         return -1
@@ -153,11 +149,10 @@ def get_audio_duration(filepath: str | BytesIO) -> float:
          Trace.error(f"MediaInfo: {error}")
          return -1
 
-    if isinstance(media_info, MediaInfo):
-        for track in media_info.tracks: # type: ignore[reportUnknownVariableType]
-            if track.track_type == "Audio":
-                duration = round(int(track.duration) / 1000, 3)
-                break
+    for track in media_info.tracks:
+        if track.track_type == "Audio":
+            duration = round(int(track.duration) / 1000, 3)
+            break
 
     return duration
 
@@ -200,51 +195,50 @@ def get_video_metadata(filepath: str | BytesIO) -> None | Dict[str, Any]:
          Trace.error(f"MediaInfo: {error}")
          return None
 
-    if isinstance(media_info, MediaInfo):
-        for track in media_info.tracks: # type: ignore[reportUnknownVariableType]
-            if track.track_type == "Video":
+    for track in media_info.tracks:
+        if track.track_type == "Video":
 
-                info["width"]  = track.width
-                info["height"] = track.height
-                info["tracks"] += 1
+            info["width"]  = track.width
+            info["height"] = track.height
+            info["tracks"] += 1
 
-                if track.duration:
-                    info["duration"] = round(track.duration / 1000, 3)
+            if track.duration:
+                info["duration"] = round(track.duration / 1000, 3)
 
-                info["video"]["track"] = track.track_id
-                if track.bit_rate:
-                    bitrate =  int(track.bit_rate) / 1000
-                    info["video"]["bitrate"]  = bitrate
+            info["video"]["track"] = track.track_id
+            if track.bit_rate:
+                bitrate =  int(track.bit_rate) / 1000
+                info["video"]["bitrate"]  = bitrate
 
-                    if info["bitrate"] == 0:
-                        info["bitrate"] = bitrate
-                    else:
-                        info["bitrate"] += bitrate
-
-                info["video"]["format"]    = track.format + " " + track.format_profile
-                info["video"]["fps"]       = float(track.frame_rate)
-                info["video"]["colorInfo"] = track.color_space + " " + track.chroma_subsampling
-
-            if track.track_type == "Audio":
-
-                info["tracks"] += 1
-                info["audio"]["trackID"] = track.track_id
-                if int(track.bit_rate):
-                    bitrate =  int(track.bit_rate) / 1000
-                    info["audio"]["bitrate"] = bitrate
-                    if info["bitrate"] == 0:
-                        info["bitrate"] = bitrate
-                    else:
-                        info["bitrate"] += bitrate
-
-                if int(track.channel_s) < 3:
-                    channels = ["mono", "stereo"][int(track.channel_s)-1]
+                if info["bitrate"] == 0:
+                    info["bitrate"] = bitrate
                 else:
-                    channels = str(track.channel_s) + " channels"
+                    info["bitrate"] += bitrate
 
-                info["audio"]["channels"]     = track.channel_s
-                info["audio"]["samplingRate"] = track.sampling_rate
-                info["audio"]["format"]       = track.format  + " " + track.format_additionalfeatures + " (" + channels + ")"
+            info["video"]["format"]    = track.format + " " + track.format_profile
+            info["video"]["fps"]       = float(track.frame_rate)
+            info["video"]["colorInfo"] = track.color_space + " " + track.chroma_subsampling
+
+        if track.track_type == "Audio":
+
+            info["tracks"] += 1
+            info["audio"]["trackID"] = track.track_id
+            if int(track.bit_rate):
+                bitrate =  int(track.bit_rate) / 1000
+                info["audio"]["bitrate"] = bitrate
+                if info["bitrate"] == 0:
+                    info["bitrate"] = bitrate
+                else:
+                    info["bitrate"] += bitrate
+
+            if int(track.channel_s) < 3:
+                channels = ["mono", "stereo"][int(track.channel_s)-1]
+            else:
+                channels = str(track.channel_s) + " channels"
+
+            info["audio"]["channels"]     = track.channel_s
+            info["audio"]["samplingRate"] = track.sampling_rate
+            info["audio"]["format"]       = track.format  + " " + track.format_additionalfeatures + " (" + channels + ")"
 
     return info
 
@@ -269,20 +263,19 @@ def get_audio_metadata(filepath: str | BytesIO) -> None | Dict[str, Any]:
          Trace.error(f"MediaInfo: {error}")
          return None
 
-    if isinstance(media_info, MediaInfo):
-        for track in media_info.tracks: # type: ignore[reportUnknownVariableType]
-            if track.track_type == "Audio":
-                if track.bit_rate:
-                    info["bitrate"] = track.bit_rate / 1000
+    for track in media_info.tracks:
+        if track.track_type == "Audio":
+            if track.bit_rate:
+                info["bitrate"] = track.bit_rate / 1000
 
-                if int(track.channel_s) < 3:
-                    channels = ["mono", "stereo"][int(track.channel_s)-1]
-                else:
-                    channels = str(track.channel_s) + " channels"
+            if int(track.channel_s) < 3:
+                channels = ["mono", "stereo"][int(track.channel_s)-1]
+            else:
+                channels = str(track.channel_s) + " channels"
 
-                info["channels"]     = int(track.channel_s)
-                info["samplingRate"] = track.sampling_rate
-                info["format"]       = track.format  + " " + track.format_additionalfeatures + " (" + channels + ")"
-                break
+            info["channels"]     = int(track.channel_s)
+            info["samplingRate"] = track.sampling_rate
+            info["format"]       = track.format  + " " + track.format_additionalfeatures + " (" + channels + ")"
+            break
 
     return info

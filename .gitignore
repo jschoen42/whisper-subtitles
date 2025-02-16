@@ -4,19 +4,35 @@ result/*
 data/*
 !data/.gitkeep
 
-_traceAll/*
-!_traceAll/.gitkeep
+wav/*
+!wav/.gitkeep
 
+__history.txt
+_trace*/*
+_old/*
+
+.mypy_cache/*
+.type-check-result/*
+
+.timestamps.json
+.Python31?-*
+
+### General
+.env
 *.7z
-__history*.txt
-.mypy_cache
-_dictionary/*.json
+*.zip
+*.rar
+*.tar.gz
 
 ### Python
 
-__pycache__/
-.venv*/
-.mypy_cache
+.venv*/*
+*.pyc
+__pycache__/*
+*.pkl
+dist/*
+build/*
+*/zz_utils.egg-info/*
 
 ### Windows
 
@@ -35,7 +51,7 @@ Thumbs.db
 Icon
 
 # Thumbnails
-#._*
+._*
 
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
@@ -52,4 +68,3 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-src/update_excel.py

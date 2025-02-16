@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 29.01.2025
+    © Jürgen Schoenemeyer, 20.02.2025
 
     src/utils/format.py
 
@@ -23,7 +23,7 @@
 import math
 import datetime
 
-from typing import Any
+from typing import Any, Dict
 
 # from re import A
 
@@ -60,7 +60,7 @@ def format_bytes( size: int, reference: str ) -> str:
 """
 
 def format_bytes( size: int, unit: str ) -> str:
-    next_unit = {
+    next_unit: Dict[str, str] = {
         "B":"KB", "KB":"MB", "MB":"GB", "GB":"TB", "TB":"PB",
         "b":"Kb", "Kb":"Mb", "Mb":"Gb", "Gb":"Tb", "Tb":"Pb"
     }
@@ -81,7 +81,7 @@ def format_bytes_v2(size: int) -> str:
     if power == 0:
         return f"{size} B"
     else:
-        return f"{round(size / 1024 ** power, 3)} {["B", "KB", "MB", "GB", "TB"][int(power)]}"
+        return f'{round(size / 1024 ** power, 3)} {["B", "KB", "MB", "GB", "TB"][int(power)]}'
 
 def convert_duration(duration: int) -> str:
     seconds=int(duration/1000)%60

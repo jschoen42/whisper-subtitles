@@ -1,3 +1,12 @@
+"""
+    © Jürgen Schoenemeyer, 30.01.2025
+
+    src/helper/excel_update.py (openpyxl)
+
+    PUBLIC:
+      - update_dictionary_excel(pathname: Path | str, filename: str, filename_update: str, column_name: str, data: Dict[str, Any]) -> bool
+"""
+
 from typing import Any, Dict
 from pathlib import Path
 from enum import StrEnum, IntEnum
@@ -12,13 +21,14 @@ from utils.decorator import duration
 from utils.excel     import get_cell_text, check_excel_file_exists
 
 class Color(StrEnum):
-    WHITE   = "00ffffff"
-    BLUE    = "004f81bd"
-    GREY    = "00a5a5a5"
-    BLACK   = "00000000"
-    ERROR   = "00FF8888" # red
-    WARNING = "00fcd723" # yellow
-    OK      = "0092d050" # green
+    WHITE     = "ffffff"
+    BLUE      = "4f81bd"
+    GREY      = "a5a5a5"
+    LIGHTGREY = "dadcdd"
+    BLACK     = "000000"
+    ERROR     = "FF8888" # red
+    WARNING   = "fcd723" # yellow
+    OK        = "92d050" # green
 
 class Fontname(StrEnum):
     HEAD = "Open Sans Bold"
@@ -29,7 +39,7 @@ class Fontsize(IntEnum):
     BODY = 11
 
 @duration("update '{filename}' -> '{filename_update}'")
-def update_dictionary_excel(pathname: Path | str, filename: str, filename_update: str, column_name: str, data: Dict[str, Any]) -> None | bool:
+def update_dictionary_excel(pathname: Path | str, filename: str, filename_update: str, column_name: str, data: Dict[str, Any]) -> bool:
     pathname = Path(pathname)
     source = pathname / filename
 
@@ -42,13 +52,13 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
 
     if not check_excel_file_exists(source):
         Trace.error(f"file not found: {source}")
-        return None
+        return False
 
     try:
         wb: Workbook= load_workbook(filename=source)
     except OSError as err:
         Trace.error(f"importExcel: {err}")
-        return None
+        return False
 
     set_styles(wb)
 

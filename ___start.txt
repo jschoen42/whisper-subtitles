@@ -8,18 +8,16 @@ python src/audio.py
 python src/combine_srt.py
 python src/update_excel.py
 
-python _mypy.py src/main.py
-python _mypy.py src/reset.py
-python _mypy.py src/audio.py
-python _mypy.py src/combine_srt.py
-python _mypy.py src/update_excel.py
+uv run _pyright.py src
+uv run _pyright.py src/main.py
+uv run _pyright.py src/main
+uv run _pyright.py src/helper
+uv run _pyright.py src/utils
 
-python _pyright.py src
-python _pyright.py src/main.py
-python _pyright.py src/main
-python _pyright.py src/helper
-python _pyright.py src/utils
-
-
+uv run _mypy.py src/main.py
+uv run _mypy.py src/reset.py
+uv run _mypy.py src/audio.py
+uv run _mypy.py src/combine_srt.py
+uv run _mypy.py src/update_excel.py
 
 projects: 94, filesAll: 1964, durationAll: 150:28:44.164, charsAll: 5809022, wordsAll: 905348, sentencesAll: 58816

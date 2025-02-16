@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 19.01.2025
+    © Jürgen Schoenemeyer, 19.02.2025
 
     src/utils/excel.py
 
@@ -7,8 +7,8 @@
      - check_excel_file_exists(filepath: Path | str) -> bool
 
      - read_excel_file(folderpath: Path | str, filename: str) -> None | Tuple[Workbook, float]
-     - read_excel_worksheet(folderpath: str, filename: str, sheet_name: str) -> None | Tuple[Worksheet, float]
-     - get_excel_worksheet(workbook: Workbook, sheet_name: str) -> None | Worksheet
+     - read_excel_worksheet(folderpath: str, filename: str, sheet_name: str) -> Tuple[Worksheet | None, float]
+     - get_excel_worksheet(workbook: Workbook, sheet_name: str) -> Worksheet | None
 
      - get_cell_text(in_cell: Cell | MergedCell) -> str:
      - get_cell_value(in_cell: Cell | MergedCell, check_boolean: bool = True) -> bool | str
@@ -26,7 +26,7 @@ import re
 import unicodedata
 import warnings
 
-from typing import Tuple
+from typing import Any, Tuple
 from pathlib import Path
 from datetime import datetime
 
@@ -40,8 +40,6 @@ from openpyxl.cell.cell import Cell, MergedCell
 
 # from openpyxl.workbook.defined_name import DefinedName, DefinedNameList
 # from openpyxl.worksheet._write_only import WriteOnlyWorksheet
-# from openpyxl.worksheet._read_only import ReadOnlyWorksheet
-# from openpyxl.chartsheet.chartsheet import Chartsheet
 # from openpyxl.cell.read_only import ReadOnlyCell
 # from openpyxl.styles.named_styles import NamedStyle
 
@@ -72,37 +70,45 @@ def read_excel_file(folderpath: Path | str, filename: str) -> Tuple[Workbook | N
         return None, 0
 
     try:
-        workbook = load_workbook(filename = filepath)
+        workbook: Workbook = load_workbook(filename = filepath)
     except OSError as err:
         Trace.error(f"{err}")
         return None, 0
 
     return workbook, get_modification_timestamp(filepath)
 
-def read_excel_worksheet(folderpath: str, filename: str, sheet_name: str) -> Tuple[Worksheet | None, float]:
+def read_excel_worksheet(folderpath: Path | str, filename: str, sheet_name: str) -> Tuple[Worksheet | None, float]:
     filepath = Path(folderpath) / filename
 
     if check_excel_file_exists(filepath) is False:
-        return None, 0
+        return None, 0.0
 
     try:
         workbook: Workbook = load_workbook(filename = filepath)
     except OSError as err:
         Trace.error(f"{err}")
-        return None, 0
+        return None, 0.0
 
     try:
-        sheet: Worksheet = workbook[sheet_name]
+        sheet = workbook[sheet_name]
+        assert isinstance(sheet, Worksheet)
+    except AssertionError:
+        Trace.error(f"'{sheet_name}' is not a Worksheet")
+        return None, 0.0
     except KeyError as err:
         Trace.error(f"KeyError: {err}")
-        return None, 0
+        return None, 0.0
 
     check_hidden_rows_columns(sheet)
     return sheet, get_modification_timestamp(filepath)
 
-def get_excel_worksheet(workbook: Workbook, sheet_name: str) -> None | Worksheet:
+def get_excel_worksheet(workbook: Workbook, sheet_name: str) -> Worksheet | None:
     try:
-        sheet: Worksheet = workbook[sheet_name]
+        sheet = workbook[sheet_name]
+        assert isinstance(sheet, Worksheet)
+    except AssertionError:
+        Trace.error(f"'{sheet_name}' is not a Worksheet")
+        return None
     except KeyError as err:
         Trace.error(f"{err}")
         return None
@@ -112,7 +118,7 @@ def get_excel_worksheet(workbook: Workbook, sheet_name: str) -> None | Worksheet
 
 # check if column(s) or row(s) are hidden
 
-def check_hidden_rows_columns(sheet: Worksheet) -> None:
+def check_hidden_rows_columns(sheet: Any) -> None:
     for key, value in sheet.column_dimensions.items():
         if value.hidden is True:
             if key != "A":

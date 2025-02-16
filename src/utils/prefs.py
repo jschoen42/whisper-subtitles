@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 04.02.2025
+    © Jürgen Schoenemeyer, 20.02.2025
 
     src/utils/prefs.py
 
@@ -16,9 +16,9 @@
 import json
 import re
 
-from json    import JSONDecodeError
 from pathlib import Path
 from typing  import Any, Dict, List, Tuple
+from json    import JSONDecodeError
 
 import yaml
 
@@ -74,7 +74,7 @@ class Prefs:
     def get(cls, key_path: str, default:Any = None) -> Any:
 
         def get_pref_key(key_path: str) -> Any: # key_path = "one.two.three" -
-            keys = key_path.split(".")
+            keys: list[str] = key_path.split(".")
 
             data = cls.data
 
@@ -87,6 +87,7 @@ class Prefs:
                     return default
 
                 data = data[key]
+
             return data
 
         result = get_pref_key(key_path)

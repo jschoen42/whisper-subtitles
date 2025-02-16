@@ -21,7 +21,7 @@ import hashlib
 from typing import Any, Dict, List, Set, Tuple
 import numpy
 
-from main.spacy import analyse_sentences_spacy
+from primary.spacy import analyse_sentences_spacy
 
 from utils.trace import Trace
 from utils.prefs import Prefs
@@ -651,7 +651,9 @@ def prepare_words(data: Dict[str, Any], is_faster_whisper: bool, is_intro: bool,
 #
 ####################################################
 
-def split_to_lines(words: List[Dict[str, Any]], dictionary: Dict[str, Any]) -> Tuple[List[Dict[str, Any]], str, str, Dict[str, Any], Dict[str, Any]]:
+from helper.captions import Segment  # noqa: E402
+
+def split_to_lines(words: List[Dict[str, Any]], dictionary: Dict[str, Any]) -> Tuple[List[Segment], str, str, Dict[str, Any], Dict[str, Any]]:
     line  = ""
     lines = ""
 
@@ -661,7 +663,7 @@ def split_to_lines(words: List[Dict[str, Any]], dictionary: Dict[str, Any]) -> T
 
     corrected_details: Dict[str, Any] = {}
 
-    captions: List[Dict[str, Any]] = []
+    captions: List[Segment] = []
     section = 0
 
     def check_any_runctuation(word: str) -> bool:
@@ -792,11 +794,12 @@ def split_to_lines(words: List[Dict[str, Any]], dictionary: Dict[str, Any]) -> T
             lines += line
 
             section += 1
-            caption: Dict[str, Any] = {}
-            caption["section"] = section
-            caption["start"]   = start
-            caption["end"]     = end
-            caption["text"]    = line.lstrip()
+            caption: Segment = {
+                "section": section,
+                "start":   start,
+                "end":     end,
+                "text":    line.lstrip(),
+            }
             captions.append(caption)
 
             start_format = format_timestamp(start)

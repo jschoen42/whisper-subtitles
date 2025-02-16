@@ -1,19 +1,20 @@
 """
-    © Jürgen Schoenemeyer, 17.01.2025
+    © Jürgen Schoenemeyer, 17.02.2025
 
-    src/helper/whisper_excel_import.py
+    src/helper/excel_read.py (calamine)
 
     https://github.com/tafia/calamine
 
     PUBLIC:
-     - import_project_excel(pathname: Path | str, filename: str)           -> None | Dict[str, Any]
-     - import_dictionary_excel(pathname: Path | str, filename: str)        -> None | Tuple[ DictionaryResultDict, SheetNames, float ]
-     - import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None | Tuple[List[str], List[str], List[List[str]]]
-     - import_captions_excel(pathname: Path | str, filename: str)          -> None | List[ColumnSubtitleInfo]
-     - import_ssml_rules_excel(pathname: Path | str, filename: str)        -> None | Dict[str, Any]
+     - import_project_excel(pathname: Path | str, filename: str)           -> Project | None
+     - import_dictionary_excel(pathname: Path | str, filename: str)        -> Dictionary | None
+     - import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> PreCheck | None
+     - import_captions_excel(pathname: Path | str, filename: str)          -> Captions | None
+     - import_ssml_rules_excel(pathname: Path | str, filename: str)        -> SSML_Rules | None
 """
 
-from typing import Any, Dict, List, NamedTuple, Tuple
+from __future__ import annotations # -> forward declaration
+from typing import Any, Dict, List, NamedTuple, Tuple, TypedDict
 from pathlib import Path
 
 from python_calamine import CalamineWorkbook, CalamineError, WorksheetNotFound
@@ -38,13 +39,55 @@ from utils.excel     import check_excel_file_exists, check_double_quotes
      - column 5: no prompt (x)
      - column 6: Prompt
 
-    Return
-      - dict prompt: main_prompt
-      - list parts: [speaker, files [filename, folder, isIntro, prompt]]
-
+    Result
+    {
+      "prompt": "DATEV ...",
+      "parts": [
+        {
+          "speaker": "Gunther Schwanke",
+          "files": [
+            {
+              "file": "OSR_2409_KB_Kap_01_00.mp4",
+              "folder": "",
+              "isIntro": true,
+              "prompt": "Gunther Schwanke »Aktuelles aus dem Arbeitsrecht Juli 2024«"
+            },
+            ...
+          ]
+        },
+        {
+          "speaker": "Markus Burgenmeister",
+          "files": [
+            {
+              "file": "OSR_2409_KB_Kap_02_00.mp4",
+              "folder": "",
+              "isIntro": true,
+              "prompt": "Markus Burgenmeister »Optionales Statusfeststellungsverfahren«"
+            },
+            ...
+          ]
+        }
+        ...
+      ]
+    }
 """
+
+class Project(TypedDict):
+    prompt: str
+    parts: List[Speaker]
+
+class Speaker(TypedDict):
+    speaker: str
+    files: List[File]
+
+class File(TypedDict):
+    file: str
+    folder: str
+    isIntro: bool
+    prompt: str
+
 @duration("import '{filename}'")
-def import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str, Any]:
+def import_project_excel(pathname: Path | str, filename: str) -> Project | None:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -64,10 +107,9 @@ def import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str
     filename = ""
     speaker = ""
     main_prompt = ""
-
-    result: Dict[str, Any] = {}
-    part: Dict[str, Dict[str, Any]] = {}
     speakers: List[str] = []
+
+    part: Dict[str, Speaker] = {}
 
     for i, row in enumerate(data):
         if i == 0:
@@ -105,11 +147,13 @@ def import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str
                     "prompt": prompt,
                 })
 
-        result["prompt"] = main_prompt
-        result["parts"]  = []
+    result: Project = {
+        "prompt": main_prompt,
+        "parts": []
+    }
 
-        for _key, value in part.items():
-            result["parts"].append(value)
+    for _key, value in part.items():
+        result["parts"].append(value)
 
     return result
 
@@ -137,16 +181,23 @@ def import_project_excel(pathname: Path | str, filename: str) -> None | Dict[str
       - list of sheet names
       - file timestamp
 """
+
 class DictionaryEntry(NamedTuple):
     correction: str
     sheet_name: str
     row: int
 
-DictionaryResultDict = Dict[str, DictionaryEntry]
+DictionaryDict = Dict[str, DictionaryEntry]
 SheetNames = List[str]
 
+Dictionary = Tuple[
+    DictionaryDict,
+    SheetNames,
+    float
+]
+
 @duration("import '{filename}'")
-def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple[ DictionaryResultDict, SheetNames, float ]:
+def import_dictionary_excel(pathname: Path | str, filename: str) -> Dictionary | None:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -160,13 +211,13 @@ def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple
         Trace.error(f"CalamineError: {err}")
         return None
 
-    result: DictionaryResultDict = {}
+    result: DictionaryDict = {}
 
     for sheet_name in workbook.sheet_names:
         if sheet_name.startswith("-"):
             continue
 
-        data: List[Any]  = workbook.get_sheet_by_name(sheet_name).to_python(skip_empty_area=False)
+        data: List[Any]	 = workbook.get_sheet_by_name(sheet_name).to_python(skip_empty_area=False)
 
         for i, row in enumerate(data):
             if i == 0:
@@ -218,8 +269,17 @@ def import_dictionary_excel(pathname: Path | str, filename: str) -> None | Tuple
      - List: singles: www.mydatev.de, KOST1, Meier-Muster, BA-BEA ...
      - List: multiples: 'en block', 'Société à responsabilité limitée'
 """
+
+PreCheck = Tuple[
+    List[str],      # abbreviations_with_dot: z.B., Abs., ggf., ...
+    List[str],      # singles: www.mydatev.de, KOST1, Meier-Muster, BA-BEA ...
+    List[
+        List[str]   # ["Microsoft","Customer","Agreement"]
+    ],
+]
+
 @duration("import '{filename}'")
-def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None | Tuple[List[str], List[str], List[List[str]]]:
+def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> PreCheck | None:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -291,8 +351,21 @@ def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> None 
       - Segement
         [start_timecode, end_timecode, [id, text, type, pause], ...]
 """
+
+class ColumnSubtitleExcel(TypedDict):
+    start: float
+    end:   float
+    mark:  str
+    type:  str
+    text:  str
+    pause: float
+
+Captions = List [
+    List[ColumnSubtitleExcel]
+]
+
 @duration("import '{filename}'")
-def import_captions_excel(pathname: Path | str, filename: str) -> None | List[List[Any]]:
+def import_captions_excel(pathname: Path | str, filename: str) -> Captions | None:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -395,8 +468,15 @@ def import_captions_excel(pathname: Path | str, filename: str) -> None | List[Li
      - language: template: <template> / rules: [pre, key, post, value]
      - say_as:   template: <template> / rules: [pre, key, post, value]
 """
+
+class Rules(TypedDict):
+    template: str
+    rules: List[List[str]]
+
+SSML_Rules = Dict[str, Rules]
+
 @duration("import '{filename}'")
-def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[str, Any]:
+def import_ssml_rules_excel(pathname: Path | str, filename: str) -> SSML_Rules | None:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -410,7 +490,7 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> None | Dict[
         Trace.error(f"CalamineError: {err}")
         return None
 
-    result: Dict[str, Any] = {}
+    result: SSML_Rules = {}
     trace_details = "import"
 
     for sheet_name in workbook.sheet_names:

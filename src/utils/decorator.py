@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 27.01.2025
+    © Jürgen Schoenemeyer, 27.0.2025
 
     src/utils/decorator.py
 
@@ -14,6 +14,7 @@
 """
 
 import contextlib
+from inspect import BoundArguments, Signature
 import time
 import re
 import functools
@@ -92,7 +93,7 @@ def my_decorator(function=None, *, ... ) -> Callable:
 
 def duration(special: Callable[[Any], Any] | str | None = None, *, text: str | None = None, rounds: int=1) -> Callable[[Any], Any]:
     def decorator(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
-        @functools.wraps(func)
+        @functools.wraps(wrapped=func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
 
             # get all input args & kwargs of the decorated function
@@ -146,7 +147,7 @@ def duration(special: Callable[[Any], Any] | str | None = None, *, text: str | N
 
 def deprecated(special: Callable[[Any], Any] | str | None = None, *, message: str | None = None) -> Callable[[Any], Any]:
     def decorator(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
-        @functools.wraps(func)
+        @functools.wraps(wrapped=func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
 
             text = ""
@@ -171,7 +172,7 @@ def deprecated(special: Callable[[Any], Any] | str | None = None, *, message: st
         return wrapper
 
     if callable(special):
-        return decorator(special) # @deprecated
+        return decorator(func=special) # @deprecated
     else:
         return decorator          # @deprecated( ...
 
@@ -240,8 +241,8 @@ def retry_exception(text: str | None = None, exception: type[BaseException] = Ex
 # get args and kwargs values -> default values are considered
 
 def get_args_values( func: Callable[[Any], Any], *args: Any, **kwargs: Any ) -> Tuple[List[Any], Dict[Any, Any]]:
-    sig = inspect.signature(func)
-    bound_args = sig.bind_partial(*args, **kwargs)
+    sig: Signature = inspect.signature(func)
+    bound_args: BoundArguments = sig.bind_partial(*args, **kwargs)
     bound_args.apply_defaults()
 
     args_values: Any = []
@@ -283,7 +284,7 @@ def replace_argument_values(match: Match[str], func_name: str, args_values: List
 
 def type_check(*expected_types: type) -> Callable[[Any], Any]:
     def decorator(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
-        @functools.wraps(func)
+        @functools.wraps(wrapped=func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             result = func(*args, **kwargs)
 

@@ -10,7 +10,7 @@ from utils.trace   import Trace
 
 from helper.excel_read import import_project_excel
 from helper.analyse    import get_video_length
-from helper.captions   import import_caption, writefile_srt
+from helper.captions   import import_caption, writefile_srt, Segment
 
 data_path = BASE_PATH / "../data"
 
@@ -74,7 +74,7 @@ def main() -> None:
 
         offset = 0.0
         section_number = 0
-        captions_new = []
+        captions_new: List[Segment] = []
 
         for part, _value in captions_info.items():
             duration      = float(captions_info[part]["duration"])
@@ -83,11 +83,12 @@ def main() -> None:
             for caption_info in caption_infos:
                 section_number += 1
 
-                caption_modified: Dict[str, Any] = {}
-                caption_modified["section"] = section_number
-                caption_modified["start"]   = offset + caption_info["start"]
-                caption_modified["end"]     = offset + caption_info["end"]
-                caption_modified["text"]    = caption_info["text"]
+                caption_modified: Segment = {
+                    "section": section_number,
+                    "start":   offset + caption_info["start"],
+                    "end":     offset + caption_info["end"],
+                    "text":    caption_info["text"],
+                }
                 captions_new.append( caption_modified )
 
             offset += duration
