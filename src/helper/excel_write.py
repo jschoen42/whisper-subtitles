@@ -1,29 +1,30 @@
 """
-    © Jürgen Schoenemeyer, 31.01.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     src/helper/excel_write.py (xlsxwriter)
 
     PUBLIC:
-      - export_TextToSpeech_excel(data: List[ColumnSubtitleInfo], pathname: Path | str, filename: str) -> bool:
+      - export_text_to_speech_excel(data: List[ColumnSubtitleInfo], pathname: Path | str, filename: str) -> bool:
 
     PRIVATE:
      - def page_setup_print(worksheet: Any) -> None:
 """
+from __future__ import annotations
 
-from typing import Any, Dict, List, NamedTuple, TypedDict, cast
-from pathlib import Path
 from enum import StrEnum
+from pathlib import Path
+from typing import Any, Dict, List, NamedTuple, TypedDict, cast
 
-import xlsxwriter                               # type: ignore[import-untyped]
-from xlsxwriter.exceptions import XlsxFileError # type: ignore[import-untyped]
+import xlsxwriter  # type: ignore[import-untyped]
+from xlsxwriter.exceptions import XlsxFileError  # type: ignore[import-untyped]
 
-from utils.trace     import Trace
 from utils.decorator import duration
-from utils.file      import create_folder
-from utils.excel     import seconds_to_timecode_excel
+from utils.excel import seconds_to_timecode_excel
+from utils.file import create_folder
+from utils.trace import Trace
 
 """
-    export_TextToSpeech_excel(
+    export_text_to_speech_excel(
         data: List[SubtitleColumnFormat],
         pathname: Path | str,
         filename: str
@@ -127,7 +128,7 @@ global_styles = {
 }
 
 @duration("export '{filename}'")
-def export_TextToSpeech_excel(data: List[SubtitleColumnFormat], pathname: Path | str, filename: str) -> bool:
+def export_text_to_speech_excel(data: List[SubtitleColumnFormat], pathname: Path | str, filename: str) -> bool:
     pathname = Path(pathname)
 
     create_folder(pathname)
@@ -173,7 +174,7 @@ def export_TextToSpeech_excel(data: List[SubtitleColumnFormat], pathname: Path |
     last_end = True
     count = 0
 
-    for i in range(0, len(data)):
+    for i in range(len(data)):
         subtitle_info = cast(ColumnSubtitleInfo, data[i])
 
         start = seconds_to_timecode_excel(subtitle_info["start"])

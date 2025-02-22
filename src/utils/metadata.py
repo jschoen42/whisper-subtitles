@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 12.02.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     src/utils/metadata.py
 
@@ -10,13 +10,17 @@
      - get_video_metadata(filepath: str | BytesIO) -> None | Dict[str, Any]
      - get_audio_metadata(filepath: str | BytesIO) -> None | Dict[str, Any]
 """
+from __future__ import annotations
 
-from typing import Any, Dict, Protocol, cast
-from io import BytesIO
+from typing import TYPE_CHECKING, Any, Dict, Protocol, cast
 
 from pymediainfo import MediaInfo, Track
 
 from utils.trace import Trace
+
+if TYPE_CHECKING:
+    from io import BytesIO
+
 
 class AudioTrack(Protocol):
     track_type: str                        # "Audio"
@@ -170,7 +174,7 @@ def get_video_metadata(filepath: str | BytesIO) -> None | Dict[str, Any]:
             "format":     "",
             "bitrate":    0.0,
             "fps":        0.0,
-            "colorInfo":  ""
+            "colorInfo":  "",
         },
 
         "audio": {
@@ -179,7 +183,7 @@ def get_video_metadata(filepath: str | BytesIO) -> None | Dict[str, Any]:
             "channels":     0,
             "bitrate":      0.0,
             "samplingRate": 0,
-        }
+        },
     }
 
     # https://pymediainfo.readthedocs.io/en/stable/

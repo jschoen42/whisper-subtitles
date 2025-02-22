@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 20.02.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     src/utils/trace.py
 
@@ -33,23 +33,23 @@
       - Color.<color_name>
       - Color.clear(text: str) -> str:
 """
+from __future__ import annotations
 
-import platform
-import sys
-import os
-import re
-import inspect
 import importlib.util
-
-from typing import Any, Callable, Dict, List
-from typing_extensions import override
-from types import FrameType
+import inspect
+import platform
+import re
+import sys
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from datetime import datetime
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Dict, List
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from zoneinfo import ZoneInfo
-from zoneinfo import ZoneInfoNotFoundError
+from typing_extensions import override
+
+if TYPE_CHECKING:
+    from types import FrameType
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 
@@ -140,7 +140,7 @@ class Trace:
     default_base: Path = BASE_PATH.resolve()
     default_base_folder: str = str(default_base).replace("\\", "/")
 
-    settings: Dict[str, Any] = {
+    settings: ClassVar[Dict[str, Any]] = {
         "appl_folder":    default_base_folder + "/",
 
         "color":          True,
@@ -153,8 +153,8 @@ class Trace:
         "show_caller":    True,
     }
 
-    pattern:  List[str] = []
-    messages: List[str] = []
+    pattern:  ClassVar[List[str]] = []
+    messages: ClassVar[List[str]] = []
     csv: bool = False
     output: Callable[..., None] | None = None
 
@@ -169,7 +169,7 @@ class Trace:
                     # tzdata installed ?
 
                     if importlib.util.find_spec("tzdata") is None:
-                        print( f"{pattern['warning']} install 'tzdata' for named timezones")
+                        print( f"{pattern['warning']} install 'tzdata' for named timezones")  # noqa: T201
                         cls.settings[key] = True
                     else:
 
@@ -178,7 +178,7 @@ class Trace:
                         try:
                             _ = ZoneInfo(value)
                         except ZoneInfoNotFoundError:
-                            print( f"{pattern['error']} tzdata '{value}' unknown timezone")
+                            print( f"{pattern['error']} tzdata '{value}' unknown timezone")  # noqa: T201
                             cls.settings[key] = True
 
             else:
@@ -209,9 +209,9 @@ class Trace:
 
         try:
             if not trace_path.is_dir():
-                os.makedirs(path)
+                Path(path).mkdir(parents=True)
 
-            with open(Path(trace_path, f"{filename} • {curr_time}.txt"), "w", encoding="utf-8") as file:
+            with Path.open(Path(trace_path, f"{filename} • {curr_time}.txt"), mode="w", encoding="utf-8", newline="\n") as file:
                 file.write(text)
 
         except OSError as err:
@@ -303,18 +303,18 @@ class Trace:
             pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
             cls.__show_message(cls.__check_file_output(), pre, message, *optional)
             try:
-                print(f"{Color.RED}{Color.BOLD} >>> Press Any key to continue or ESC to exit <<< {Color.RESET}", end="", flush=True)
+                print(f"{Color.RED}{Color.BOLD} >>> Press Any key to continue or ESC to exit <<< {Color.RESET}", end="", flush=True)  # noqa: T201
 
                 if platform.system() == "Windows":
                     import msvcrt
 
                     key = msvcrt.getch()                      # type: ignore[attr-defined] # -> Linux
-                    print()
+                    print()  # noqa: T201
 
                 else: # unix terminal
 
-                    import tty
                     import termios
+                    import tty
 
                     fd: int = sys.stdin.fileno()
                     old_settings: Any = termios.tcgetattr(fd)  # type: ignore[attr-defined] # -> Windows
@@ -325,7 +325,7 @@ class Trace:
                         termios.tcsetattr(                     # type: ignore[attr-defined] # -> Windows
                             fd,
                             termios.TCSADRAIN,                 # type: ignore[attr-defined] # -> Windows
-                            old_settings
+                            old_settings,
                         )
                         print()
 
@@ -352,7 +352,7 @@ class Trace:
     @classmethod
     def __get_time_timezone(cls, tz: bool | str) -> str:
         if tz is False:
-            return datetime.now().strftime("%H:%M:%S.%f")[:-3]
+            return datetime.now().astimezone().strftime("%H:%M:%S.%f")[:-3]
 
         elif tz is True:
             d = datetime.now().astimezone()
@@ -460,10 +460,10 @@ class Trace:
 
         # https://docs.python.org/3/library/sys.html#sys.displayhook
 
-        bytes = (text_no_tabs + "\n").encode("utf-8", "backslashreplace")
+        data = (text_no_tabs + "\n").encode("utf-8", "backslashreplace")
         if hasattr(sys.stdout, "buffer"):
-            sys.stdout.buffer.write(bytes)
+            sys.stdout.buffer.write(data)
             sys.stdout.flush()
         else:
-            text = bytes.decode("utf-8", "strict")
+            text = data.decode("utf-8", "strict")
             sys.stdout.write(text)

@@ -221,6 +221,7 @@ git merge feature/...
 git status
 
 git push -u origin main
+git push origin main --force
 
 git branche -d feature/... (delete)
 

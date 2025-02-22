@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 27.0.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     src/utils/decorator.py
 
@@ -12,18 +12,20 @@
       - def get_args_values( func: Callable, *args: Any, **kwargs: Any ) -> Tuple[List, Dict]:
       - def replace_arguments(match: Match, func_name: str, *args: Any, **kwargs: Any) -> str:
 """
+from __future__ import annotations
 
 import contextlib
-from inspect import BoundArguments, Signature
-import time
-import re
 import functools
 import inspect
+import re
+import time
+from inspect import BoundArguments, Signature
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Match, Tuple
 
-from typing import Any, Dict, Generator, List, Match, Tuple
-from collections.abc import Callable
+from utils.trace import Color, Trace
 
-from utils.trace import Trace, Color
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 """ Decorator '@my_decorator'
 
@@ -110,11 +112,11 @@ def duration(special: Callable[[Any], Any] | str | None = None, *, text: str | N
 
             if isinstance(special, str): # text as arg
                 pretext = special
-            else:                        # text as kwarg
-                if text is None:
-                    pretext = func.__name__
-                else:
-                    pretext = text
+
+            elif text is None:           # text as kwarg
+                pretext = func.__name__
+            else:
+                pretext = text
 
             # replace arg, kwarg: {0} or {0|name} or {0|name} or {__name__}
             # args_values: ['Max', 99, False], kwargs_values: {'name': 'Max', 'number': 99, 'type': False}
@@ -153,9 +155,9 @@ def deprecated(special: Callable[[Any], Any] | str | None = None, *, message: st
             text = ""
             if isinstance(special, str): # message as arg
                 text = special
-            else:                        # message as kwarg
-                if message is not None:
-                    text = message
+
+            elif message is not None:    # message as kwarg
+                text = message
 
             # before ...
 
@@ -203,7 +205,7 @@ def deprecated(message: str="") -> Callable:
 # @retry_exception("error limit '{0}'", exception=ValueError)
 # @retry_exception("ttx => font '{0}'", exception=ValueError, delay=2.5, retries=10)
 
-def retry_exception(text: str | None = None, exception: type[BaseException] = Exception, delay: int|float = 1, retries: int = 5) -> Callable[[Any], Any]:
+def retry_exception(text: str | None = None, exception: type[BaseException] = Exception, delay: float = 1, retries: int = 5) -> Callable[[Any], Any]:
     def decorator(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -269,10 +271,10 @@ def replace_argument_values(match: Match[str], func_name: str, args_values: List
             if pos < len(args_values):
                 return str(args_values[pos])
 
-        else:
-            # kwargs_values: {type} -> kwargs_values["type"]
-            if argument in kwargs_values:
-                return str(kwargs_values.get(argument))
+        # kwargs_values: {type} -> kwargs_values["type"]
+
+        elif argument in kwargs_values:
+            return str(kwargs_values.get(argument))
 
     return ""
 

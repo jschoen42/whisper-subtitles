@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 18.02.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     PUBLIC:
      - import_caption(dirname: Path | str, basename: str) -> Captions | None
@@ -13,15 +13,16 @@
      - seconds_to_timecode_vtt(x: float, fps: float) -> str
      - parse_timecode(text: str) -> float
 """
+from __future__ import annotations
 
-from typing  import List, Tuple, TypedDict
 from pathlib import Path
+from typing import List, Tuple, TypedDict
 
-import webvtt # type: ignore[import-untyped]
+import webvtt  # type: ignore[import-untyped]
 
+from utils.file import export_text
 from utils.trace import Trace
-from utils.file  import export_text
-from utils.util  import format_timestamp
+from utils.util import format_timestamp
 
 # PUBLIC
 
@@ -34,7 +35,7 @@ class Segment(TypedDict):
 Captions = Tuple[
     List[Segment],
     int,
-    List[int]
+    List[int],
 ]
 
 def import_caption(dirname: Path | str, basename: str) -> Captions | None:
@@ -42,8 +43,6 @@ def import_caption(dirname: Path | str, basename: str) -> Captions | None:
 
     filepath = dirname / basename
     extension = filepath.suffix
-
-    filepath.suffix
 
     if extension == ".vtt":
         try:
@@ -83,7 +82,7 @@ def import_caption(dirname: Path | str, basename: str) -> Captions | None:
             "section": i + 1,
             "start": start,
             "end":   end,
-            "text":  text
+            "text":  text,
         }
 
         segments.append(segment)

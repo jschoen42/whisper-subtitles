@@ -1,24 +1,27 @@
 """
-    © Jürgen Schoenemeyer, 30.01.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     src/helper/excel_update.py (openpyxl)
 
     PUBLIC:
       - update_dictionary_excel(pathname: Path | str, filename: str, filename_update: str, column_name: str, data: Dict[str, Any]) -> bool
 """
+from __future__ import annotations
 
-from typing import Any, Dict
+from enum import IntEnum, StrEnum
 from pathlib import Path
-from enum import StrEnum, IntEnum
+from typing import TYPE_CHECKING, Any, Dict
 
 from openpyxl import load_workbook
-from openpyxl.styles import NamedStyle, Font, Alignment
-from openpyxl.workbook.workbook import Workbook
-from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl.styles import Alignment, Font, NamedStyle
 
-from utils.trace     import Trace
 from utils.decorator import duration
-from utils.excel     import get_cell_text, check_excel_file_exists
+from utils.excel import check_excel_file_exists, get_cell_text
+from utils.trace import Trace
+
+if TYPE_CHECKING:
+    from openpyxl.workbook.workbook import Workbook
+    from openpyxl.worksheet.worksheet import Worksheet
 
 class Color(StrEnum):
     WHITE     = "ffffff"
@@ -75,7 +78,7 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
         ws: Worksheet = wb[sheet_name]
 
         row = -1
-        for i in range(0, ws.max_column):
+        for i in range(ws.max_column):
             if get_cell_text(ws[1][i]) == column_name:
                 row = i
                 break

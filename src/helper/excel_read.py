@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 17.02.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     src/helper/excel_read.py (calamine)
 
@@ -8,21 +8,21 @@
     PUBLIC:
      - import_project_excel(pathname: Path | str, filename: str)           -> Project | None
      - import_dictionary_excel(pathname: Path | str, filename: str)        -> Dictionary | None
-     - import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> PreCheck | None
+     - import_hunspell_pre_check_excel(pathname: Path | str, filename: str) -> PreCheck | None
      - import_captions_excel(pathname: Path | str, filename: str)          -> Captions | None
      - import_ssml_rules_excel(pathname: Path | str, filename: str)        -> SSML_Rules | None
 """
+from __future__ import annotations
 
-from __future__ import annotations # -> forward declaration
-from typing import Any, Dict, List, NamedTuple, Tuple, TypedDict
 from pathlib import Path
+from typing import Any, Dict, List, NamedTuple, Tuple, TypedDict
 
-from python_calamine import CalamineWorkbook, CalamineError, WorksheetNotFound
+from python_calamine import CalamineError, CalamineWorkbook, WorksheetNotFound
 
-from utils.trace     import Trace
 from utils.decorator import duration
-from utils.file      import get_modification_timestamp
-from utils.excel     import check_excel_file_exists, check_double_quotes
+from utils.excel import check_double_quotes, check_excel_file_exists
+from utils.file import get_modification_timestamp
+from utils.trace import Trace
 
 """
     Excel: Project Infos -> SpeechToText
@@ -137,7 +137,7 @@ def import_project_excel(pathname: Path | str, filename: str) -> Project | None:
                     speakers.append(speaker)
                     part[speaker] = {
                         "speaker": speaker,
-                        "files": []
+                        "files": [],
                     }
 
                 part[speaker]["files"].append({
@@ -149,10 +149,10 @@ def import_project_excel(pathname: Path | str, filename: str) -> Project | None:
 
     result: Project = {
         "prompt": main_prompt,
-        "parts": []
+        "parts": [],
     }
 
-    for _key, value in part.items():
+    for value in part.values():
         result["parts"].append(value)
 
     return result
@@ -193,7 +193,7 @@ SheetNames = List[str]
 Dictionary = Tuple[
     DictionaryDict,
     SheetNames,
-    float
+    float,
 ]
 
 @duration("import '{filename}'")
@@ -279,7 +279,7 @@ PreCheck = Tuple[
 ]
 
 @duration("import '{filename}'")
-def import_hunspell_PreCheck_excel(pathname: Path | str, filename: str) -> PreCheck | None:
+def import_hunspell_pre_check_excel(pathname: Path | str, filename: str) -> PreCheck | None:
     pathname = Path(pathname)
     filepath = pathname / filename
 
@@ -393,8 +393,6 @@ def import_captions_excel(pathname: Path | str, filename: str) -> Captions | Non
         if i == 0:
             continue # skip header
 
-        row = data[i]
-
         start  = row[0].strip()
         end    = row[1].strip()
         marked = row[2].strip().lower() == "x" # start of one ssml
@@ -507,8 +505,6 @@ def import_ssml_rules_excel(pathname: Path | str, filename: str) -> SSML_Rules |
         for i, row in enumerate(data):
             if i == 0:
                continue # skip header
-
-            row = data[i]
 
             _error, key = check_double_quotes(sheet_name, row[1], i+1, filename)
             if key != "":

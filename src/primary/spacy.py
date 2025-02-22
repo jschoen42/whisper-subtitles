@@ -1,25 +1,25 @@
 """
-    © Jürgen Schoenemeyer, 08.01.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     PUBLIC:
      - init_spacy(language: str) -> None
      - get_modelname_spacy(language: str) -> str
      - analyse_sentences_spacy(text: str, language: str = "de-DE") -> Tuple[List, List]:
 """
+from __future__ import annotations
 
 import re
 import warnings
-
-from typing import Any, Dict, List, Tuple
-from pathlib import Path
 from importlib.metadata import version
+from pathlib import Path
+from typing import Any, Dict, List, Tuple
 
 import spacy
 
-from utils.globals   import BASE_PATH
-from utils.prefs     import Prefs
-from utils.trace     import Trace
 from utils.decorator import duration
+from utils.globals import BASE_PATH
+from utils.prefs import Prefs
+from utils.trace import Trace
 
 # https://spacy.io/models/de
 

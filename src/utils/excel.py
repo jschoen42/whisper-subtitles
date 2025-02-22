@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 19.02.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     src/utils/excel.py
 
@@ -21,31 +21,27 @@
      - convert_datetime( time_string: str ) -> int
      - seconds_to_timecode_excel(x: float) -> str
 """
+from __future__ import annotations
 
 import re
 import unicodedata
 import warnings
-
-from typing import Any, Tuple
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Tuple
 
 from dateutil import parser
-from dateutil.tz import tzoffset
-
 from openpyxl import load_workbook
-from openpyxl.workbook.workbook import Workbook
 from openpyxl.worksheet.worksheet import Worksheet
-from openpyxl.cell.cell import Cell, MergedCell
 
-# from openpyxl.workbook.defined_name import DefinedName, DefinedNameList
-# from openpyxl.worksheet._write_only import WriteOnlyWorksheet
-# from openpyxl.cell.read_only import ReadOnlyCell
-# from openpyxl.styles.named_styles import NamedStyle
-
+from utils.file import check_file_exists, get_modification_timestamp
 from utils.trace import Trace
-from utils.file  import get_modification_timestamp, check_file_exists
-from utils.util  import format_timestamp
+from utils.util import format_timestamp
+
+if TYPE_CHECKING:
+    from dateutil.tz import tzoffset
+    from openpyxl.cell.cell import Cell, MergedCell
+    from openpyxl.workbook.workbook import Workbook
 
 # UserWarning: Data Validation extension is not supported and will be removed
 warnings.simplefilter("ignore")
@@ -91,7 +87,7 @@ def read_excel_worksheet(folderpath: Path | str, filename: str, sheet_name: str)
 
     try:
         sheet = workbook[sheet_name]
-        assert isinstance(sheet, Worksheet)
+        assert isinstance(sheet, Worksheet)  # noqa: S101
     except AssertionError:
         Trace.error(f"'{sheet_name}' is not a Worksheet")
         return None, 0.0
@@ -105,7 +101,7 @@ def read_excel_worksheet(folderpath: Path | str, filename: str, sheet_name: str)
 def get_excel_worksheet(workbook: Workbook, sheet_name: str) -> Worksheet | None:
     try:
         sheet = workbook[sheet_name]
-        assert isinstance(sheet, Worksheet)
+        assert isinstance(sheet, Worksheet)  # noqa: S101
     except AssertionError:
         Trace.error(f"'{sheet_name}' is not a Worksheet")
         return None

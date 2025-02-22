@@ -1,25 +1,24 @@
 """
-    © Jürgen Schoenemeyer, 08.01.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     PUBLIC:
      - hunspell_dictionary_init(path: str, filename: str, language: str = "de-DE") -> None:
      - spellcheck(words: List, debug: bool = False) -> Dict:
 """
+from __future__ import annotations
 
 import re
-
-from typing import Dict, List
 from pathlib import Path
+from typing import Dict, List
 
-from spylls.hunspell import Dictionary # type: ignore[import-untyped]
+from spylls.hunspell import Dictionary  # type: ignore[import-untyped]
 
-from utils.globals   import BASE_PATH
-from utils.trace     import Trace
+from helper.excel_read import import_hunspell_pre_check_excel
 from utils.decorator import duration
-from utils.prefs     import Prefs
-from utils.file      import export_json
-
-from helper.excel_read import import_hunspell_PreCheck_excel
+from utils.file import export_json
+from utils.globals import BASE_PATH
+from utils.prefs import Prefs
+from utils.trace import Trace
 
 # ../data/_hunspell/de-DE.dic
 # ../data/_hunspell/PreCheck_de-DE.xlsx
@@ -44,7 +43,7 @@ def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "d
     if global_dictionary_data is None:
         try:
             global_dictionary_data = Dictionary.from_files(str(path / filename))
-            Trace.result(f"'{str(path / filename)}' loaded")
+            Trace.result(f"'{path / filename}' loaded")
         except OSError as err:
             Trace.fatal(f"{err}")
 
@@ -52,11 +51,11 @@ def hunspell_dictionary_init(path: Path | str, filename: str, language: str = "d
         filename = "PreCheck_" + language + ".xlsx"
 
         if language == "de-DE":
-            ret = import_hunspell_PreCheck_excel(path, filename)
+            ret = import_hunspell_pre_check_excel(path, filename)
             if ret:
                 (   global_special_dot_words,
                     global_precheck_single_words,
-                    global_precheck_multiple_words
+                    global_precheck_multiple_words,
                 ) = ret
             else:
                 Trace.fatal( f"'{filename}' not found" )
@@ -117,47 +116,47 @@ def spellcheck(words: List[str], debug: bool=False) -> Dict[str, int]:
             found = check_multiple_words(word, i)
             if found > 0:
                 i += found
+
+            elif word in global_special_dot_words:
+                i += 1
             else:
-                if word in global_special_dot_words:
-                    i += 1
-                else:
-                    word = word.strip(".':,;!?…\"()<>")  # e.g. " 'Beim Speichern sofort festschreiben'."
+                word = word.strip(".':,;!?…\"()<>")  # e.g. " 'Beim Speichern sofort festschreiben'."
 
-                    if word not in global_precheck_single_words:
-                        try:
-                            checked = global_dictionary_data.lookup(word)
-                        except Exception as err:
-                            Trace.error( f"{i}: {word} -> {err}" )
-                            i += 1
-                            continue
+                if word not in global_precheck_single_words:
+                    try:
+                        checked = global_dictionary_data.lookup(word)
+                    except Exception as err:
+                        Trace.error( f"{i}: {word} -> {err}" )
+                        i += 1
+                        continue
 
-                        if checked:
-                            if word in global_success:
-                                global_success[word] += 1
-                            else:
-                                global_success[word] = 1
-
-                            if debug:
-                                Trace.info(f"ok: '{word}'")
-
+                    if checked:
+                        if word in global_success:
+                            global_success[word] += 1
                         else:
-                            if word in global_failure:
-                                global_failure[word] += 1
-                            else:
-                                global_failure[word] = 1
+                            global_success[word] = 1
 
-                            Trace.error(f"failed: '{word}'")
-                            if word in result:
-                                result[word] += 1
-                            else:
-                                result[word] = 1
+                        if debug:
+                            Trace.info(f"ok: '{word}'")
 
-                    i += 1
+                    else:
+                        if word in global_failure:
+                            global_failure[word] += 1
+                        else:
+                            global_failure[word] = 1
+
+                        Trace.error(f"failed: '{word}'")
+                        if word in result:
+                            result[word] += 1
+                        else:
+                            result[word] = 1
+
+                i += 1
 
     return result
 
 @duration("Hunspell Dictionary result")
-def getSpellStatistic() -> None:
+def get_spell_statistic() -> None:
     path = Prefs.get("trace_all.path")
 
     # success

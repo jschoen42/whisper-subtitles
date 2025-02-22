@@ -1,14 +1,16 @@
 """
-    © Jürgen Schoenemeyer, 08.01.2025
+    Jürgen Schoenemeyer, 22.02.2025
 
     PUBLIC:
      - get_settings_transcribe_faster(info: Dict, media_type: str, media_info: Dict, vad_sampling_rate: int, speech_chunks: List) -> Tuple[Dict[str, Any], List[Dict[str, Any]]]:
 """
 
+from __future__ import annotations
+
 from typing import Any, Dict, List, Tuple
 
-from utils.trace  import Trace
-from utils.util   import format_timestamp
+from utils.trace import Trace
+from utils.util import format_timestamp
 
 """
 TranscriptionInfo(
@@ -65,7 +67,7 @@ def get_settings_transcribe_faster(info: Dict[str, Any], media_type: str, media_
             "language_probability",
             "duration",
             "duration_after_vad",
-            "all_language_probs"
+            "all_language_probs",
         ]
         settings = {p: getattr(info, p) for p in props}
     except Exception as error:
@@ -75,9 +77,7 @@ def get_settings_transcribe_faster(info: Dict[str, Any], media_type: str, media_
     # transcription_options: TranscriptionOptions
 
     try:
-        settings["transcription_options"] = {
-            prop: value for prop, value in info.transcription_options.__dict__.items() # type: ignore[attr-defined]
-        }
+        settings["transcription_options"] = dict(info.transcription_options.__dict__.items()) # type: ignore[attr-defined]
     except Exception as error:
         settings["transcription_options"] = None
         Trace.error(f"{error}")
@@ -85,9 +85,7 @@ def get_settings_transcribe_faster(info: Dict[str, Any], media_type: str, media_
     # vad_options: Optional[VadOptions]
 
     try:
-        settings["vad_options"] = {
-            prop: value for prop, value in info.vad_options.__dict__.items() # type: ignore[attr-defined]
-        }
+        settings["vad_options"] = dict(info.vad_options.__dict__.items())  # type: ignore[attr-defined]
     except Exception as error:
         settings["vad_options"] = None
         Trace.error(f"{error}")

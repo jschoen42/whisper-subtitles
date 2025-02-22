@@ -1,21 +1,22 @@
 # uv run _mypy.py src
 
+from __future__ import annotations
+
 import json
-import os
+import locale
 import platform
 import re
+import shutil
 import subprocess
 import sys
 import time
-import locale
-
-from typing import List
 from argparse import ArgumentParser
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
 from re import Match
 from subprocess import CompletedProcess
+from typing import List
 
 BASE_PATH = Path(sys.argv[0]).parent.parent.resolve()
 RESULT_FOLDER = ".type-check-result"
@@ -42,7 +43,7 @@ def run_mypy(src_path: Path, python_version: str) -> None:
 
     if python_version == "":
         try:
-            with open(".python-version", mode="r") as f:
+            with Path.open(Path(".python-version"), mode="r") as f:
                 python_version = f.read().strip()
         except OSError:
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
@@ -192,9 +193,9 @@ def run_mypy(src_path: Path, python_version: str) -> None:
     if not folder_path.exists():
         folder_path.mkdir(parents=True, exist_ok=True)
 
-    text = f"Python:   {sys.version.replace(LINEFEET, ' ')}\n"
+    text  = f"Python:   {sys.version.replace(LINEFEET, ' ')}\n"
     text += f"Platform: {platform.platform()}\n"
-    text += f"Date:     {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}\n"
+    text += f"Date:     {datetime.now().astimezone().strftime('%d.%m.%Y %H:%M:%S')}\n"
     text += f"Path:     {BASE_PATH}\n"
     text += "\n"
 
@@ -204,17 +205,28 @@ def run_mypy(src_path: Path, python_version: str) -> None:
         text += f" {setting}\n"
     text += "\n"
 
-    config = "tmp.toml"
-    with open(config, "w") as config_file:
+    config = Path("tmp.toml")
+    with Path.open(config, mode="w", newline="\n") as config_file:
         config_file.write(configuration)
 
     try:
-        result: CompletedProcess[str] = subprocess.run(["mypy", str(src_path), "--config-file", "tmp.toml", "--verbose", "--output=json"] + settings, capture_output=True, text=True)
+        mypy_path = shutil.which("mypy")
+        if mypy_path is None:
+            print("Error: 'mypy' not installed -> uv add mypy --dev")
+            sys.exit(1)
+
+        result: CompletedProcess[str] = subprocess.run(
+            [mypy_path, str(src_path), "--config-file", "tmp.toml", "--verbose", "--output=json", *settings],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        # result: CompletedProcess[str] = subprocess.run(["mypy", str(src_path), "--config-file", "tmp.toml", "--verbose", "--output=json"] + settings, capture_output=True, text=True, check=False)
     except Exception as err:
         print(f"error: {err} - mypy")
         sys.exit(1)
     finally:
-        os.remove(config)
+        Path.unlink(config)
 
     # analyse stderr ("--verbose")
 
@@ -253,7 +265,7 @@ def run_mypy(src_path: Path, python_version: str) -> None:
 
     mypy_missing_stubs = Path(".mypy_cache") / "missing_stubs"
     if mypy_missing_stubs.exists():
-        with open(mypy_missing_stubs, "r") as f:
+        with Path.open(mypy_missing_stubs, "r") as f:
             lines = f.read()
 
         text += f"stubs missing -> '{mypy_missing_stubs.as_posix()}'\n"
@@ -325,7 +337,7 @@ def run_mypy(src_path: Path, python_version: str) -> None:
     text += "\n" + footer + "\n"
 
     result_filename = f"mypy-{python_version}-'{name}'.txt"
-    with open(folder_path / result_filename, "w", newline="\n") as file:
+    with Path.open(folder_path / result_filename, "w", newline="\n") as file:
         file.write(text)
 
     duration = time.time() - start

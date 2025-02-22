@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 08.01.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     PUBLIC:
      - analyse_results(model_id: str, model_name: str, media_type: str, media_name: str, media_path: str, json_path: str, _info_path: str, _analyse_path: str, beam_size: int) -> None | Dict:
@@ -7,32 +7,34 @@
      - show_complete_results(project: str, duration: float, words: int) -> None
      - get_video_length(path: Path | str, filename: str) -> None | float
 """
+from __future__ import annotations
 
 import io
-
-from typing import Any, Dict, List
 from pathlib import Path
-from typing import Tuple
+from typing import Any, Dict, List, Tuple
 
-import numpy
+import numpy as np
 
-from utils.trace    import Trace
-from utils.file     import import_json
-from utils.metadata import get_audio_duration, get_video_metadata, get_audio_metadata
+from utils.file import import_json
+from utils.metadata import get_audio_duration, get_audio_metadata, get_video_metadata
+from utils.trace import Trace
 
-def analyse_results(model_id: str, model_name: str, media_type: str, media_name: str, media_path: str, json_path: str, _info_path: str, _analyse_path: str, beam_size: int) -> None | Dict[str, Any]:
+
+def analyse_results(model_id: str, model_name: str, media_type: str, media_name: str, media_path: Path | str, json_path: str, _info_path: str, _analyse_path: str, beam_size: int) -> None | Dict[str, Any]:
+
+    media_path = Path(media_path)
 
     condition_on_previous_text = True
     if model_name == "large-v3":
         condition_on_previous_text = False
 
-    media_pathname = media_path + media_name + "." + media_type
+    media_pathname = media_path / (media_name + "." + media_type)
     filename     = f"{media_name} - ({model_id}) {model_name}"
     filename_two = f"{filename}-fast#{condition_on_previous_text}#beam-{beam_size}"
 
     media_duration = 0.0
     try:
-        with open(media_pathname, "rb") as media_file:
+        with Path.open(media_pathname, "rb") as media_file:
             media_data = media_file.read()
 
             if media_type == "mp4":
@@ -84,8 +86,8 @@ def show_parts_results(project: str, results: List[Dict[str, Any]]) -> Tuple[int
         duration += result["duration"]
         words    += result["words"]
 
-    average = numpy.mean(words_per_minute)
-    standard_deviation  = numpy.std(words_per_minute)
+    average = np.mean(words_per_minute)
+    standard_deviation  = np.std(words_per_minute)
 
     Trace.result(f"'{project}' duration: {duration/60:6.2f} minutes, {words} words => words_per_minute: average {average:6.2f}, standard_deviation {standard_deviation:5.2f}" )
     return duration, words
@@ -94,8 +96,10 @@ def show_complete_results(project: str, duration: float, words: int) -> None:
     Trace.result(f"'{project}' duration: {duration/60:6.2f} minutes, {words} words\n" )
 
 def get_video_length(path: Path | str, filename: str) -> None | float:
+    path = Path(path)
+
     try:
-        with open(Path(path, filename), "rb") as media_file:
+        with Path.open(path / filename, "rb") as media_file:
             media_data = media_file.read()
 
             media_details: None |Dict[str, Any] = get_video_metadata(io.BytesIO(media_data))

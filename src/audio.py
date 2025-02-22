@@ -1,17 +1,17 @@
 # .venv/Scripts/activate
 # python src/audio.py
 
-import sys
-import os
-import time
+from __future__ import annotations
 
+import os
+import sys
+import time
 from pathlib import Path
 
+from utils.audio import convert_to_wav  # , filter_to_wav
 from utils.globals import BASE_PATH
-from utils.prefs   import Prefs
-from utils.trace   import Trace
-
-from utils.audio import convert_to_wav # , filter_to_wav
+from utils.prefs import Prefs
+from utils.trace import Trace
 
 SOURCE_TYPE  = ".mp4"
 SAMPLING     = 16000

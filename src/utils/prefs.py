@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 20.02.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     src/utils/prefs.py
 
@@ -12,23 +12,24 @@
      - merge_dicts(a: Dict, b: Dict) -> Dict
      - build_tree(tree: List, in_key: str, value: str) -> Dict
 """
+from __future__ import annotations
 
 import json
 import re
-
+from json import JSONDecodeError
 from pathlib import Path
-from typing  import Any, Dict, List, Tuple
-from json    import JSONDecodeError
+from typing import Any, ClassVar, Dict, List, Tuple
 
 import yaml
 
 from utils.globals import BASE_PATH
-from utils.trace   import Trace
+from utils.trace import Trace
+
 
 class Prefs:
     pref_path: Path = BASE_PATH / "prefs"
     pref_prefix: str = ""
-    data: Dict[Any, Any] = {}
+    data: ClassVar[Dict[Any, Any]] = {}
 
     @classmethod
     def init(cls, pref_path: Path | str | None = None, pref_prefix: str | None = None ) -> None:
@@ -50,7 +51,7 @@ class Prefs:
             Trace.error(f"pref not found '{cls.pref_path}\\{pref_name}'")
             return False
         try:
-            with open( Path(cls.pref_path, pref_name), "r", encoding="utf-8") as file:
+            with Path.open( Path(cls.pref_path, pref_name), mode="r", encoding="utf-8") as file:
                 data = yaml.safe_load(file)
 
             cls.data = dict(merge_dicts(cls.data, data))
@@ -121,7 +122,7 @@ class Prefs:
 
 def get_pref_special(pref_path: Path, pref_prexix: str, pref_name: str, key: str) -> str:
     try:
-        with open(Path(pref_path, pref_prexix + pref_name + ".yaml"), "r", encoding="utf-8") as file:
+        with Path.open(Path(pref_path, pref_prexix + pref_name + ".yaml"), mode="r", encoding="utf-8") as file:
             pref = yaml.safe_load(file)
 
     except yaml.YAMLError as err:
@@ -140,7 +141,7 @@ def get_pref_special(pref_path: Path, pref_prexix: str, pref_name: str, key: str
 
 def read_pref( pref_path: Path, pref_name: str ) -> Tuple[bool, Dict[Any, Any]]:
     try:
-        with open( Path(pref_path, pref_name), "r", encoding="utf-8") as file:
+        with Path.open( Path(pref_path, pref_name), mode="r", encoding="utf-8") as file:
             data = yaml.safe_load(file)
 
         # Trace.wait( f"{pref_name}: {json.dumps(data, sort_keys=True, indent=2)}" )
@@ -194,9 +195,9 @@ def merge(a: Dict[Any, Any], b: Dict[Any, Any], path: List[str] | None = None) -
     for key in b:
         if key in a:
             if isinstance(a[key], dict) and isinstance(b[key], dict):
-                merge(a[key], b[key], path + [str(key)])
+                merge(a[key], b[key], [*path, str(key)])
             elif a[key] != b[key]:
-                raise Exception("Conflict at " + ".".join(path + [str(key)]))
+                raise Exception("Conflict at " + ".".join([*path, str(key)]))
         else:
             a[key] = b[key]
     return a

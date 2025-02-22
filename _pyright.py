@@ -3,21 +3,21 @@
 # install: npm install --global pyright
 # update:  npm update --global pyright
 
+from __future__ import annotations
+
 import json
-import os
+import locale
 import platform
 import shutil
 import subprocess
 import sys
 import time
-import locale
-
-from typing import Dict, List
 from argparse import ArgumentParser
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
 from subprocess import CompletedProcess
+from typing import Dict, List
 
 BASE_PATH = Path(sys.argv[0]).parent.parent.resolve()
 RESULT_FOLDER = ".type-check-result"
@@ -28,7 +28,7 @@ def run_pyright(src_path: Path, python_version: str) -> None:
 
     if python_version == "":
         try:
-            with open(".python-version", "r") as f:
+            with Path.open(Path(".python-version"), mode="r") as f:
                 python_version = f.read().strip()
         except OSError:
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
@@ -69,10 +69,11 @@ def run_pyright(src_path: Path, python_version: str) -> None:
         "reportUnusedCallResult": False,       # always False -> _vars
 
         "exclude": [
-            ".venv/*",
-            "src/faster_whisper/*",
-            "src/extras/*",
-        ]
+            "**/site-packages",
+            "**/Scripts/activate_this.py",
+            "**/src/faster_whisper/*",
+            "**/src/extras/*",
+        ],
     }
 
     if not src_path.exists():
@@ -96,7 +97,7 @@ def run_pyright(src_path: Path, python_version: str) -> None:
 
     text  = f"Python:   {sys.version.replace(LINEFEET, ' ')}\n"
     text += f"Platform: {platform.platform()}\n"
-    text += f"Date:     {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}\n"
+    text += f"Date:     {datetime.now().astimezone().strftime('%d.%m.%Y %H:%M:%S')}\n"
     text += f"Path:     {BASE_PATH}\n"
     text += "\n"
 
@@ -104,17 +105,22 @@ def run_pyright(src_path: Path, python_version: str) -> None:
     for key, value in settings.items():
         text += f" - {key}: {value}\n"
 
-    config = "tmp.json"
-    with open(config, mode="w") as config_file:
+    config = Path("tmp.json")
+    with Path.open(config, mode="w") as config_file:
         json.dump(settings, config_file, indent=2)
 
     try:
-        result: CompletedProcess[str] = subprocess.run([npx_path, "pyright", src_path, "--project", config, "--outputjson"], capture_output=True, text=True)
+        result: CompletedProcess[str] = subprocess.run(
+            [npx_path, "pyright", src_path, "--project", config, "--outputjson"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
     except Exception as err:
         print(f"error: {err} - pyright")
         sys.exit(1)
     finally:
-        os.remove(config)
+        Path.unlink(config)
 
     if result.stderr != "":
         print(f"errorcode: {result.returncode}")
@@ -167,20 +173,20 @@ def run_pyright(src_path: Path, python_version: str) -> None:
     footer += f"informations: {summary['informationCount']}, "
     footer += f"duration: {summary['timeInSec']} sec"
 
-    n = len(str(Path(".").absolute())) + 1
+    n = len(str(Path.cwd().absolute())) + 1
 
     last_file = ""
     error_types: Counter[str] = Counter()
     for diagnostic in diagnostics:
-        file       = Path(diagnostic["file"]).as_posix()
-        error_type = diagnostic["rule"]
-        error      = diagnostic["severity"]
-        range      = diagnostic["range"]["start"]
+        file        = Path(diagnostic["file"]).as_posix()
+        error_type  = diagnostic["rule"]
+        error       = diagnostic["severity"]
+        range_start = diagnostic["range"]["start"]
 
         error_types[error_type] += 1
 
         msg = file[n:]
-        msg += f":{range['line']+1}:{range['character']+1} - {error}: " # 0-based
+        msg += f":{range_start['line']+1}:{range_start['character']+1} - {error}: " # 0-based
         msg += diagnostic["message"]
         msg += f" ({error_type})"
 
@@ -203,7 +209,7 @@ def run_pyright(src_path: Path, python_version: str) -> None:
     text += footer + "\n"
 
     result_filename = f"PyRight-{python_version}-'{name}'.txt"
-    with open(folder_path / result_filename, mode="w", newline="\n") as f:
+    with Path.open(folder_path / result_filename, mode="w", newline="\n") as f:
         f.write(text)
 
     duration = time.time() - start

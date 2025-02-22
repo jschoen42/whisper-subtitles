@@ -1,16 +1,17 @@
 # .venv/Scripts/activate
 # python src/combine_srt.py
 
+from __future__ import annotations
+
 import sys
 from typing import Any, Dict, List
 
-from utils.globals import BASE_PATH
-from utils.prefs   import Prefs
-from utils.trace   import Trace
-
+from helper.analyse import get_video_length
+from helper.captions import Segment, import_caption, writefile_srt
 from helper.excel_read import import_project_excel
-from helper.analyse    import get_video_length
-from helper.captions   import import_caption, writefile_srt, Segment
+from utils.globals import BASE_PATH
+from utils.prefs import Prefs
+from utils.trace import Trace
 
 data_path = BASE_PATH / "../data"
 
@@ -35,7 +36,7 @@ def main() -> None:
         videos: List[str] = []
         ret = import_project_excel( data_path / mainfolder / folder, folder + ".xlsx" )
         if ret is None:
-            return None
+            return
 
         for part in ret["parts"]:
             for entry in part["files"]:
@@ -61,11 +62,11 @@ def main() -> None:
         for filename, duration in video_infos.items():
             result = import_caption( dirname, filename.replace(".mp4", ".srt" ) )
             if result is None:
-                return None
+                return
 
             result_cc: Dict[str, Any] = {
                 "duration": duration,
-                "cc": result[0]
+                "cc": result[0],
             }
 
             captions_info[filename] = result_cc
@@ -76,7 +77,7 @@ def main() -> None:
         section_number = 0
         captions_new: List[Segment] = []
 
-        for part, _value in captions_info.items():
+        for part in captions_info:
             duration      = float(captions_info[part]["duration"])
             caption_infos = captions_info[part]["cc"]
 

@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 08.01.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     PUBLIC:
      - prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: Dict, media_filename: str) -> Tuple[list, int, float, float, str, List, List]:
@@ -15,19 +15,19 @@
 
 """
 
-import re
+from __future__ import annotations
+
 import hashlib
+import re
+from typing import TYPE_CHECKING, Any, Dict, List, Set, Tuple
 
-from typing import Any, Dict, List, Set, Tuple
-import numpy
-
-from primary.spacy import analyse_sentences_spacy
-
-from utils.trace import Trace
-from utils.prefs import Prefs
-from utils.util  import format_timestamp, CacheJSON
+import numpy as np
 
 from helper.spelling import spellcheck
+from primary.spacy import analyse_sentences_spacy
+from utils.prefs import Prefs
+from utils.trace import Trace
+from utils.util import CacheJSON, format_timestamp
 
 #################################################################################################################
 #
@@ -162,7 +162,7 @@ def format_euro(text: str, thousand_separator: str = ".", float_separator: str =
         entry: Dict[str, Any] = {
             "start":  match.start(),
             "end":    match.end(),
-            "result": result
+            "result": result,
         }
         results.append(entry)
 
@@ -397,7 +397,7 @@ def prepare_words(data: Dict[str, Any], is_faster_whisper: bool, is_intro: bool,
         #  - errors in the model -> " Untertitel im Auftrag des ZDF für funk, 2017"
         #  - internal promt -> "Das Recht des Heimatstaates."
 
-        # toDo: vorletztes Segment
+        # TODO: vorletztes Segment
 
         # OSR_2311_LuG_LODAS
         # OSR_2311_Lohn_Kap_02_00:     *** suspicious text *** segment 9/10  - last: False, no_speech_prob: 0.981, duration: 0.56, compressionRatio: 0.87 ' Vielen Dank.'
@@ -447,14 +447,14 @@ def prepare_words(data: Dict[str, Any], is_faster_whisper: bool, is_intro: bool,
                     if segment_start > last_segment_end + 13:
                         pause_error["introStart"].append([ 13, format_timestamp(last_segment_end), segment_pause])
                         Trace.warning(f"pause at intro slide start (>13 sec): {segment_start}")
-                else:
-                    if segment_start > last_segment_end + 2:
-                        pause_error["normalStart"].append([ 2, format_timestamp(last_segment_end), segment_pause])
-                        Trace.warning(f"pause at normal slide start (>2 sec): {segment_start}")
-            else:
-                if segment_start > last_segment_end + 5:
-                    pause_error["innerPause"].append([ 5, format_timestamp(last_segment_end) + " -> " + format_timestamp(segment_start), segment_pause ])
-                    Trace.warning(f"pause inside slide (>5 sec): {segment_start}, Pause: {segment_pause}")
+
+                elif segment_start > last_segment_end + 2:
+                    pause_error["normalStart"].append([ 2, format_timestamp(last_segment_end), segment_pause])
+                    Trace.warning(f"pause at normal slide start (>2 sec): {segment_start}")
+
+            elif segment_start > last_segment_end + 5:
+                pause_error["innerPause"].append([ 5, format_timestamp(last_segment_end) + " -> " + format_timestamp(segment_start), segment_pause ])
+                Trace.warning(f"pause inside slide (>5 sec): {segment_start}, Pause: {segment_pause}")
 
             last_segment_seek = segment_seek
 
@@ -522,9 +522,9 @@ def prepare_words(data: Dict[str, Any], is_faster_whisper: bool, is_intro: bool,
 
                     if word_info_original["text"] == "[*]":
                         continue
-                    else:
-                        curr_word                = " " + word_info_original["text"]
-                        word_info["probability"] = word_info_original["confidence"]
+
+                    curr_word                = " " + word_info_original["text"]
+                    word_info["probability"] = word_info_original["confidence"]
 
             word_info["word"] = re.sub('[″‟“”„»«"]', "'", curr_word)
 
@@ -553,7 +553,7 @@ def prepare_words(data: Dict[str, Any], is_faster_whisper: bool, is_intro: bool,
                 if are_inner_prompts_possible(model_name):
                     Trace.warning(f"{model_name}: possible single word repetition {error_text} (segment {error_segment})")
                 else:
-                    # toDo "sehr sehr schnell" (Eigenorganisation compact & classic 4.1)
+                    # TODO: "sehr sehr schnell" (Eigenorganisation compact & classic 4.1)
                     #words_new[-1]["end"]  = word_info["end"]
                     #words_new[-1]["duration"] = round(words_new[-1]["end"] - words_new[-1]["start"], 2)
                     Trace.error(f"{model_name}: single word repetition {error_text} (segment {error_segment}) not removed")
@@ -596,8 +596,8 @@ def prepare_words(data: Dict[str, Any], is_faster_whisper: bool, is_intro: bool,
 
         word["pause"] = round(pause, 2)
 
-    average_probability = float(numpy.mean(probability))
-    standard_deviation  = float(numpy.std(probability))
+    average_probability = float(np.mean(probability))
+    standard_deviation  = float(np.std(probability))
 
     if corrected:
         Trace.warning(f"corrected: {corrected}")
@@ -651,7 +651,9 @@ def prepare_words(data: Dict[str, Any], is_faster_whisper: bool, is_intro: bool,
 #
 ####################################################
 
-from helper.captions import Segment  # noqa: E402
+
+if TYPE_CHECKING:
+    from helper.captions import Segment
 
 def split_to_lines(words: List[Dict[str, Any]], dictionary: Dict[str, Any]) -> Tuple[List[Segment], str, str, Dict[str, Any], Dict[str, Any]]:
     line  = ""
@@ -787,7 +789,7 @@ def split_to_lines(words: List[Dict[str, Any]], dictionary: Dict[str, Any]) -> T
                         corrected_details[corr_text] = {
                             "count":     count,
                             "worksheet": dictionary[w][1],
-                            "row":       dictionary[w][2]
+                            "row":       dictionary[w][2],
                         }
 
             line = line.replace(" …", "").replace("  ", " ").replace("...", "…")  # .replace("..", ".") # usw..

@@ -1,32 +1,39 @@
 """
-    © Jürgen Schoenemeyer, 08.01.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     PUBLIC:
      - search_model_path(model_name: str) -> None | str
      - load_model_whisper(model_name: str) -> Any
      - transcribe_whisper(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> str | Dict
 """
+from __future__ import annotations
 
+import hashlib
 import io
 import time
-import hashlib
-# import warnings
-
-from typing import Any, Dict
 from pathlib import Path
 
-import whisper # type: ignore[import-untyped]
+# import warnings
+from typing import TYPE_CHECKING, Any, Dict
 
-from utils.globals  import BASE_PATH
-from utils.prefs    import Prefs
-from utils.trace    import Trace
-from utils.file     import import_json, export_json, export_text
-from utils.util     import CacheJSON
+import whisper  # type: ignore[import-untyped]
+
+from helper.captions import export_srt, export_vtt
+from helper.excel_write import export_text_to_speech_excel
+from helper.whisper_util import (
+    get_filename_parameter,
+    prepare_words,
+    split_to_lines,
+    split_to_sentences,
+)
+from utils.file import export_json, export_text, import_json
+from utils.globals import BASE_PATH
 from utils.metadata import get_media_info
+from utils.prefs import Prefs
+from utils.trace import Trace
 
-from helper.captions     import export_srt, export_vtt
-from helper.excel_write  import export_TextToSpeech_excel
-from helper.whisper_util import get_filename_parameter, prepare_words, split_to_lines, split_to_sentences
+if TYPE_CHECKING:
+    from utils.util import CacheJSON
 
 # warnings.simplefilter("ignore", UserWarning)
 # warnings.simplefilter("ignore", FutureWarning) #
@@ -138,7 +145,7 @@ def transcribe_whisper(project_params: Dict[str, Any], media_params: Dict[str, A
         Trace.error(f"media not found '{media_pathname}'")
         return None
     else:
-        with open(media_pathname, "rb") as f:
+        with Path.open(media_pathname, "rb") as f:
             file = f.read()
             media_md5 = hashlib.md5(file).hexdigest()
             media_info = get_media_info(io.BytesIO(file))
@@ -199,19 +206,19 @@ def transcribe_whisper(project_params: Dict[str, Any], media_params: Dict[str, A
         Trace.info(f"{media_name} - {duration_cpu:.2f} sec")
 
         export_json(path_json, filename_two + ".json", result)
-    else:
-        if "type" not in result:
-            Trace.update(f"update existing json {filename_two + '.json'}")
 
-            result_new = {}
-            result_new["md5"]        = result["md5"]
-            result_new["type"]       = media_type
-            result_new["duration"]   = round(result["mediaDuration"], 2)
-            result_new["cpuTime"]    = round(result["cpuTime"], 2)
-            result_new["language"]   = result["language"]
-            result_new["text"]       = result["text"]
-            result_new["segments"]   = result["segments"]
-            export_json(path_json, filename_two + ".json", result_new)
+    elif "type" not in result:
+        Trace.update(f"update existing json {filename_two + '.json'}")
+
+        result_new = {}
+        result_new["md5"]        = result["md5"]
+        result_new["type"]       = media_type
+        result_new["duration"]   = round(result["mediaDuration"], 2)
+        result_new["cpuTime"]    = round(result["cpuTime"], 2)
+        result_new["language"]   = result["language"]
+        result_new["text"]       = result["text"]
+        result_new["segments"]   = result["segments"]
+        export_json(path_json, filename_two + ".json", result_new)
 
     # Tuple[list, int, float, float, str, List, List]
 
@@ -221,7 +228,7 @@ def transcribe_whisper(project_params: Dict[str, Any], media_params: Dict[str, A
         _standard_deviation,  # not used
         last_segment_text,
         repetition_error,
-        pause_error
+        pause_error,
     ) = prepare_words(result, False, is_intro, model_name, language, cache_nlp, media_name)
 
     export_json(Path(path_json_tmp, modelname_nlp), filename_two + ".json", words)
@@ -230,7 +237,7 @@ def transcribe_whisper(project_params: Dict[str, Any], media_params: Dict[str, A
         text,
         text_combined,
         corrected_details,
-        spelling_result
+        spelling_result,
    ) = split_to_lines(words, dictionary_data)
 
     nlp_name = " [" + modelname_nlp + "]"
@@ -246,7 +253,7 @@ def transcribe_whisper(project_params: Dict[str, Any], media_params: Dict[str, A
     export_text(Path(path_vtt, whisper_parameter + nlp_name, curr_subfolder), media_name + ".vtt", export_vtt(cc), newline = "\r\n")
 
     sentence_data = split_to_sentences(words, dictionary_data)
-    export_TextToSpeech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx")
+    export_text_to_speech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx")
 
     return {
         "text":            text_combined,

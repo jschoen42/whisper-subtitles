@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 08.01.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     PUBLIC:
      - precheck_models(models: List) -> bool
@@ -7,34 +7,44 @@
      - model_loaded_faster_whisper(model_name: str) -> None | WhisperModel
      - transcribe_fasterwhisper(project_params: Dict, media_params: Dict, cache_nlp: CacheJSON) -> str | Dict
 """
+from __future__ import annotations
 
-import sys
-import io
-import time
 import hashlib
+import io
 import logging
 import platform
-
-from typing import Any, Dict, List, Tuple
+import sys
+import time
 from pathlib import Path
+from typing import Any, Dict, List, Tuple
 
 import arrow
 
 import faster_whisper
 from faster_whisper import WhisperModel
-
-from utils.globals  import BASE_PATH
-from utils.prefs    import Prefs
-from utils.trace    import Trace
-from utils.file     import get_file_infos, get_modification_timestamp, set_modification_timestamp, import_json_timestamp, export_json, export_text
-from utils.util     import CacheJSON, format_subtitle
-from utils.metadata import get_media_info
-
-from helper.captions    import export_srt, export_vtt
-from helper.excel_write import export_TextToSpeech_excel
-
-from helper.whisper_util import get_filename_parameter, are_prompts_allowed, prepare_words, split_to_lines, split_to_sentences
+from helper.captions import export_srt, export_vtt
+from helper.excel_write import export_text_to_speech_excel
 from helper.whisper_faster_util import get_settings_transcribe_faster
+from helper.whisper_util import (
+    are_prompts_allowed,
+    get_filename_parameter,
+    prepare_words,
+    split_to_lines,
+    split_to_sentences,
+)
+from utils.file import (
+    export_json,
+    export_text,
+    get_file_infos,
+    get_modification_timestamp,
+    import_json_timestamp,
+    set_modification_timestamp,
+)
+from utils.globals import BASE_PATH
+from utils.metadata import get_media_info
+from utils.prefs import Prefs
+from utils.trace import Trace
+from utils.util import CacheJSON, format_subtitle
 
 # https://github.com/SYSTRAN/faster-whisper
 
@@ -179,7 +189,7 @@ def transcribe_fasterwhisper(project_params: Dict[str, Any], media_params: Dict[
         if file_info is None:
             return None
 
-        with open(media_pathname, "rb") as f:
+        with Path.open(media_pathname, "rb") as f:
             file = f.read()
             media_md5 = hashlib.md5(file).hexdigest()
             media_info = get_media_info(io.BytesIO(file))
@@ -222,13 +232,13 @@ def transcribe_fasterwhisper(project_params: Dict[str, Any], media_params: Dict[
         "created": "",
         "language": "",
         "text": "",
-        "segments": []
+        "segments": [],
     }
 
     path_json     = Path(path_json_base, whisper_parameter)
     path_json_tmp = Path(path_json, "tmp")
 
-    vad_parameter = None
+    vad_parameter: None | Dict[str, Any] = None
     if vad_enabled:
 
         # Attributes:
@@ -257,10 +267,10 @@ def transcribe_fasterwhisper(project_params: Dict[str, Any], media_params: Dict[
         #  - min_silence_duration_ms = 2000
         #  - speech_pad_ms           = 400
 
-        vad_parameter = dict(
-            min_speech_duration_ms = 250,
-            speech_pad_ms          = (600, 100),
-        )
+        vad_parameter = {
+            "min_speech_duration_ms": 250,
+            "speech_pad_ms":          (600, 100),
+        }
 
     cached, timestamp = import_json_timestamp(path_json, filename_two + ".json", show_error=False)
 
@@ -393,7 +403,7 @@ def transcribe_fasterwhisper(project_params: Dict[str, Any], media_params: Dict[
         _standard_deviation,   # not used
         last_segment_text,
         repetition_error,
-        pause_error
+        pause_error,
     ) = prepare_words(result, True, is_intro, model_name, language, cache_nlp, media_name)
 
     export_json(Path(path_json_tmp, modelname_nlp), filename_two + ".json", words, timestamp = timestamp)
@@ -403,7 +413,7 @@ def transcribe_fasterwhisper(project_params: Dict[str, Any], media_params: Dict[
         text,
         text_combined,
         corrected_details,
-        spelling_result
+        spelling_result,
     ) = split_to_lines(words, dictionary_data)
 
     if timestamp:
@@ -423,7 +433,7 @@ def transcribe_fasterwhisper(project_params: Dict[str, Any], media_params: Dict[
     export_text(Path(path_vtt, whisper_parameter + nlp_name, curr_subfolder), media_name + ".vtt", export_vtt(cc), newline = "\r\n", timestamp = timestamp)
 
     sentence_data = split_to_sentences(words, dictionary_data)
-    export_TextToSpeech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx") # type: ignore # SubtitleColumnFormat
+    export_text_to_speech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx") # type: ignore # SubtitleColumnFormat
 
     return {
         "text":            text_combined,

@@ -14,6 +14,7 @@ uv run _pyright.py src/main
 uv run _pyright.py src/helper
 uv run _pyright.py src/utils
 
+uv run _mypy.py src
 uv run _mypy.py src/main.py
 uv run _mypy.py src/reset.py
 uv run _mypy.py src/audio.py

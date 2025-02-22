@@ -1,13 +1,14 @@
 # .venv/Scripts/activate
 # python src/final_srt_vtt.py
 
+from __future__ import annotations
+
 import os
 
+from helper.captions import import_caption, writefile_srt  #, writefile_vtt
 from utils.globals import BASE_PATH
-from utils.prefs   import Prefs
-from utils.trace   import Trace
-
-from helper.captions import import_caption, writefile_srt #, writefile_vtt
+from utils.prefs import Prefs
+from utils.trace import Trace
 
 PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
 

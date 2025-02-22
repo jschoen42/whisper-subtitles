@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 19.01.2025
+    © Jürgen Schoenemeyer, 22.02.2025
 
     src/utils/audio.py
 
@@ -12,10 +12,9 @@
 
      - filter_to_wav(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str, filter_path: str, filter_name: str) -> None
 """
+from __future__ import annotations
 
 import subprocess
-import os
-
 from pathlib import Path
 
 from utils.trace import Trace
@@ -45,11 +44,14 @@ from utils.trace import Trace
 """
 
 def split_audio(source_path: Path | str, dest_path: Path | str, filename: str, ffmpeg: str) -> None:
-    if not Path(dest_path).is_dir():
-        os.makedirs(Path(dest_path))
+    source_path = Path(source_path)
+    dest_path = Path(dest_path)
 
-    source = Path(source_path, filename)
-    dest   = Path(dest_path, Path(filename).stem + ".m4a")
+    if not dest_path.is_dir():
+        dest_path.mkdir(parents=True)
+
+    source = source_path / filename
+    dest   = dest_path / (Path(filename).stem + ".m4a")
 
     if dest.is_file():
         Trace.info(f"{dest} always exists")
@@ -62,11 +64,14 @@ def split_audio(source_path: Path | str, dest_path: Path | str, filename: str, f
             Trace.error(f"There was an error running your FFmpeg script - {commands}")
 
 def convert_to_mp3(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str) -> None:
-    if not Path(dest_path).is_dir():
-        os.makedirs(Path(dest_path))
+    source_path = Path(source_path)
+    dest_path   = Path(dest_path)
 
-    source = Path(source_path, filename)
-    dest   = Path(dest_path, Path(filename).stem + ".wav")
+    if not dest_path.is_dir():
+        dest_path.mkdir(parents=True)
+
+    source = source_path / filename
+    dest   = dest_path / (Path(filename).stem + ".wav")
 
     if dest.is_file():
         Trace.info(f"{dest} always exists")
@@ -79,11 +84,14 @@ def convert_to_mp3(source_path: Path | str, dest_path: Path | str, filename: str
             Trace.error(f"There was an error running your FFmpeg script - {commands}")
 
 def convert_to_wav(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str) -> None:
-    if not Path(dest_path).is_dir():
-        os.makedirs(Path(dest_path))
+    source_path = Path(source_path)
+    dest_path   = Path(dest_path)
 
-    source = Path(source_path, filename)
-    dest   = Path(dest_path, Path(filename).stem + ".wav")
+    if not dest_path.is_dir():
+        dest_path.mkdir(parents=True)
+
+    source = source_path / filename
+    dest   = dest_path / (Path(filename).stem + ".wav")
 
     if dest.is_file():
         Trace.info(f"{dest} always exists")
@@ -96,11 +104,14 @@ def convert_to_wav(source_path: Path | str, dest_path: Path | str, filename: str
             Trace.error(f"There was an error running your FFmpeg script - {commands}")
 
 def convert_to_flac(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str) -> None:
-    if not Path(dest_path).is_dir():
-        os.makedirs(Path(dest_path))
+    source_path = Path(source_path)
+    dest_path   = Path(dest_path)
 
-    source = Path(source_path, filename)
-    dest   = Path(dest_path, Path(filename).stem + ".flac")
+    if not dest_path.is_dir():
+        dest_path.mkdir(parents=True)
+
+    source = source_path / filename
+    dest   = dest_path / (Path(filename).stem + ".flac")
 
     if dest.is_file():
         Trace.info(f"{dest} always exists")
@@ -113,12 +124,14 @@ def convert_to_flac(source_path: Path | str, dest_path: Path | str, filename: st
             Trace.error(f"There was an error running your FFmpeg script - {commands}")
 
 def filter_to_wav(source_path: Path | str, dest_path: Path | str, filename: str, sampling: int, channels: int, ffmpeg: str, filter_path: str, filter_name: str) -> None:
+    source_path = Path(source_path)
+    dest_path   = Path(dest_path)
 
-    if not Path(dest_path).is_dir():
-        os.makedirs(Path(dest_path))
+    if not dest_path.is_dir():
+        dest_path.mkdir(parents=True)
 
-    source = Path(source_path,  filename)
-    dest   = Path(dest_path, Path(filename).stem + ".wav")
+    source = source_path / filename
+    dest   = dest_path / (Path(filename).stem + ".wav")
 
     if dest.is_file():
         Trace.info(f"{dest} always exists")

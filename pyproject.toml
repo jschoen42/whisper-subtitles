@@ -35,7 +35,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "basedpyright>=1.27.1",
     "mypy>=1.15.0",
     "types-openpyxl>=3.1.5.20241225",
     "types-pyyaml>=6.0.12.20241230",
@@ -52,3 +51,4 @@ reportUnusedCallResult = false
 reportUnknownArgumentType = false
 reportUnknownVariableType = false
 reportUnknownMemberType = false
+reportUnusedParameter = false

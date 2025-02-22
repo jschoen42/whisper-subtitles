@@ -1,30 +1,34 @@
 # .venv/Scripts/activate
 # python src/main.py
 
-import sys
+from __future__ import annotations
+
 import json
+import sys
 import time
-
-from typing import Any, Dict
 from pathlib import Path
+from typing import Any, Dict
 
-from utils.globals import BASE_PATH
-from utils.prefs   import Prefs
-from utils.trace   import Trace
-from utils.file    import check_file_exists, export_text
-from utils.util    import CacheJSON
-from utils.log     import log_clear, log_add, log_get_data
-from utils.log     import DictionaryLog
-
-from helper.excel_read   import import_project_excel, import_dictionary_excel
-from helper.captions     import seconds_to_timecode_vtt
-from helper.spelling     import hunspell_dictionary_init, getSpellStatistic
-from helper.whisper_util import init_special_text, are_inner_prompts_possible, prompt_main_normalize, prompt_normalize, get_filename_parameter
-
+from helper.captions import seconds_to_timecode_vtt
+from helper.excel_read import import_dictionary_excel, import_project_excel
+from helper.spelling import get_spell_statistic, hunspell_dictionary_init
+from helper.whisper_util import (
+    are_inner_prompts_possible,
+    get_filename_parameter,
+    init_special_text,
+    prompt_main_normalize,
+    prompt_normalize,
+)
 from primary.spacy import get_modelname_spacy
-from primary.whisper_faster import precheck_models, transcribe_fasterwhisper
 from primary.whisper import transcribe_whisper
+from primary.whisper_faster import precheck_models, transcribe_fasterwhisper
 from primary.whisper_timestamped import transcribe_whisper_timestamped
+from utils.file import check_file_exists, export_text
+from utils.globals import BASE_PATH
+from utils.log import DictionaryLog, log_add, log_clear, log_get_data
+from utils.prefs import Prefs
+from utils.trace import Trace
+from utils.util import CacheJSON
 
 PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
 
@@ -103,7 +107,7 @@ def main() -> None:
     # check all media exist
 
     error = False
-    for project, data in projects.items():
+    for data in projects.values():
         path_project = data[0]
         data_project = data[1]
 
@@ -294,7 +298,7 @@ def main() -> None:
                             )
                             log_dictionary.add(
                                 result["corrected"],
-                                result["spelling"]
+                                result["spelling"],
                             )
                             time.sleep(0)
                             # Trace.info()
@@ -353,7 +357,7 @@ def main() -> None:
 
         d = time.perf_counter() - start
 
-        getSpellStatistic()
+        get_spell_statistic()
 
         Trace.result(f"projects: {project_all}, filesAll: {file_count_all}, durationAll: {seconds_to_timecode_vtt(duration_all)}, charsAll: {chars_all}, wordsAll: {words_all}, sentencesAll: {sentences_all} ({d:,.2f} sec)")
 

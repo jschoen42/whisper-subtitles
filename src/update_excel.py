@@ -1,13 +1,15 @@
 # .venv/Scripts/activate
 # python src/update_excel.py
 
+from __future__ import annotations
+
 import sys
 
+from helper.excel_update import update_dictionary_excel
+from utils.file import import_json
 from utils.prefs import Prefs
 from utils.trace import Trace
-from utils.file  import import_json
 
-from helper.excel_update import update_dictionary_excel
 
 def main() -> None:
     Prefs.init("settings")

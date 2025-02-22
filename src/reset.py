@@ -1,13 +1,14 @@
 # .venv/Scripts/activate
 # python src/reset.py
 
-import sys
+from __future__ import annotations
 
+import sys
 from pathlib import Path
 
+from utils.file import delete_folder_tree, get_folders_in_folder
 from utils.prefs import Prefs
 from utils.trace import Trace
-from utils.file  import delete_folder_tree, get_folders_in_folder
 
 PROJECTS: str = "projects_all.yaml"  # "projects.yaml", "projects_all.yaml"
 
