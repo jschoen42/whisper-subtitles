@@ -1,4 +1,31 @@
-# uv run _mypy.py src
+"""
+    © Jürgen Schoenemeyer, 23.02.2025
+
+    _mypy.py
+
+    INSTALL:
+     - uv add pypy --dev
+
+    INSTALL STUBS - https://github.com/python/typeshed/tree/main/stubs
+     - uv add lxml-stubs --dev
+     - uv add pandas-stubs --dev
+     - uv add types-beautifulsoup4 --dev
+     - uv add types-openpyxl --dev
+     - uv add types-python-dateutil --dev
+     - uv add types-pyyaml --dev
+     - uv add types-xmltodict --dev
+
+    RUN CLI
+     - uv run _mypy.py .
+     - uv run _mypy.py src
+     - uv run _mypy.py src/main.py
+
+    PUBLIC:
+     - run_mypy(src_path: Path, python_version: str) -> None
+
+    PRIVAT:
+     - format_singular_plural(value: int, text: str) -> str
+"""
 
 from __future__ import annotations
 
@@ -39,6 +66,12 @@ exclude = [
 module = "faster_whisper.*"
 ignore_errors = true
 """
+
+def format_singular_plural(value: int, text: str) -> str:
+    if value == 1:
+        return f"{value} {text}"
+    return f"{value} {text}s"
+
 def run_mypy(src_path: Path, python_version: str) -> None:
 
     if python_version == "":
@@ -295,8 +328,11 @@ def run_mypy(src_path: Path, python_version: str) -> None:
     #   "severity": "error"
     # }
 
+    notes = 0
     errors = 0
-    error_files = 0
+    warnings = 0
+
+    msg_files = 0
     last_file = ""
     error_types: Counter[str] = Counter()
 
@@ -305,27 +341,40 @@ def run_mypy(src_path: Path, python_version: str) -> None:
             continue
 
         data = json.loads(line)
+
         file = Path(data["file"]).as_posix()
+        severity = data["severity"]
+        message_type = data["code"]
+
+        if severity == "error":
+            error_types[message_type] += 1
+            errors += 1
+
+        elif severity == "warning":
+            error_types[message_type] += 1
+            warnings += 1
+
+        elif severity == "note":
+            notes += 1
 
         if last_file != file:
             if last_file != "":
                 text += "\n"
             text += "### " + file + " ###\n\n"
             last_file = file
-            error_files += 1
-
-        error_type = data["code"]
-        error_types[error_type] += 1
+            msg_files += 1
 
         pre = f"{file}:{data["line"]}:{data["column"]+1}" # column 0-based
-        text += f"{pre} {data["severity"]}: {data["message"]} [{error_type}]\n"
+        text += f"{pre} {severity}: {data["message"]}"
+        if severity != "note":
+            text += f" [{message_type}]\n"
+        else:
+            text += "\n"
 
         if data["hint"] is not None:
             hints = data["hint"].split("\n")
             for hint in hints:
                 text += f"{pre}  - {hint}\n"
-
-        errors += 1
 
     if len(error_types)>0:
         text += "\nError types (sorted)"
@@ -333,7 +382,12 @@ def run_mypy(src_path: Path, python_version: str) -> None:
             text += f"\n - {error_type[0]}: {error_type[1]}"
         text += "\n\n"
 
-    footer = f"Found {errors} errors in {error_files} files (checked {len(sources)} source files)"
+    footer = "Found "
+    footer += f"{format_singular_plural(errors,   'error')}, "
+    footer += f"{format_singular_plural(warnings, 'warning')}, "
+    footer += f"{format_singular_plural(notes,    'note')} in "
+    footer += f"{msg_files} of {format_singular_plural(len(sources), 'file')} "
+
     text += "\n" + footer + "\n"
 
     result_filename = f"mypy-{python_version}-'{name}'.txt"

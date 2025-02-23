@@ -1,4 +1,31 @@
-# uv run _basedpyright.py src
+"""
+    © Jürgen Schoenemeyer, 23.02.2025
+
+    _basedpyright.py
+
+    INSTALL:
+     - uv add basedpyright --dev
+
+    INSTALL STUBS - https://github.com/python/typeshed/tree/main/stubs
+     - uv add lxml-stubs --dev
+     - uv add pandas-stubs --dev
+     - uv add types-beautifulsoup4 --dev
+     - uv add types-openpyxl --dev
+     - uv add types-python-dateutil --dev
+     - uv add types-pyyaml --dev
+     - uv add types-xmltodict --dev
+
+    RUN CLI
+     - uv run _basedpyright.py .
+     - uv run _basedpyright.py src
+     - uv run _basedpyright.py src/main.py
+
+    PUBLIC:
+     - run_pyright(src_path: Path, python_version: str) -> None
+
+    PRIVAT:
+     - format_singular_plural(value: int, text: str) -> str
+"""
 
 from __future__ import annotations
 
@@ -20,6 +47,11 @@ BASE_PATH = Path(sys.argv[0]).parent.parent.resolve()
 RESULT_FOLDER = ".type-check-result"
 
 LINEFEET = "\n"
+
+def format_singular_plural(value: int, text: str) -> str:
+    if value == 1:
+        return f"{value} {text}"
+    return f"{value} {text}s"
 
 def run_basedpyright(src_path: Path, python_version: str) -> None:
 
@@ -171,6 +203,7 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
 
     n = len(str(Path.cwd().absolute())) + 1
 
+    msg_files = 0
     last_file = ""
     error_types: Counter[str] = Counter()
     for diagnostic in diagnostics:
@@ -191,6 +224,7 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
                 text += "\n"
             text += "\n### " + file[n:] + " ###\n"
             last_file = file
+            msg_files += 1
 
         text += "\n" + msg
 
@@ -201,6 +235,12 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
         for error_type in error_types.most_common():
             text += f"\n - {error_type[0]}: {error_type[1]}"
         text += "\n\n"
+
+    footer = "Found "
+    footer += f"{format_singular_plural(summary['errorCount'],'error')}, "
+    footer += f"{format_singular_plural(summary['warningCount'],'warning')}, "
+    footer += f"{format_singular_plural(summary['informationCount'],'information')} in "
+    footer += f"{msg_files} of {format_singular_plural(summary['filesAnalyzed'], 'file')}"
 
     text += footer + "\n"
 

@@ -142,14 +142,5 @@ whisper-subtitles v0.1.0
 │   │   └── scipy v1.15.1
 │   │       └── numpy v2.1.3
 │   └── openai-whisper v20240930 (*)
-├── xlsxwriter v3.2.2
-├── basedpyright v1.27.1 (group: dev)
-│   └── nodejs-wheel-binaries v22.14.0
-├── mypy v1.15.0 (group: dev)
-│   ├── mypy-extensions v1.0.0
-│   └── typing-extensions v4.12.2
-├── types-openpyxl v3.1.5.20241225 (group: dev)
-├── types-pyyaml v6.0.12.20241230 (group: dev)
-└── types-requests v2.32.0.20241016 (group: dev)
-    └── urllib3 v2.3.0
+└── xlsxwriter v3.2.2
 (*) Package tree already displayed
