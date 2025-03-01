@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
 
     src/helper/excel_write.py (xlsxwriter)
 
@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any, Dict, List, NamedTuple, TypedDict, cast
 
 import xlsxwriter  # type: ignore[import-untyped]
+
 from xlsxwriter.exceptions import XlsxFileError  # type: ignore[import-untyped]
 
 from utils.decorator import duration
@@ -202,10 +203,11 @@ def export_text_to_speech_excel(data: List[SubtitleColumnFormat], pathname: Path
 
     try:
         workbook.close()
-        return True
     except XlsxFileError as err:
         Trace.error(f"XlsxFileError:{err}")
         return False
+
+    return True
 
 # https://xlsxwriter.readthedocs.io/page_setup.html
 

@@ -1,5 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
+
+        src/primary/whisper.py
 
     PUBLIC:
      - search_model_path(model_name: str) -> None | str
@@ -11,6 +13,7 @@ from __future__ import annotations
 import hashlib
 import io
 import time
+
 from pathlib import Path
 
 # import warnings

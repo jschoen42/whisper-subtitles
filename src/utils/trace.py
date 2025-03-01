@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 15:26
 
     src/utils/trace.py
 
@@ -40,13 +40,12 @@ import inspect
 import platform
 import re
 import sys
+
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, Dict, List
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Dict, List, override
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
-
-from typing_extensions import override
 
 if TYPE_CHECKING:
     from types import FrameType
@@ -131,7 +130,9 @@ pattern: Dict[str, str] = {
     "debug":     "DEBUG", # only in debug mode
     "wait":      "WAIT ", # only in debug mode
 
-    "clear":     " $$$ ", # only internal (for decorator, ...) - •••
+    "clear":     " §§§ ", # only internal (for decorator, ...)
+    #"clear":    " 🕑  ",
+
 }
 
 class Trace:
@@ -327,7 +328,7 @@ class Trace:
                             termios.TCSADRAIN,                 # type: ignore[attr-defined] # -> Windows
                             old_settings,
                         )
-                        print()
+                        print()  # noqa: T201
 
                 if key == b"\x1b":
                     sys.exit()

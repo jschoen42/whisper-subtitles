@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 23.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 16:19
 
     _mypy.py
 
@@ -13,6 +13,7 @@
      - uv add types-openpyxl --dev
      - uv add types-python-dateutil --dev
      - uv add types-pyyaml --dev
+     - uv add types-toml --dev
      - uv add types-xmltodict --dev
 
     RUN CLI
@@ -37,6 +38,7 @@ import shutil
 import subprocess
 import sys
 import time
+
 from argparse import ArgumentParser
 from collections import Counter
 from datetime import datetime
@@ -254,8 +256,7 @@ def run_mypy(src_path: Path, python_version: str) -> None:
             text=True,
             check=False,
         )
-        # result: CompletedProcess[str] = subprocess.run(["mypy", str(src_path), "--config-file", "tmp.toml", "--verbose", "--output=json"] + settings, capture_output=True, text=True, check=False)
-    except Exception as err:
+    except subprocess.CalledProcessError as err:
         print(f"error: {err} - mypy")
         sys.exit(1)
     finally:
@@ -264,7 +265,8 @@ def run_mypy(src_path: Path, python_version: str) -> None:
     # analyse stderr ("--verbose")
 
     # LOG:  Mypy Version: 1.14.0
-    # LOG:  Found source: BuildSource(path='src\\__init__.py', module='__main__', has_text=False, base_dir='G:\\Python\\Whisper\\whisper-datev-gitlab\\src', followed=False)
+    # LOG:  Found source: BuildSource(path='src\\__init__.py', module='__main__', has_text=False,
+    #                     base_dir='G:\\Python\\Whisper\\whisper-datev-gitlab\\src', followed=False)
     # ...
     # LOG:  Metadata fresh for __main__: file src\__init__.py
 
@@ -336,11 +338,27 @@ def run_mypy(src_path: Path, python_version: str) -> None:
     last_file = ""
     error_types: Counter[str] = Counter()
 
+    fatal_error = False
+    footer = ""
     for line in result.stdout.splitlines():
         if line == "":
             continue
 
-        data = json.loads(line)
+        try:
+            data = json.loads(line)
+        except ValueError:
+            if "Found " in line:
+                fatal_error = True
+                footer = line
+                break
+
+            print(f"### fatal error ### {line}")
+
+            text += line + "\n"
+
+            message_type = "syntax error"
+            error_types[message_type] += 1
+            continue
 
         file = Path(data["file"]).as_posix()
         severity = data["severity"]
@@ -382,17 +400,18 @@ def run_mypy(src_path: Path, python_version: str) -> None:
             text += f"\n - {error_type[0]}: {error_type[1]}"
         text += "\n\n"
 
-    footer = "Found "
-    footer += f"{format_singular_plural(errors,   'error')}, "
-    footer += f"{format_singular_plural(warnings, 'warning')}, "
-    footer += f"{format_singular_plural(notes,    'note')} in "
-    footer += f"{msg_files} of {format_singular_plural(len(sources), 'file')} "
+    if fatal_error is False:
+        footer = "Found "
+        footer += f"{format_singular_plural(errors,   'error')}, "
+        footer += f"{format_singular_plural(warnings, 'warning')}, "
+        footer += f"{format_singular_plural(notes,    'note')} in "
+        footer += f"{msg_files} of {format_singular_plural(len(sources), 'file')} "
 
     text += "\n" + footer + "\n"
 
     result_filename = f"mypy-{python_version}-'{name}'.txt"
-    with Path.open(folder_path / result_filename, "w", newline="\n") as file:
-        file.write(text)
+    with Path.open(folder_path / result_filename, "w", newline="\n") as f:
+        f.write(text)
 
     duration = time.time() - start
     print(f"[MyPy {version} ({duration:.2f} sec)] {footer} -> {RESULT_FOLDER}/{result_filename}")

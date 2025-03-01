@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 15:26
 
     src/utils/excel.py
 
@@ -26,6 +26,7 @@ from __future__ import annotations
 import re
 import unicodedata
 import warnings
+
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Tuple

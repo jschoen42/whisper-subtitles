@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
 
     src/helper/excel_update.py (openpyxl)
 
@@ -105,7 +105,8 @@ def update_dictionary_excel(pathname: Path | str, filename: str, filename_update
     try:
         wb.save(filename=dest_path)
         Trace.result(f"'{dest_path}'")
-        return True
     except OSError as err:
         Trace.error(f"{err}")
         return False
+
+    return True

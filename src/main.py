@@ -1,11 +1,17 @@
-# .venv/Scripts/activate
-# python src/main.py
+"""
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
 
+    src/main.py
+
+    .venv/Scripts/activate
+    python src/main.py
+"""
 from __future__ import annotations
 
 import json
 import sys
 import time
+
 from pathlib import Path
 from typing import Any, Dict
 

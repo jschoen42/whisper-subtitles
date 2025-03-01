@@ -1,9 +1,15 @@
-# .venv/Scripts/activate
-# python src/combine_srt.py
+"""
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
 
+    src/combine_srt.py
+
+    .venv/Scripts/activate
+    python src/combine_srt.py
+"""
 from __future__ import annotations
 
 import sys
+
 from typing import Any, Dict, List
 
 from helper.analyse import get_video_length

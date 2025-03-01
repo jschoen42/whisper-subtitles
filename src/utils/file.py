@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 15:26
 
     src/utils/file.py
 
@@ -60,6 +60,7 @@ import json
 import os
 import re
 import shutil
+
 from pathlib import Path
 from re import Match
 from typing import Any, Dict, List, Tuple
@@ -213,11 +214,13 @@ def create_folder( folderpath: Path | str ) -> bool:
         try:
             folderpath.mkdir(parents=True)
             Trace.update( f"makedir: {folderpath}")
-            return True
+
         except OSError as error:
             error_msg = str(error).split(":")[0]
             Trace.error( f"{error_msg}: {folderpath}")
             return False
+
+        return True
     else:
         return False
 
@@ -233,12 +236,12 @@ def delete_file(path: Path | str, filename: str) -> bool:
         try:
             filepath.unlink()
             Trace.update(f"file '{filepath}' deleted")
-            return True
 
         except OSError as err:
             Trace.error(f"{err}")
+            return False
 
-    return False
+    return True
 
 def beautify_path( path: Path | str ) -> str:
     return str( path ).replace("\\\\", "/")
@@ -281,7 +284,6 @@ def import_text( folderpath: Path | str, filename: Path | str, encoding: str="ut
         try:
             with Path.open(filepath, mode="r", encoding=encoding) as file:
                 data = file.read()
-            return data
 
         except OSError as error:
             Trace.error(f"{error}")
@@ -290,6 +292,8 @@ def import_text( folderpath: Path | str, filename: Path | str, encoding: str="ut
         except UnicodeDecodeError as error:
             Trace.error(f"{filepath}: {error}")
             return None
+
+        return data
 
     else:
         if show_error:
@@ -441,12 +445,13 @@ def export_file(filepath: Path | str, filename: str, text: str, in_type: str | N
             else:
                 Trace.update( f"changed '{trace_export_path}'")
 
-            return my_filename
-
         except OSError as err:
             error = str(err).split(":")[0]
             Trace.error(f"{error} '{trace_export_path}'")
             return None
+
+        return my_filename
+
 
 # increment_filename(filename_stem: str) -> str:
 #

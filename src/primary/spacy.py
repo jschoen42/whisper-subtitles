@@ -1,5 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
+
+    src/primary/spacy.py
 
     PUBLIC:
      - init_spacy(language: str) -> None
@@ -10,6 +12,7 @@ from __future__ import annotations
 
 import re
 import warnings
+
 from importlib.metadata import version
 from pathlib import Path
 from typing import Any, Dict, List, Tuple

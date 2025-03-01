@@ -1,5 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
+
+    src/primary/whisper_timestamped.py
 
     PUBLIC:
      - load_model_whisper(model_name: str) -> Any
@@ -11,6 +13,7 @@ import hashlib
 import io
 import time
 import warnings
+
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict
 
@@ -241,7 +244,7 @@ def transcribe_whisper_timestamped(project_params: Dict[str, Any], media_params:
     export_text(Path(path_vtt, whisper_parameter + nlp_name, curr_subfolder), media_name + ".vtt", export_vtt(cc), newline = "\r\n")
 
     sentence_data = split_to_sentences(words, dictionary_data)
-    export_text_to_speech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx") # type: ignore # SubtitleColumnFormat
+    export_text_to_speech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx") # SubtitleColumnFormat
 
     return {
         "text":            text_combined,

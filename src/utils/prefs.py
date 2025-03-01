@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 15:26
 
     src/utils/prefs.py
 
@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import re
+
 from json import JSONDecodeError
 from pathlib import Path
 from typing import Any, ClassVar, Dict, List, Tuple
@@ -24,7 +25,6 @@ import yaml
 
 from utils.globals import BASE_PATH
 from utils.trace import Trace
-
 
 class Prefs:
     pref_path: Path = BASE_PATH / "prefs"
@@ -144,9 +144,6 @@ def read_pref( pref_path: Path, pref_name: str ) -> Tuple[bool, Dict[Any, Any]]:
         with Path.open( Path(pref_path, pref_name), mode="r", encoding="utf-8") as file:
             data = yaml.safe_load(file)
 
-        # Trace.wait( f"{pref_name}: {json.dumps(data, sort_keys=True, indent=2)}" )
-        return False, data
-
     except yaml.YAMLError as err:
         Trace.fatal(f"YAMLError '{pref_name}':\n{err}")
         return True, {}
@@ -154,6 +151,8 @@ def read_pref( pref_path: Path, pref_name: str ) -> Tuple[bool, Dict[Any, Any]]:
     except OSError as err:
         Trace.error( f"{beautify_path(str(err))}" )
         return True, {}
+
+    return False, data
 
 def beautify_path( path: Path | str ) -> str:
     return str( path ).replace("\\\\", "/")
@@ -192,9 +191,9 @@ def merge(a: Dict[Any, Any], b: Dict[Any, Any], path: List[str] | None = None) -
     if path is None:
         path = []
 
-    for key in b:
+    for key, value in b.items():
         if key in a:
-            if isinstance(a[key], dict) and isinstance(b[key], dict):
+            if isinstance(a[key], dict) and isinstance(value, dict):
                 merge(a[key], b[key], [*path, str(key)])
             elif a[key] != b[key]:
                 raise Exception("Conflict at " + ".".join([*path, str(key)]))

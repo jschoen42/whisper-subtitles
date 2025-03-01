@@ -12,85 +12,75 @@ exclude = [
     "site-packages",
 ]
 
-[lint]
-select = [
-    "N",    # pep8-naming
-    "W",    # pycodestyle Warning
-    "E",    # pycodestyle Error
-    "F",    # Pyflakes
-    "I",    # isort#
-    "PERF", # Perflint
-    "DOC",  # pydoclint
-    "PLR",  # Refactor
-    "PLW",  # Warning
-    "UP",   # pyupgrade
-    "FURB", # refurrb
-    "RUF",  # Ruff
+line-length = 150
 
-    "A",    # flake8-builtins
-    "ANN",  # flake8-annotations
-    "ARG",  # flake8-unused-arguments
-    "B",    # flake8-bugbear
-    "C4",   # flake8-comprehensions
-    "COM",  # flake8-commas
-    "DTZ",  # flake8-datetimez
-    "EM",   # flake8-errmsg
-    "EXE",  # flake8-executable
-    "FA",   # flake8-future
-    "FIX",  # flake8-fixme
-    "FLY",  # flake8-flynt
-    "G",    # flake8-logging-format
-    "ICN",  # flake8-import-conventions
-    "INP",  # flake8-no-pep420
-    "INT",  # flake8-gettext
-    "ISC",  # flake8-implicit-str-concat
-    "LOG",  # flake8-logging
-    "PIE",  # flake8-pie
-    "PT",   # flake8-pytest-style
-    "PTH",  # flake8-use-pathlib
-    "PYI",  # flake8-pyi
-    "Q",    # flake8-quotes
-    "RET",  # flake8-return
-    "RSE",  # flake8-raise
-    "S",    # flake8-bandit
-    "SIM",  # flake8-simplify
-    "SLF",  # flake8-self
-    "SLOT", # flake8-slots
-    "T10",  # flake8-debugger
-    "TC",   # flake8-type-checking
-    "TD",   # flake8-todos
-    "TID",  # flake8-tidy-imports
-]
+[lint]
+select = ["ALL"]
 ignore = [
+    "C90",     # mccabe
+    "D",       # pydocstyle
+    "ERA",     # eradicate
+    "FBT",     # flake8-boolean-trap
+    "FIX",     # flake8-fixme
+    "T20",     # flake8-print
+    "TD",      # flake8-todos
+
+    # flake8-builtins
     "A001",    # builtin-variable-shadowing
-    "A005",    # stdlib-module-shadowing (-> utils.trace)
+    "A002",    # builtin-argument-shadowing
+    "A005",    # stdlib-module-shadowing
+
+    # flake8-annotations
     "ANN401",  # any-type
+
+    # flake8-unused-arguments
     "ARG001",  # unused-function-argument
+
+    # pycodestyle Error
     "E501",    # line too long
+
+    # Perflint
     "PERF203", # try-except-in-loop
     "PERF401", # manual-list-comprehension
+
+    # Refactor
     "PLR0911", # too-many-return-statements
     "PLR0912", # too-many-branches
     "PLR0913", # too-many-arguments
     "PLR0915", # too-many-statements
     "PLR2004", # magic-value-comparison
+
     "PLW0603", # global-statement
+
+    # flake8-return
     "RET504",  # unnecessary-assign
     "RET505",  # superfluous-else-return
+
+    # Ruff
+    "RUF001",  # ambiguous-unicode-character-string
+    "RUF003",  # ambiguous-unicode-character-comment
+    "RUF100",  # unused-noqa
+
+    # flake8-bandit
+    "S311",    # suspicious-non-cryptographic-random-usage
     "S324",    # hashlib-insecure-hash-function
     "S603",    # subprocess-without-shell-equals-true
+
+    # flake8-simplify
     "SIM102",  # collapsible-if
     "SIM103",  # needless-bool
     "SIM105",  # suppressible-exception
     "SIM108",  # if-else-block-instead-of-if-exp
+    "SIM110",  # reimplemented-builtin
 
+    # tryceratops
+    "TRY002",  # raise-vanilla-class
+
+    # pyupgrade
     "UP006",   # non-pep585-annotation
     "UP035",   # deprecated-import
-    "RUF001",  # ambiguous-unicode-character-string
-    "RUF003",  # ambiguous-unicode-character-comment
-    "RUF100",  # unused-noqa
-    "TD002",   # missing-todo-author
-    "TD003",   # missing-todo-link
-
-    "FIX002",  # line-contains-todo
 ]
+
+[lint.isort]
+lines-between-types = 1
+lines-after-imports = 1

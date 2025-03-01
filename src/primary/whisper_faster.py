@@ -1,5 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
+
+    src/primary/whisper_faster.py
 
     PUBLIC:
      - precheck_models(models: List) -> bool
@@ -15,12 +17,14 @@ import logging
 import platform
 import sys
 import time
+
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 import arrow
 
 import faster_whisper
+
 from faster_whisper import WhisperModel
 from helper.captions import export_srt, export_vtt
 from helper.excel_write import export_text_to_speech_excel
@@ -298,8 +302,8 @@ def transcribe_fasterwhisper(project_params: Dict[str, Any], media_params: Dict[
                 export_json(path_json, file_name, result)
                 set_modification_timestamp(file_path, timestamp)
 
-        if "media" in cached and "md5" in cached["media"]: # type: ignore # header v2
-            md5 = cached["media"]["md5"]                   # type: ignore
+        if "media" in cached and "md5" in cached["media"]:
+            md5 = cached["media"]["md5"]
 
         if md5 == "":
             Trace.fatal(f"unknown cache format {Path(path_json, filename_two + '.json')}")
@@ -433,7 +437,7 @@ def transcribe_fasterwhisper(project_params: Dict[str, Any], media_params: Dict[
     export_text(Path(path_vtt, whisper_parameter + nlp_name, curr_subfolder), media_name + ".vtt", export_vtt(cc), newline = "\r\n", timestamp = timestamp)
 
     sentence_data = split_to_sentences(words, dictionary_data)
-    export_text_to_speech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx") # type: ignore # SubtitleColumnFormat
+    export_text_to_speech_excel(sentence_data, Path(path_excel, whisper_parameter + nlp_name, curr_subfolder), media_name + ".xlsx") # SubtitleColumnFormat
 
     return {
         "text":            text_combined,

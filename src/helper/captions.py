@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
 
     PUBLIC:
      - import_caption(dirname: Path | str, basename: str) -> Captions | None

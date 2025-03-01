@@ -1,9 +1,15 @@
-# .venv/Scripts/activate
-# python src/reset.py
+"""
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
 
+    src/reset.py
+
+    .venv/Scripts/activate
+    python src/reset.py
+"""
 from __future__ import annotations
 
 import sys
+
 from pathlib import Path
 
 from utils.file import delete_folder_tree, get_folders_in_folder

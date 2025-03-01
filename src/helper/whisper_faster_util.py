@@ -1,10 +1,11 @@
 """
-    Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 18:04
+
+    src/helper/whisper_faster_util.py
 
     PUBLIC:
      - get_settings_transcribe_faster(info: Dict, media_type: str, media_info: Dict, vad_sampling_rate: int, speech_chunks: List) -> Tuple[Dict[str, Any], List[Dict[str, Any]]]:
 """
-
 from __future__ import annotations
 
 from typing import Any, Dict, List, Tuple
@@ -70,25 +71,25 @@ def get_settings_transcribe_faster(info: Dict[str, Any], media_type: str, media_
             "all_language_probs",
         ]
         settings = {p: getattr(info, p) for p in props}
-    except Exception as error:
+    except (TypeError, AttributeError, KeyError, ValueError) as err:
         settings["duration"] = -1
-        Trace.error(f"{error}")
+        Trace.error(f"{err}")
 
     # transcription_options: TranscriptionOptions
 
     try:
         settings["transcription_options"] = dict(info.transcription_options.__dict__.items()) # type: ignore[attr-defined]
-    except Exception as error:
+    except (TypeError, ValueError, AttributeError) as err:
         settings["transcription_options"] = None
-        Trace.error(f"{error}")
+        Trace.error(f"{err}")
 
     # vad_options: Optional[VadOptions]
 
     try:
         settings["vad_options"] = dict(info.vad_options.__dict__.items())  # type: ignore[attr-defined]
-    except Exception as error:
+    except (TypeError, ValueError, AttributeError) as err:
         settings["vad_options"] = None
-        Trace.error(f"{error}")
+        Trace.error(f"{err}")
 
     settings["source"] = {}
     settings["source"]["channels"]      = media_info["channels"]

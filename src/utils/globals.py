@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 15:26
 
     src/utils/globals.py
 
@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import os
 import sys
+
 from pathlib import Path
 from typing import List
 

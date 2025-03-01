@@ -1,5 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 18:03
+
+    src/helper/spelling.py
 
     PUBLIC:
      - hunspell_dictionary_init(path: str, filename: str, language: str = "de-DE") -> None:
@@ -8,6 +10,7 @@
 from __future__ import annotations
 
 import re
+
 from pathlib import Path
 from typing import Dict, List
 
@@ -125,7 +128,7 @@ def spellcheck(words: List[str], debug: bool=False) -> Dict[str, int]:
                 if word not in global_precheck_single_words:
                     try:
                         checked = global_dictionary_data.lookup(word)
-                    except Exception as err:
+                    except (AttributeError, TypeError, ValueError, IndexError ) as err:
                         Trace.error( f"{i}: {word} -> {err}" )
                         i += 1
                         continue

@@ -1,16 +1,16 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
 
     src/helper/excel_read.py (calamine)
 
     https://github.com/tafia/calamine
 
     PUBLIC:
-     - import_project_excel(pathname: Path | str, filename: str)           -> Project | None
-     - import_dictionary_excel(pathname: Path | str, filename: str)        -> Dictionary | None
+     - import_project_excel(pathname: Path | str, filename: str)            -> Project | None
+     - import_dictionary_excel(pathname: Path | str, filename: str)         -> Dictionary | None
      - import_hunspell_pre_check_excel(pathname: Path | str, filename: str) -> PreCheck | None
-     - import_captions_excel(pathname: Path | str, filename: str)          -> Captions | None
-     - import_ssml_rules_excel(pathname: Path | str, filename: str)        -> SSML_Rules | None
+     - import_captions_excel(pathname: Path | str, filename: str)           -> Captions | None
+     - import_ssml_rules_excel(pathname: Path | str, filename: str)         -> SSML_Rules | None
 """
 from __future__ import annotations
 

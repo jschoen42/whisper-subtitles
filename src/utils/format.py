@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 15:26
 
     src/utils/format.py
 
@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import datetime
 import math
+
 from typing import Any, Dict
 
 from dateutil.parser import parse
@@ -119,4 +120,3 @@ def str_to_bool(value: Any) -> bool | None:
         return False
     else:
         return None
-

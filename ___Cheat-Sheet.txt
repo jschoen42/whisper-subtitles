@@ -12,7 +12,7 @@ uv init -p 3.13
 ------------------ pyproject.toml -----------------
 ...
 authors = [
-  { name="Jürgen Schoenemeyer", email="js007@web.de" },
+   { name = "Jürgen Schoenemeyer", email = "js007@web.de" },
 ]
 license = {file = "LICENSE"}
 ...

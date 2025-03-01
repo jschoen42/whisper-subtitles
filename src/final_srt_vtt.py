@@ -1,6 +1,11 @@
-# .venv/Scripts/activate
-# python src/final_srt_vtt.py
+"""
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
 
+    src/final_srt_vtt.py
+
+    .venv/Scripts/activate
+    python src/final_srt_vtt.py
+"""
 from __future__ import annotations
 
 import os

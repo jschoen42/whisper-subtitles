@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 15:26
 
     src/utils/util.py
 
@@ -25,7 +25,6 @@ from typing import Any, Dict, List
 
 from utils.file import create_folder, export_json, import_json
 from utils.trace import Color, Trace
-
 
 # PUBLIC
 def format_subtitle( start_time: float, end_time: float, text: str, color: bool=True ) -> str:

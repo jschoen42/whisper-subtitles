@@ -1,5 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
+
+    src/helper/whisper_util.py
 
     PUBLIC:
      - prepare_words(data: Dict, is_faster_whisper: bool, is_intro: bool, model_name: str, language: str, cache_md5: Dict, media_filename: str) -> Tuple[list, int, float, float, str, List, List]:
@@ -14,11 +16,11 @@
      - format_euro(text: str, thousand_separator: str = ".", float_separator: str = ",", euro: str = "€") -> str:
 
 """
-
 from __future__ import annotations
 
 import hashlib
 import re
+
 from typing import TYPE_CHECKING, Any, Dict, List, Set, Tuple
 
 import numpy as np

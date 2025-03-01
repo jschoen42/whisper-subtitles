@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 23.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 16:36
 
     _basedpyright.py
 
@@ -13,6 +13,7 @@
      - uv add types-openpyxl --dev
      - uv add types-python-dateutil --dev
      - uv add types-pyyaml --dev
+     - uv add types-toml --dev
      - uv add types-xmltodict --dev
 
     RUN CLI
@@ -36,6 +37,7 @@ import shutil
 import subprocess
 import sys
 import time
+
 from argparse import ArgumentParser
 from collections import Counter
 from datetime import datetime
@@ -57,7 +59,7 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
 
     if python_version == "":
         try:
-            with Path.open(Path("python-version"), mode="r") as f:
+            with Path.open(Path(".python-version"), mode="r") as f:
                 python_version = f.read().strip()
         except OSError:
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
@@ -98,9 +100,11 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
         "reportUnusedCallResult": False,       # always False -> _vars
 
         "exclude": [
-            ".venv/*",
-            "src/faster_whisper/*",
-            "src/extras/*",
+            "**/.venv",
+            "**/site-packages",
+            "**/Scripts/activate_this.py",
+            "**/src/faster_whisper/*",
+            "**/src/extras/*",
         ],
     }
 
@@ -144,7 +148,7 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
             text=True,
             check=False,
         )
-    except Exception as err:
+    except subprocess.CalledProcessError as err:
         print(f"error: {err} - basedpyright")
         sys.exit(1)
     finally:
@@ -195,29 +199,28 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
 
     text = text.replace("[version]", version )
 
-    footer: str =  f"files: {summary['filesAnalyzed']}, "
-    footer += f"errors: {summary['errorCount']}, "
-    footer += f"warnings: {summary['warningCount']}, "
-    footer += f"informations: {summary['informationCount']}, "
-    footer += f"duration: {summary['timeInSec']} sec"
-
     n = len(str(Path.cwd().absolute())) + 1
 
     msg_files = 0
     last_file = ""
     error_types: Counter[str] = Counter()
     for diagnostic in diagnostics:
+
         file        = Path(diagnostic["file"]).as_posix()
-        error_type  = diagnostic["rule"]
-        error       = diagnostic["severity"]
+        severity    = diagnostic["severity"]
+        if severity == "information":
+            error_type = ""
+        else:
+            error_type = diagnostic["rule"]
+            error_types[error_type] += 1
+
         range_start = diagnostic["range"]["start"]
 
-        error_types[error_type] += 1
-
         msg = file[n:]
-        msg += f":{range_start['line']+1}:{range_start['character']+1} - {error}: " # 0-based
+        msg += f":{range_start['line']+1}:{range_start['character']+1} - {severity}: " # 0-based
         msg += diagnostic["message"]
-        msg += f" ({error_type})"
+        if error_type != "":
+            msg += f" ({error_type})"
 
         if last_file != file:
             if last_file != "":
@@ -232,9 +235,11 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
 
     if len(error_types)>0:
         text += "\nError types (sorted)"
-        for error_type in error_types.most_common():
-            text += f"\n - {error_type[0]}: {error_type[1]}"
+        for error_type, count in error_types.most_common():
+            text += f"\n - {error_type}: {count}"
         text += "\n\n"
+
+    text += "\n"
 
     footer = "Found "
     footer += f"{format_singular_plural(summary['errorCount'],'error')}, "

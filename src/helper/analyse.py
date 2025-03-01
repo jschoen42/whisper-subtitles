@@ -1,5 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 22.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
+
+    src/helper/analyse.py
 
     PUBLIC:
      - analyse_results(model_id: str, model_name: str, media_type: str, media_name: str, media_path: str, json_path: str, _info_path: str, _analyse_path: str, beam_size: int) -> None | Dict:
@@ -10,6 +12,7 @@
 from __future__ import annotations
 
 import io
+
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
@@ -18,7 +21,6 @@ import numpy as np
 from utils.file import import_json
 from utils.metadata import get_audio_duration, get_audio_metadata, get_video_metadata
 from utils.trace import Trace
-
 
 def analyse_results(model_id: str, model_name: str, media_type: str, media_name: str, media_path: Path | str, json_path: str, _info_path: str, _analyse_path: str, beam_size: int) -> None | Dict[str, Any]:
 
@@ -108,8 +110,8 @@ def get_video_length(path: Path | str, filename: str) -> None | float:
 
             media_duration: float = media_details["duration"]
 
-        return media_duration
-
     except OSError as error:
         Trace.error(f"{error}")
         return None
+
+    return media_duration

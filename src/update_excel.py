@@ -1,6 +1,11 @@
-# .venv/Scripts/activate
-# python src/update_excel.py
+"""
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
 
+    src/update_excel.py
+
+    .venv/Scripts/activate
+    python src/update_excel.py
+"""
 from __future__ import annotations
 
 import sys
@@ -9,7 +14,6 @@ from helper.excel_update import update_dictionary_excel
 from utils.file import import_json
 from utils.prefs import Prefs
 from utils.trace import Trace
-
 
 def main() -> None:
     Prefs.init("settings")

@@ -1,11 +1,17 @@
-# .venv/Scripts/activate
-# python src/audio.py
+"""
+    © Jürgen Schoenemeyer, 01.03.2025 17:52
 
+    src/audio.py
+
+    .venv/Scripts/activate
+    python src/audio.py
+"""
 from __future__ import annotations
 
 import os
 import sys
 import time
+
 from pathlib import Path
 
 from utils.audio import convert_to_wav  # , filter_to_wav
@@ -58,4 +64,3 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         Trace.exception("KeyboardInterrupt")
         sys.exit()
-

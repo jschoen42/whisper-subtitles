@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 23.02.2025
+    © Jürgen Schoenemeyer, 01.03.2025 16:36
 
     _pyright.py
 
@@ -7,13 +7,14 @@
      - npm install --global pyright
      - npm update --global pyright
 
-    INSTALL STUBS - https://github.com/python/typeshed/tree/main/stubs:
+    INSTALL STUBS - https://github.com/python/typeshed/tree/main/stubs
      - uv add lxml-stubs --dev
      - uv add pandas-stubs --dev
      - uv add types-beautifulsoup4 --dev
      - uv add types-openpyxl --dev
      - uv add types-python-dateutil --dev
      - uv add types-pyyaml --dev
+     - uv add types-toml --dev
      - uv add types-xmltodict --dev
 
     RUN CLI
@@ -37,6 +38,7 @@ import shutil
 import subprocess
 import sys
 import time
+
 from argparse import ArgumentParser
 from collections import Counter
 from datetime import datetime
@@ -99,6 +101,7 @@ def run_pyright(src_path: Path, python_version: str) -> None:
         "reportUnusedCallResult": False,       # always False -> _vars
 
         "exclude": [
+            "**/.venv",
             "**/site-packages",
             "**/Scripts/activate_this.py",
             "**/src/faster_whisper/*",
@@ -146,7 +149,7 @@ def run_pyright(src_path: Path, python_version: str) -> None:
             text=True,
             check=False,
         )
-    except Exception as err:
+    except subprocess.CalledProcessError as err:
         print(f"error: {err} - pyright")
         sys.exit(1)
     finally:
@@ -233,9 +236,11 @@ def run_pyright(src_path: Path, python_version: str) -> None:
 
     if len(error_types)>0:
         text += "\nError types (sorted)"
-        for error_type in error_types.most_common():
-            text += f"\n - {error_type[0]}: {error_type[1]}"
+        for error_type, count in error_types.most_common():
+            text += f"\n - {error_type}: {count}"
         text += "\n\n"
+
+    text += "\n"
 
     footer = "Found "
     footer += f"{format_singular_plural(summary['errorCount'],'error')}, "
