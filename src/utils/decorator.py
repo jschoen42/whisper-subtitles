@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 15:26
+    © Jürgen Schoenemeyer, 06.03.2025 17:56
 
     src/utils/decorator.py
 
@@ -8,9 +8,9 @@
      - @deprecated(message: str="")
      - @retry_exception(text: str="", exception=Exception, delay: int|float=1, retries: int=5)
 
-    PRIVAT:
-      - def get_args_values( func: Callable, *args: Any, **kwargs: Any ) -> Tuple[List, Dict]:
-      - def replace_arguments(match: Match, func_name: str, *args: Any, **kwargs: Any) -> str:
+    PRIVATE:
+     - def get_args_values( func: Callable, *args: Any, **kwargs: Any ) -> Tuple[List, Dict]:
+     - def replace_arguments(match: Match, func_name: str, *args: Any, **kwargs: Any) -> str:
 """
 from __future__ import annotations
 
@@ -86,8 +86,8 @@ def my_decorator(function=None, *, ... ) -> Callable:
         return decorator           # Decorator Factory
 """
 
-# @duration
-# @duration()
+# @duration    <- there are sometimes (?) problems with the function parameter and mypy, PyRight, Pylance
+# @duration()  <- no problems
 # @duration("")
 # @duration("{__name__} 3: {0} {1} {2}")
 # @duration("{__name__} 2: {name} {number} {type}")
@@ -248,8 +248,8 @@ def get_args_values( func: Callable[[Any], Any], *args: Any, **kwargs: Any ) -> 
     bound_args: BoundArguments = sig.bind_partial(*args, **kwargs)
     bound_args.apply_defaults()
 
-    args_values: Any = []
-    kwargs_values: Any = {}
+    args_values = []
+    kwargs_values = {}
     for name, value in bound_args.arguments.items():
         args_values.append(value)
         kwargs_values[name] = value

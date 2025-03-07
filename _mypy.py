@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 16:19
+    © Jürgen Schoenemeyer, 04.03.2025 14:30
 
     _mypy.py
 
@@ -382,8 +382,8 @@ def run_mypy(src_path: Path, python_version: str) -> None:
             last_file = file
             msg_files += 1
 
-        pre = f"{file}:{data["line"]}:{data["column"]+1}" # column 0-based
-        text += f"{pre} {severity}: {data["message"]}"
+        pre = f"{file}:{data['line']}:{data['column']+1}" # column 0-based
+        text += f"{pre} {severity}: {data['message']}"
         if severity != "note":
             text += f" [{message_type}]\n"
         else:

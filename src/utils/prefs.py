@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 15:26
+    © Jürgen Schoenemeyer, 06.03.2025 17:56
 
     src/utils/prefs.py
 
@@ -9,6 +9,7 @@
       - load(cls, pref_name: str) -> bool
       - get(cls, key_path: str) -> Any
 
+    PRIVATE:
      - merge_dicts(a: Dict, b: Dict) -> Dict
      - build_tree(tree: List, in_key: str, value: str) -> Dict
 """

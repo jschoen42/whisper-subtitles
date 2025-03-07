@@ -17,7 +17,8 @@ _old/*
 .timestamps.json
 .Python31?-*
 
-pre-commit-exclude.toml
+/.githooks.toml
+*.log
 
 ### General
 .env

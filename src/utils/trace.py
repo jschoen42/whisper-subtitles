@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 15:26
+    © Jürgen Schoenemeyer, 05.03.2025 14:22
 
     src/utils/trace.py
 
@@ -11,12 +11,7 @@
       - Trace.set(timezone="Europe/Berlin") # "UTC", "America/New_York"
       - Trace.set(show_caller=False)
       - Trace.set(appl_folder="/trace/")
-      #
-      - Trace.file_init(["action", "result", "warning", "error"], csv=False)
-      - Trace.file_save("./logs", "testTrace")
-      #
-      - Trace.redirect(function) # -> e.g. qDebug (PySide6)
-      #
+
       - Trace.action()
       - Trace.result()
       - Trace.info()     # not in reduced mode
@@ -28,6 +23,11 @@
       - Trace.fatal()
       - Trace.debug()    # only in debug mode
       - Trace.wait()     # only in debug mode
+
+      - Trace.file_init(["action", "result", "warning", "error"], csv=False)
+      - Trace.file_save("./logs", "testTrace")
+
+      - Trace.redirect(function) # -> e.g. qDebug (PySide6)
 
     class Color:
       - Color.<color_name>
@@ -42,9 +42,9 @@ import re
 import sys
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, Dict, List, override
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Dict, List
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 if TYPE_CHECKING:
@@ -52,61 +52,52 @@ if TYPE_CHECKING:
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 
-def ansi_code(code: int) -> str:
-    return f"\033[{code}m"
-
-class StrEnum(Enum):
-    @override
-    def __str__(self) -> str: # type: ignore[reportImplicitOverride]
-        return self.value
-
 class Color(StrEnum):
-    RESET            = ansi_code(0)
-    BOLD             = ansi_code(1)
-    DISABLE          = ansi_code(2)
-    ITALIC           = ansi_code(3)
-    UNDERLINE        = ansi_code(4)
-    INVERSE          = ansi_code(7)
-    INVISIBLE        = ansi_code(8)
-    STRIKETHROUGH    = ansi_code(9)
-    NORMAL           = ansi_code(22)
+    RESET            = "\033[0m"
+    BOLD             = "\033[1m"
+    DISABLE          = "\033[2m"
+    ITALIC           = "\033[3m"
+    UNDERLINE        = "\033[4m"
+    INVERSE          = "\033[7m"
+    INVISIBLE        = "\033[8m"
+    STRIKETHROUGH    = "\033[9m"
+    NORMAL           = "\033[11m"
 
-    BLACK            = ansi_code(30)  # light/dark mode: #666666 / #666666
-    RED              = ansi_code(31)  # light/dark mode: #CD3131 / #F14C4C
-    GREEN            = ansi_code(32)  # light/dark mode: #14CE14 / #23D18B
-    YELLOW           = ansi_code(33)  # light/dark mode: #B5BA00 / #F5F543
-    BLUE             = ansi_code(34)  # light/dark mode: #0451A5 / #3B8EEA
-    MAGENTA          = ansi_code(35)  # light/dark mode: #BC05BC / #D670D6
-    CYAN             = ansi_code(36)  # light/dark mode: #0598BC / #29B8DB
-    LIGHT_GRAY       = ansi_code(37)  # light/dark mode: #A5A5A5 / #E5E5E5
+    BLACK            = "\033[30m"  # light/dark mode: #666666 / #666666
+    RED              = "\033[31m"  # light/dark mode: #CD3131 / #F14C4C
+    GREEN            = "\033[32m"  # light/dark mode: #14CE14 / #23D18B
+    YELLOW           = "\033[33m"  # light/dark mode: #B5BA00 / #F5F543
+    BLUE             = "\033[34m"  # light/dark mode: #0451A5 / #3B8EEA
+    MAGENTA          = "\033[356m" # light/dark mode: #BC05BC / #D670D6
+    CYAN             = "\033[36m"  # light/dark mode: #0598BC / #29B8DB
+    LIGHT_GRAY       = "\033[37m"  # light/dark mode: #A5A5A5 / #E5E5E5
 
-    # LIGHT_GRAY       = ansi_code(37)
-    # DARK_GRAY        = ansi_code(90)
-    # LIGHT_RED        = ansi_code(91)
-    # LIGHT_GREEN      = ansi_code(92)
-    # LIGHT_YELLOW     = ansi_code(93)
-    # LIGHT_BLUE       = ansi_code(94)
-    # LIGHT_MAGENTA    = ansi_code(95)
-    # LIGHT_CYAN       = ansi_code(96)
-    # WHITE            = ansi_code(97)
+    BLACK_BG         = "\033[40m"
+    RED_BG           = "\033[41m"
+    GREEN_BG         = "\033[42m"
+    YELLOW_BG        = "\033[43m"
+    BLUE_BG          = "\033[44m"
+    MAGENTA_BG       = "\033[45m"
+    CYAN_BG          = "\033[46m"
+    LIGHT_GRAY_BG    = "\033[47m"
 
-    BLACK_BG         = ansi_code(40)
-    RED_BG           = ansi_code(41)
-    GREEN_BG         = ansi_code(42)
-    YELLOW_BG        = ansi_code(43)
-    BLUE_BG          = ansi_code(44)
-    MAGENTA_BG       = ansi_code(45)
-    CYAN_BG          = ansi_code(46)
-    LIGHT_GRAY_BG    = ansi_code(47)
+    # DARK_GRAY        = "\033[90m"
+    # LIGHT_RED        = "\033[91m"
+    # LIGHT_GREEN      = "\033[92m"
+    # LIGHT_YELLOW     = "\033[93m"
+    # LIGHT_BLUE       = "\033[94m"
+    # LIGHT_MAGENTA    = "\033[95m"
+    # LIGHT_CYAN       = "\033[96m"
+    # WHITE            = "\033[97m"
 
-    # DARK_GRAY_BG     = ansi_code(100)
-    # LIGHT_RED_BG     = ansi_code(101)
-    # LIGHT_GREEN_BG   = ansi_code(102)
-    # LIGHT_YELLOW_BG  = ansi_code(103)
-    # LIGHT_BLUE_BG    = ansi_code(104)
-    # LIGHT_MAGENTA_BG = ansi_code(105)
-    # LIGHT_CYAN_BG    = ansi_code(106)
-    # WHITE_BG         = ansi_code(107)
+    # DARK_GRAY_BG     = "\033[100m"
+    # LIGHT_RED_BG     = "\033[101m"
+    # LIGHT_GREEN_BG   = "\033[102m"
+    # LIGHT_YELLOW_BG  = "\033[103m"
+    # LIGHT_BLUE_BG    = "\033[104m"
+    # LIGHT_MAGENTA_BG = "\033[105m"
+    # LIGHT_CYAN_BG    = "\033[106m"
+    # WHITE_BG         = "\033[107m"
 
     @staticmethod
     def clear(text: str) -> str:
@@ -130,9 +121,7 @@ pattern: Dict[str, str] = {
     "debug":     "DEBUG", # only in debug mode
     "wait":      "WAIT ", # only in debug mode
 
-    "clear":     " §§§ ", # only internal (for decorator, ...)
-    #"clear":    " 🕑  ",
-
+    "default":   " ooo ", # only internal (for decorator, ...)
 }
 
 class Trace:
@@ -167,142 +156,104 @@ class Trace:
 
                 if key == "timezone" and isinstance(value, str):
 
-                    # tzdata installed ?
+                    # timezone valid: "UTC", "Europe/Berlin"), "America/New_York" ...
 
                     if importlib.util.find_spec("tzdata") is None:
-                        print( f"{pattern['warning']} install 'tzdata' for named timezones")  # noqa: T201
-                        cls.settings[key] = True
+                        cls.settings["timezone"] = True
+                        Trace.warning( f"please install 'tzdata' for named timezones e.g. '{value}' -> uv add tzdata" )
+
                     else:
-
-                        # timezone valid ?
-
                         try:
                             _ = ZoneInfo(value)
                         except ZoneInfoNotFoundError:
-                            print( f"{pattern['error']} tzdata '{value}' unknown timezone")  # noqa: T201
-                            cls.settings[key] = True
+                            cls.settings["timezone"] = True
+                            Trace.error( f"tzdata '{value}' unknown timezone" )
 
             else:
                 Trace.fatal(f"trace settings: unknown parameter '{key}'")
 
-    @classmethod
-    def redirect(cls, output: Callable[..., None]) -> None:
-        cls.output = output
-
-    @classmethod
-    def file_init(cls, pattern_list: None | List[str] = None, csv: bool = False) -> None:
-        if pattern_list is None:
-            cls.pattern = []
-        else:
-            cls.pattern = pattern_list
-        cls.csv = csv
-        cls.messages = []
-
-    @classmethod
-    def file_save(cls, path: Path | str, filename: str) -> None:
-        trace_path = Path(path)
-
-        text = ""
-        for message in Trace.messages:
-            text += message + "\n"
-
-        curr_time = cls.__get_time_timezone(cls.settings["timezone"]).replace(":", "-")
-
-        try:
-            if not trace_path.is_dir():
-                Path(path).mkdir(parents=True)
-
-            with Path.open(Path(trace_path, f"{filename} • {curr_time}.txt"), mode="w", encoding="utf-8", newline="\n") as file:
-                file.write(text)
-
-        except OSError as err:
-            Trace.error(f"[trace_end] write {err}")
-
-        cls.messages = []
-
-    # action, result, info, update, download
-
-    @classmethod
-    def action(cls, message: str = "", *optional: Any) -> None:
-        pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
-        cls.__show_message(cls.__check_file_output(), pre, message, *optional)
-
-    @classmethod
-    def result(cls, message: str = "", *optional: Any) -> None:
-        pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
-        cls.__show_message(cls.__check_file_output(), pre, message, *optional)
-
-    @classmethod
-    def time(cls, message: str = "", *optional: Any) -> None:
-        pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_custom_caller('duration')}"
-        cls.__show_message(cls.__check_file_output(), pre, message, *optional)
-
-    @classmethod
-    def custom(cls, message: str = "", *optional: Any, path: str = "custom") -> None:
-        pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_custom_caller(path)}"
-        cls.__show_message(cls.__check_file_output(), pre, message, *optional)
+    # info, update, download (not in reduced mode)
 
     @classmethod
     def info(cls, message: str = "", *optional: Any) -> None:
         if not cls.settings["reduced_mode"]:
-            pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
-            cls.__show_message(cls.__check_file_output(), pre, message, *optional)
+            pre = f"{cls._get_time()}{cls._get_pattern()}{cls._get_caller()}"
+            cls._show_message(cls._check_file_output(), pre, message, *optional)
 
     @classmethod
     def update(cls, message: str = "", *optional: Any) -> None:
         if not cls.settings["reduced_mode"]:
-            pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
-            cls.__show_message(cls.__check_file_output(), pre, message, *optional)
+            pre = f"{cls._get_time()}{cls._get_pattern()}{cls._get_caller()}"
+            cls._show_message(cls._check_file_output(), pre, message, *optional)
 
     @classmethod
     def download(cls, message: str = "", *optional: Any) -> None:
         if not cls.settings["reduced_mode"]:
-            pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
-            cls.__show_message(cls.__check_file_output(), pre, message, *optional)
+            pre = f"{cls._get_time()}{cls._get_pattern()}{cls._get_caller()}"
+            cls._show_message(cls._check_file_output(), pre, message, *optional)
+
+    # action, result
+
+    @classmethod
+    def action(cls, message: str = "", *optional: Any) -> None:
+        pre = f"{cls._get_time()}{cls._get_pattern()}{cls._get_caller()}"
+        cls._show_message(cls._check_file_output(), pre, message, *optional)
+
+    @classmethod
+    def result(cls, message: str = "", *optional: Any) -> None:
+        pre = f"{cls._get_time()}{cls._get_pattern()}{cls._get_caller()}"
+        cls._show_message(cls._check_file_output(), pre, message, *optional)
+
+    # custom
+
+    @classmethod
+    def custom(cls, message: str = "", *optional: Any, path: str = "custom") -> None:
+        pre = f"{cls._get_time()}{cls._get_pattern()}{cls._get_custom_caller(path)}"
+        cls._show_message(cls._check_file_output(), pre, message, *optional)
 
     # important => text MAGENTA, BOLD
 
     @classmethod
     def important(cls, message: str = "", *optional: Any) -> None:
-        pre = f"{cls.__get_time()}{Color.MAGENTA}{cls.__get_pattern()}{cls.__get_caller()}"
-        cls.__show_message(cls.__check_file_output(), pre, f"{Color.MAGENTA}{Color.BOLD}{message}{Color.RESET}", *optional)
+        pre = f"{cls._get_time()}{Color.MAGENTA}{cls._get_pattern()}{cls._get_caller()}"
+        cls._show_message(cls._check_file_output(), pre, f"{Color.MAGENTA}{Color.BOLD}{message}{Color.RESET}", *optional)
 
     # warning, error, exception, fatal => RED
 
     @classmethod
     def warning(cls, message: str = "", *optional: Any) -> None:
-        pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
-        cls.__show_message(cls.__check_file_output(), pre, message, *optional)
+        pre = f"{cls._get_time()}{cls._get_pattern()}{cls._get_caller()}"
+        cls._show_message(cls._check_file_output(), pre, message, *optional)
 
     @classmethod
     def error(cls, message: str = "", *optional: Any) -> None:
-        pre = f"{cls.__get_time()}{Color.RED}{cls.__get_pattern()}{cls.__get_caller()}"
-        cls.__show_message(cls.__check_file_output(), pre, message, *optional)
+        pre = f"{cls._get_time()}{Color.RED}{cls._get_pattern()}{cls._get_caller()}"
+        cls._show_message(cls._check_file_output(), pre, message, *optional)
 
     @classmethod
     def exception(cls, message: str = "", *optional: Any) -> None:
-        pre = f"{cls.__get_time()}{Color.RED}{cls.__get_pattern()}{cls.__get_caller()}"
-        cls.__show_message(cls.__check_file_output(), pre, message, *optional)
+        pre = f"{cls._get_time()}{Color.RED}{cls._get_pattern()}{cls._get_caller()}"
+        cls._show_message(cls._check_file_output(), pre, message, *optional)
 
     @classmethod
     def fatal(cls, message: str = "", *optional: Any) -> None:
-        pre = f"{cls.__get_time()}{Color.RED}{Color.BOLD}{cls.__get_pattern()}{cls.__get_caller()}"
-        cls.__show_message(cls.__check_file_output(), pre, message, *optional)
+        pre = f"{cls._get_time()}{Color.RED}{Color.BOLD}{cls._get_pattern()}{cls._get_caller()}"
+        cls._show_message(cls._check_file_output(), pre, message, *optional)
         raise SystemExit
 
-    # debug, wait
+    # debug, wait (only in debug mode)
 
     @classmethod
     def debug(cls, message: str = "", *optional: Any) -> None:
         if cls.settings["debug_mode"] and not cls.settings["reduced_mode"]:
-            pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
-            cls.__show_message(cls.__check_file_output(), pre, message, *optional)
+            pre = f"{cls._get_time()}{cls._get_pattern()}{cls._get_caller()}"
+            cls._show_message(cls._check_file_output(), pre, message, *optional)
 
     @classmethod
     def wait(cls, message: str = "", *optional: Any) -> None:
         if cls.settings["debug_mode"]:
-            pre = f"{cls.__get_time()}{cls.__get_pattern()}{cls.__get_caller()}"
-            cls.__show_message(cls.__check_file_output(), pre, message, *optional)
+            pre = f"{cls._get_time()}{cls._get_pattern()}{cls._get_caller()}"
+            cls._show_message(cls._check_file_output(), pre, message, *optional)
             try:
                 print(f"{Color.RED}{Color.BOLD} >>> Press Any key to continue or ESC to exit <<< {Color.RESET}", end="", flush=True)  # noqa: T201
 
@@ -336,9 +287,49 @@ class Trace:
             except KeyboardInterrupt:
                 sys.exit()
 
+    # file_init, file_save
 
     @classmethod
-    def __check_file_output(cls) -> bool:
+    def file_init(cls, pattern_list: None | List[str] = None, csv: bool = False) -> None:
+        if pattern_list is None:
+            cls.pattern = []
+        else:
+            cls.pattern = pattern_list
+        cls.csv = csv
+        cls.messages = []
+
+    @classmethod
+    def file_save(cls, path: Path | str, filename: str) -> None:
+        trace_path = Path(path)
+
+        text = ""
+        for message in Trace.messages:
+            text += message + "\n"
+
+        curr_time = cls._get_time_timezone(cls.settings["timezone"]).replace(":", "-")
+
+        try:
+            if not trace_path.is_dir():
+                Path(path).mkdir(parents=True)
+
+            with Path.open(Path(trace_path, f"{filename} • {curr_time}.txt"), mode="w", encoding="utf-8", newline="\n") as file:
+                file.write(text)
+
+        except OSError as err:
+            Trace.error(f"[trace_end] write {err}")
+
+        cls.messages = []
+
+    # redirect()
+
+    @classmethod
+    def redirect(cls, output: Callable[..., None]) -> None:
+        cls.output = output
+
+    # INTERNAL
+
+    @classmethod
+    def _check_file_output(cls) -> bool:
         current_frame: FrameType | None = inspect.currentframe()
         if current_frame is None:
             return False
@@ -350,8 +341,21 @@ class Trace:
         trace_type = caller_frame.f_code.co_name
         return trace_type in cls.pattern
 
+    # show_timestamp=False -> ""
+    # timezone=False       -> "13:26:14.768"
+    # timezone=True        -> "13:26:14.768+0100"
+    # timezone="UTC"       -> "12:26:14.768+0000" (if tzdata is installed)
+
     @classmethod
-    def __get_time_timezone(cls, tz: bool | str) -> str:
+    def _get_time(cls) -> str:
+        if cls.settings["show_timestamp"]:
+            curr_time = cls._get_time_timezone(cls.settings["timezone"])
+            return f"{Color.BLUE}{curr_time}{Color.RESET}\t"
+
+        return ""
+
+    @classmethod
+    def _get_time_timezone(cls, tz: bool | str) -> str:
         if tz is False:
             return datetime.now().astimezone().strftime("%H:%M:%S.%f")[:-3]
 
@@ -359,44 +363,35 @@ class Trace:
             d = datetime.now().astimezone()
             return d.strftime("%H:%M:%S.%f")[:-3] + d.strftime("%z")
 
+        # "UTC", "Europe/Berlin", "America/New_York", ...
+
         else:
-            try:
-                timezone = ZoneInfo(tz)
-                d = datetime.now().astimezone(timezone)
-                return d.strftime("%H:%M:%S.%f")[:-3] + d.strftime("%z")
+            timezone = ZoneInfo(tz)
+            d = datetime.now().astimezone(timezone)
+            return d.strftime("%H:%M:%S.%f")[:-3] + d.strftime("%z")
 
-            # "tzdata" not installed
-
-            except ZoneInfoNotFoundError:
-                d = datetime.now().astimezone()
-                return d.strftime("%H:%M:%S.%f")[:-3] + d.strftime("%z")
-
-    @classmethod
-    def __get_time(cls) -> str:
-        if cls.settings["show_timestamp"]:
-            curr_time = cls.__get_time_timezone(cls.settings["timezone"])
-            return f"{Color.BLUE}{curr_time}{Color.RESET}\t"
-
-        return ""
+    # " --> ", " >>> ", " ==> ", "-----", ..., " ooo "
 
     @staticmethod
-    def __get_pattern() -> str:
+    def _get_pattern() -> str:
         current_frame: FrameType | None = inspect.currentframe()
         if current_frame is None:
-            return pattern["clear"]
+            return pattern["default"]
 
         caller_frame: FrameType | None = current_frame.f_back
         if caller_frame is None:
-            return pattern["clear"]
+            return pattern["default"]
 
-        trace_type = caller_frame.f_code.co_name
+        trace_type = caller_frame.f_code.co_name # info, update, download ...
         if trace_type in pattern:
             return pattern[trace_type]
 
-        return pattern["clear"]
+        return pattern["default"]
+
+    # [utils/file.py:413 » export_file]
 
     @classmethod
-    def __get_caller(cls) -> str:
+    def _get_caller(cls) -> str:
         if cls.settings["show_caller"] is False:
             return f"{Color.RESET} "
 
@@ -417,7 +412,7 @@ class Trace:
 
         line_no = str(trace_frame.f_lineno).zfill(3)
 
-        caller = trace_frame.f_code.co_name
+        caller = trace_frame.f_code.co_qualname
         caller = caller.replace(".<locals>.", " → ")
 
         if caller == "<module>":
@@ -426,14 +421,16 @@ class Trace:
             return f"\t{Color.BLUE}[{path}:{line_no} » {caller}]{Color.RESET}\t"
 
     @classmethod
-    def __get_custom_caller(cls, text: str) -> str:
+    def _get_custom_caller(cls, text: str) -> str:
         if cls.settings["show_caller"] is False:
             return f"{Color.RESET} "
 
         return f"\t{Color.BLUE}[{text}]{Color.RESET}\t"
 
+    # 13:17:22.499  ==>  [helper/excel_write.py:487 » export_to_excel]  57 media file(s)
+
     @classmethod
-    def __show_message(cls, file_output: bool, pre: str, message: str, *optional: Any) -> None:
+    def _show_message(cls, file_output: bool, pre: str, message: str, *optional: Any) -> None:
         extra = ""
         for opt in optional:
             extra += " > " + str(opt)

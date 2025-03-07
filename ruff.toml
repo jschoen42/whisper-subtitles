@@ -75,10 +75,20 @@ ignore = [
 
     # tryceratops
     "TRY002",  # raise-vanilla-class
+    "TRY300",  # try-consider-else
 
     # pyupgrade
     "UP006",   # non-pep585-annotation
     "UP035",   # deprecated-import
+]
+
+[per-file-ignores]
+"tests/*" = [
+    # flake8-bandit
+    "S101",    # assert
+
+    # flake8-pytest-style
+    "PT012",   # pytest-raises-with-multiple-statements
 ]
 
 [lint.isort]
