@@ -7,10 +7,10 @@ whisper-subtitles v0.1.0
 ├── ctranslate2 v4.5.0
 │   ├── numpy v2.1.3
 │   ├── pyyaml v6.0.2
-│   └── setuptools v75.8.2
-├── huggingface-hub v0.29.2
+│   └── setuptools v76.0.0
+├── huggingface-hub v0.29.3
 │   ├── filelock v3.17.0
-│   ├── fsspec v2025.2.0
+│   ├── fsspec v2025.3.0
 │   ├── packaging v24.2
 │   ├── pyyaml v6.0.2
 │   ├── requests v2.32.3
@@ -25,7 +25,7 @@ whisper-subtitles v0.1.0
 ├── numba v0.61.0
 │   ├── llvmlite v0.44.0
 │   └── numpy v2.1.3
-├── onnxruntime v1.20.1
+├── onnxruntime v1.21.0
 │   ├── coloredlogs v15.0.1
 │   │   └── humanfriendly v10.0
 │   │       └── pyreadline3 v3.5.4
@@ -44,11 +44,11 @@ whisper-subtitles v0.1.0
 │   │   └── requests v2.32.3 (*)
 │   ├── torch v2.4.1
 │   │   ├── filelock v3.17.0
-│   │   ├── fsspec v2025.2.0
+│   │   ├── fsspec v2025.3.0
 │   │   ├── jinja2 v3.1.6
 │   │   │   └── markupsafe v3.0.2
 │   │   ├── networkx v3.4.2
-│   │   ├── setuptools v75.8.2
+│   │   ├── setuptools v76.0.0
 │   │   ├── sympy v1.13.3 (*)
 │   │   └── typing-extensions v4.12.2
 │   └── tqdm v4.67.1 (*)
@@ -66,7 +66,7 @@ whisper-subtitles v0.1.0
 │   ├── langcodes v3.5.0
 │   │   └── language-data v1.3.0
 │   │       └── marisa-trie v1.2.1
-│   │           └── setuptools v75.8.2
+│   │           └── setuptools v76.0.0
 │   ├── murmurhash v1.0.12
 │   ├── numpy v2.1.3
 │   ├── packaging v24.2
@@ -79,7 +79,7 @@ whisper-subtitles v0.1.0
 │   │   │   └── typing-extensions v4.12.2
 │   │   └── typing-extensions v4.12.2
 │   ├── requests v2.32.3 (*)
-│   ├── setuptools v75.8.2
+│   ├── setuptools v76.0.0
 │   ├── spacy-legacy v3.0.12
 │   ├── spacy-loggers v1.0.5
 │   ├── srsly v2.5.1
@@ -97,7 +97,7 @@ whisper-subtitles v0.1.0
 │   │   ├── packaging v24.2
 │   │   ├── preshed v3.0.9 (*)
 │   │   ├── pydantic v2.10.6 (*)
-│   │   ├── setuptools v75.8.2
+│   │   ├── setuptools v76.0.0
 │   │   ├── srsly v2.5.1 (*)
 │   │   └── wasabi v1.1.3
 │   │       └── colorama v0.4.6
@@ -131,7 +131,7 @@ whisper-subtitles v0.1.0
 │   └── torch v2.4.1 (*)
 ├── spylls v0.1.7
 ├── tokenizers v0.21.0
-│   └── huggingface-hub v0.29.2 (*)
+│   └── huggingface-hub v0.29.3 (*)
 ├── torch v2.4.1 (*)
 ├── tzdata v2025.1
 ├── webvtt-py v0.5.1

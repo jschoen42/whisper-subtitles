@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 17:52
+    © Jürgen Schoenemeyer, 14.03.2025 00:13
 
     src/audio.py
 
@@ -8,7 +8,6 @@
 """
 from __future__ import annotations
 
-import os
 import sys
 import time
 
@@ -47,7 +46,7 @@ def main() -> None:
         dest = data_path / project / "03_audio"
 
         starttime = time.time()
-        for filename in os.listdir(source):
+        for filename in source.iterdir():
             if Path(filename).suffix == SOURCE_TYPE:
                 if media_type == "wav":
                     convert_to_wav( source, Path(dest, "wav"), filename, SAMPLING, CHANNELS, Prefs.get("ffmpeg")["path"] )

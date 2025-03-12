@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 04.03.2025 14:30
+    © Jürgen Schoenemeyer, 12.03.2025 16:31
 
     _mypy.py
 
@@ -78,7 +78,8 @@ def run_mypy(src_path: Path, python_version: str) -> None:
 
     if python_version == "":
         try:
-            with Path.open(Path(".python-version"), mode="r") as f:
+            filename = Path(".python-version")
+            with filename.open(mode="r") as f:
                 python_version = f.read().strip()
         except OSError:
             python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
@@ -230,7 +231,7 @@ def run_mypy(src_path: Path, python_version: str) -> None:
 
     text  = f"Python:   {sys.version.replace(LINEFEET, ' ')}\n"
     text += f"Platform: {platform.platform()}\n"
-    text += f"Date:     {datetime.now().astimezone().strftime('%d.%m.%Y %H:%M:%S')}\n"
+    text += f"Date:     {datetime.now().astimezone():%d.%m.%Y %H:%M:%S}\n"
     text += f"Path:     {BASE_PATH}\n"
     text += "\n"
 
@@ -241,7 +242,7 @@ def run_mypy(src_path: Path, python_version: str) -> None:
     text += "\n"
 
     config = Path("tmp.toml")
-    with Path.open(config, mode="w", newline="\n") as config_file:
+    with config.open(mode="w", newline="\n") as config_file:
         config_file.write(configuration)
 
     try:
@@ -300,7 +301,7 @@ def run_mypy(src_path: Path, python_version: str) -> None:
 
     mypy_missing_stubs = Path(".mypy_cache") / "missing_stubs"
     if mypy_missing_stubs.exists():
-        with Path.open(mypy_missing_stubs, "r") as f:
+        with mypy_missing_stubs.open(mode="r") as f:
             lines = f.read()
 
         text += f"stubs missing -> '{mypy_missing_stubs.as_posix()}'\n"
@@ -410,7 +411,7 @@ def run_mypy(src_path: Path, python_version: str) -> None:
     text += "\n" + footer + "\n"
 
     result_filename = f"mypy-{python_version}-'{name}'.txt"
-    with Path.open(folder_path / result_filename, "w", newline="\n") as f:
+    with (folder_path / result_filename).open(mode="w", newline="\n") as f:
         f.write(text)
 
     duration = time.time() - start

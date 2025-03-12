@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 17:52
+    © Jürgen Schoenemeyer, 14.03.2025 00:13
 
     src/primary/whisper_timestamped.py
 
@@ -21,12 +21,7 @@ import whisper_timestamped  # type: ignore[import-untyped]
 
 from helper.captions import export_srt, export_vtt
 from helper.excel_write import export_text_to_speech_excel
-from helper.whisper_util import (
-    get_filename_parameter,
-    prepare_words,
-    split_to_lines,
-    split_to_sentences,
-)
+from helper.whisper_util import get_filename_parameter, prepare_words, split_to_lines, split_to_sentences
 from primary.whisper import search_model_path
 from utils.file import export_json, export_text, import_json
 from utils.metadata import get_media_info

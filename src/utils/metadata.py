@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 25.02.2025 15:45
+    © Jürgen Schoenemeyer, 13.03.2025 23:57
 
     src/utils/metadata.py
 
@@ -12,7 +12,7 @@
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, Protocol, cast
+from typing import TYPE_CHECKING, Any, Dict, Protocol
 
 from pymediainfo import MediaInfo, Track
 
@@ -97,10 +97,12 @@ class VideoTrack(Protocol):
     unique_id: str                         # "8640863827297483320"
     width: int                             # 1920
 
-def get_media_info(filepath: str | BytesIO) -> None | Dict[str, int | float]:
+def get_media_info(filepath: str | BytesIO) -> Dict[str, int | float] | None:
 
     try:
         track = get_media_trackinfo(filepath)
+        if track is None:
+            return None
 
     except FileNotFoundError as error:
         Trace.error(f"FileNotFoundError '{error}'")
@@ -110,7 +112,7 @@ def get_media_info(filepath: str | BytesIO) -> None | Dict[str, int | float]:
          Trace.error(f"MediaInfo: {error}")
          return None
 
-    audio_track = cast(AudioTrack, track) # -> mypy
+    audio_track = track
 
     return {
         "duration": round(audio_track.duration/1000, 3),

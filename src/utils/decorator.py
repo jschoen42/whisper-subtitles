@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 06.03.2025 17:56
+    © Jürgen Schoenemeyer, 12.03.2025 12:28
 
     src/utils/decorator.py
 
@@ -130,9 +130,9 @@ def duration(special: Callable[[Any], Any] | str | None = None, *, text: str | N
 
             duration_text = f"{Color.GREEN}{Color.BOLD}{total_time:.3f} sec{Color.RESET}"
             if pretext == "":
-                Trace.custom(f"{duration_text}", path="duration")
+                Trace.decorator(f"{duration_text}", path="duration")
             else:
-                Trace.custom(f"{pretext}: {duration_text}", path="duration")
+                Trace.decorator(f"{pretext}: {duration_text}", path="duration")
 
             return result
         return wrapper
@@ -163,9 +163,9 @@ def deprecated(special: Callable[[Any], Any] | str | None = None, *, message: st
             # before ...
 
             if text == "":
-                Trace.custom(f"{Color.RED}'{func.__name__}' is deprecated{Color.RESET}", path="deprecated")
+                Trace.decorator(f"{Color.RED}'{func.__name__}' is deprecated{Color.RESET}", path="deprecated")
             else:
-                Trace.custom(f"{Color.RED}'{func.__name__}' is deprecated ({text}){Color.RESET}", path="deprecated")
+                Trace.decorator(f"{Color.RED}'{func.__name__}' is deprecated ({text}){Color.RESET}", path="deprecated")
 
             result = func(*args, **kwargs)
 
@@ -188,9 +188,9 @@ def deprecated(message: str="") -> Callable:
             # before ...
 
             if message == "":
-                Trace.custom(f"{Color.RED}'{func.__name__}' is deprecated{Color.RESET}", path="deprecated")
+                Trace.decorator(f"{Color.RED}'{func.__name__}' is deprecated{Color.RESET}", path="deprecated")
             else:
-                Trace.custom(f"{Color.RED}'{func.__name__}' is deprecated ({message}){Color.RESET}", path="deprecated")
+                Trace.decorator(f"{Color.RED}'{func.__name__}' is deprecated ({message}){Color.RESET}", path="deprecated")
 
             result = func(*args, **kwargs)
 
@@ -231,9 +231,9 @@ def retry_exception(text: str | None = None, exception: type[BaseException] = Ex
                     attempts += 1
                     attempts_text = f"{Color.RED}{Color.BOLD}failed ({attempts}/{retries}){Color.RESET}"
                     if pretext == "":
-                        Trace.custom(f"{attempts_text}", path="retry")
+                        Trace.decorator(f"{attempts_text}", path="retry")
                     else:
-                        Trace.custom(f"{pretext}: {attempts_text}", path="retry")
+                        Trace.decorator(f"{pretext}: {attempts_text}", path="retry")
 
                     time.sleep(delay)
 
@@ -315,4 +315,4 @@ def duration_cm(name: str) -> Generator[None, None, None]:
         total_time = (end_time - start_time)
 
         text = f"{Color.GREEN}{Color.BOLD}{total_time:.3f} sec{Color.RESET}"
-        Trace.custom(f"{name}: {text}", path="duration")
+        Trace.decorator(f"{name}: {text}", path="duration")

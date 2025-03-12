@@ -1,6 +1,10 @@
 {
   "explorer.compactFolders": false,
 
+  "emmet.includeLanguages": {
+    "jinja-html": "html"
+  },
+
   "editor.fontSize": 12,
   "editor.fontFamily": "Cascadia Code NF, Consolas, Courier New, monospace",
   "editor.fontWeight": 400,
@@ -22,12 +26,12 @@
   "terminal.integrated.fontFamily": "Consolas Nerd Font",
 
   "[html]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.tabSize": 2,
     "editor.formatOnType": true
   },
   "[css]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.tabSize": 2,
     "editor.formatOnType": true
   },
@@ -78,5 +82,14 @@
   "errorLens.followCursor": "activeLine",
   "markdownlint.config": {
     "MD041": false
-  }
+  },
+  "python.testing.unittestArgs": [
+    "-v",
+    "-s",
+    ".",
+    "-p",
+    "*test.py"
+  ],
+  "python.testing.pytestEnabled": false,
+  "python.testing.unittestEnabled": true
 }

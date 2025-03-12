@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 17:52
+    © Jürgen Schoenemeyer, 12.03.2025 16:40
 
     src/helper/analyse.py
 
@@ -36,7 +36,7 @@ def analyse_results(model_id: str, model_name: str, media_type: str, media_name:
 
     media_duration = 0.0
     try:
-        with Path.open(media_pathname, "rb") as media_file:
+        with media_pathname.open(mode="rb") as media_file:
             media_data = media_file.read()
 
             if media_type == "mp4":
@@ -101,7 +101,7 @@ def get_video_length(path: Path | str, filename: str) -> None | float:
     path = Path(path)
 
     try:
-        with Path.open(path / filename, "rb") as media_file:
+        with (path / filename).open(mode="rb") as media_file:
             media_data = media_file.read()
 
             media_details: None |Dict[str, Any] = get_video_metadata(io.BytesIO(media_data))

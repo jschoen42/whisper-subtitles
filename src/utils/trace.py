@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 05.03.2025 14:22
+    © Jürgen Schoenemeyer, 12.03.2025 16:31
 
     src/utils/trace.py
 
@@ -23,6 +23,8 @@
       - Trace.fatal()
       - Trace.debug()    # only in debug mode
       - Trace.wait()     # only in debug mode
+
+      - Trace.decorator()
 
       - Trace.file_init(["action", "result", "warning", "error"], csv=False)
       - Trace.file_save("./logs", "testTrace")
@@ -121,7 +123,8 @@ pattern: Dict[str, str] = {
     "debug":     "DEBUG", # only in debug mode
     "wait":      "WAIT ", # only in debug mode
 
-    "default":   " ooo ", # only internal (for decorator, ...)
+    "decorator": " ooo ",
+    "unknown":   " ??? ",
 }
 
 class Trace:
@@ -204,13 +207,6 @@ class Trace:
         pre = f"{cls._get_time()}{cls._get_pattern()}{cls._get_caller()}"
         cls._show_message(cls._check_file_output(), pre, message, *optional)
 
-    # custom
-
-    @classmethod
-    def custom(cls, message: str = "", *optional: Any, path: str = "custom") -> None:
-        pre = f"{cls._get_time()}{cls._get_pattern()}{cls._get_custom_caller(path)}"
-        cls._show_message(cls._check_file_output(), pre, message, *optional)
-
     # important => text MAGENTA, BOLD
 
     @classmethod
@@ -287,6 +283,13 @@ class Trace:
             except KeyboardInterrupt:
                 sys.exit()
 
+    # decorator -> 12:21:39.836  ooo  <text>: 1.486 sec
+
+    @classmethod
+    def decorator(cls, message: str = "", *optional: Any, path: str = "decorator") -> None:
+        pre = f"{cls._get_time()}{cls._get_pattern()}{cls._get_decorator_caller(path)}"
+        cls._show_message(cls._check_file_output(), pre, message, *optional)
+
     # file_init, file_save
 
     @classmethod
@@ -312,7 +315,8 @@ class Trace:
             if not trace_path.is_dir():
                 Path(path).mkdir(parents=True)
 
-            with Path.open(Path(trace_path, f"{filename} • {curr_time}.txt"), mode="w", encoding="utf-8", newline="\n") as file:
+            file_path = trace_path / f"{filename} • {curr_time}.txt"
+            with file_path.open(mode="w", encoding="utf-8", newline="\n") as file:
                 file.write(text)
 
         except OSError as err:
@@ -376,17 +380,17 @@ class Trace:
     def _get_pattern() -> str:
         current_frame: FrameType | None = inspect.currentframe()
         if current_frame is None:
-            return pattern["default"]
+            return pattern["unknown"] # should never happens
 
         caller_frame: FrameType | None = current_frame.f_back
         if caller_frame is None:
-            return pattern["default"]
+            return pattern["unknown"] # should never happens
 
         trace_type = caller_frame.f_code.co_name # info, update, download ...
         if trace_type in pattern:
             return pattern[trace_type]
 
-        return pattern["default"]
+        return pattern["unknown"]      # should never happens
 
     # [utils/file.py:413 » export_file]
 
@@ -421,7 +425,7 @@ class Trace:
             return f"\t{Color.BLUE}[{path}:{line_no} » {caller}]{Color.RESET}\t"
 
     @classmethod
-    def _get_custom_caller(cls, text: str) -> str:
+    def _get_decorator_caller(cls, text: str) -> str:
         if cls.settings["show_caller"] is False:
             return f"{Color.RESET} "
 

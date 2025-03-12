@@ -1,7 +1,7 @@
 """
-    © Jürgen Schoenemeyer, 06.03.2025 17:56
+    © Jürgen Schoenemeyer, 14.03.2025 00:13
 
-    src/utils/log.py
+    src/helper/log.py
 
     PUBLIC:
      - log_clear()
@@ -97,35 +97,34 @@ def log_add(
 def log_get_data() -> Tuple[str, str]:
     return (global_complete_text, global_complete_text_corr)
 
-########################################################################################
-#
-#  Global DictionaryLog incl. Hunspell (not found)
-#    => _traceAll/correctedAll - ... .txt
-#    => _traceAll/spellingAll - ... .txt
-#    => _traceAll/dictionaryUsedSorted ... .json (*)
-#
-#  (*) _dictionary/Dictionary-DATEV.xlsx: used word replace
-#
-#  init: List[str]
-#  init: ["normalize", "allgemein", "urls", "Fallbeispiele", "spezielles"]
-#
-#  add: data:          Dict[str, DictionaryEntry],
-#       data_spelling: Dict[str, int]
-#  add: { "[abc] -> [aBc]": {"count": 2, "worksheet": "allgemein", "row": 126}, ... }
-#       { "HV": 1, "K6": 1, ... }
-#
-#  get: Tuple[
-#           Dict[str, Dict[int, int]],
-#           Dict[str, int],
-#           Dict[str, int]]
-#       ]
-#  get: (
-#          { "allgemein": {126: 2, 400: 1, 1165: 3, ... }, } # excel used
-#          { "[abc] -> [aBc]": 2, "[def] -> [deF]" 1, ... }  # word replaced
-#          { "HV": 1, "K6": 4, ... }                         # spelling
-#       )
-#
-#######################################################################################
+"""
+    Global DictionaryLog incl. Hunspell (not found)
+    => _traceAll/correctedAll - ... .txt
+    => _traceAll/spellingAll - ... .txt
+    => _traceAll/dictionaryUsedSorted ... .json (*)
+
+    (*) _dictionary/Dictionary-DATEV.xlsx: used word replace
+
+    init: List[str]
+    init: ["normalize", "allgemein", "urls", "Fallbeispiele", "spezielles"]
+
+    add: data:          Dict[str, DictionaryEntry],
+        data_spelling: Dict[str, int]
+    add: { "[abc] -> [aBc]": {"count": 2, "worksheet": "allgemein", "row": 126}, ... }
+        { "HV": 1, "K6": 1, ... }
+
+    get: Tuple[
+            Dict[str, Dict[int, int]],
+            Dict[str, int],
+            Dict[str, int]]
+        ]
+    get: (
+            { "allgemein": {126: 2, 400: 1, 1165: 3, ... }, } # excel used
+            { "[abc] -> [aBc]": 2, "[def] -> [deF]" 1, ... }  # word replaced
+            { "HV": 1, "K6": 4, ... }                         # spelling
+        )
+
+"""
 
 class DictionaryEntry(TypedDict):
     worksheet: str

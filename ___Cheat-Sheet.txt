@@ -76,7 +76,7 @@ uv sync
 
 ------------------- licenses  ---------------------
 
-uv add pip-licenses
+uv add pip-licenses --dev
 pip-licenses > __licenses.txt
 uv remove pip-licenses
 
@@ -187,10 +187,10 @@ git add --all
 
 git commit -m "..."
 git commit --amend
+git commit --amend --no-edit
 git commit --am -m "..."  # n x = ONE commit
 git rebase -i HEAD~1      # modify/combine message
 
-git commit --amend --no-edit
 git push -u origin main
 
 unstage files:
@@ -200,14 +200,15 @@ git log --oneline origin/main
 git log --graph --oneline --decorate
 
 git log --name-only --pretty=format:"%h (%ch)"
-git log --name-status --pretty=format:"%h [%ai] %D >> '%s'" > __history.txt
-
-git fetch origin
-git log origin/main
+git log --name-status --pretty=format:"%h [%ai] %D >> '%s'" > _history/_history.txt
 
 ----- list of all changes of a file
 
-git log --follow -p src/utils/trace.py > trace.version.log
+git log --follow -p src/utils/trace.py > _history/trace.version.log
+git log --follow -p src/utils/decorator.py > _history/decorator.version.log
+
+git fetch origin
+git log origin/main
 
 git diff --name-only HEAD        # changed files since last commit
 git diff --name-only origin/main # changed files since last fetch

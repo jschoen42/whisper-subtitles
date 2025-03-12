@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 17:52
+    © Jürgen Schoenemeyer, 14.03.2025 00:13
 
     src/main.py
 
@@ -17,21 +17,15 @@ from typing import Any, Dict
 
 from helper.captions import seconds_to_timecode_vtt
 from helper.excel_read import import_dictionary_excel, import_project_excel
+from helper.log import DictionaryLog, log_add, log_clear, log_get_data
 from helper.spelling import get_spell_statistic, hunspell_dictionary_init
-from helper.whisper_util import (
-    are_inner_prompts_possible,
-    get_filename_parameter,
-    init_special_text,
-    prompt_main_normalize,
-    prompt_normalize,
-)
+from helper.whisper_util import are_inner_prompts_possible, get_filename_parameter, init_special_text, prompt_main_normalize, prompt_normalize
 from primary.spacy import get_modelname_spacy
 from primary.whisper import transcribe_whisper
 from primary.whisper_faster import precheck_models, transcribe_fasterwhisper
 from primary.whisper_timestamped import transcribe_whisper_timestamped
 from utils.file import check_file_exists, export_text
 from utils.globals import BASE_PATH
-from utils.log import DictionaryLog, log_add, log_clear, log_get_data
 from utils.prefs import Prefs
 from utils.trace import Trace
 from utils.util import CacheJSON
