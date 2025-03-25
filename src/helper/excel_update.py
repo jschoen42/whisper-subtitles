@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 17:52
+    © Jürgen Schoenemeyer, 01.03.2025 16:38
 
     src/helper/excel_update.py (openpyxl)
 

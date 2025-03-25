@@ -1,13 +1,13 @@
 """
-    © Jürgen Schoenemeyer, 12.03.2025 16:31
+    © Jürgen Schoenemeyer, 29.03.2025 18:57
 
     src/utils/prefs.py
 
     PUBLIC:
-    class Prefs:
-      - init(cls, pref_path = None, pref_prefix = None ) -> None
-      - load(cls, pref_name: str) -> bool
-      - get(cls, key_path: str) -> Any
+    static class Prefs:
+      - Prefs.init(pref_path = None, pref_prefix = None ) -> None
+      - Prefs.load(pref_name: str) -> bool
+      - Prefs.get(key_path: str) -> Any
 
     PRIVATE:
      - merge_dicts(a: Dict, b: Dict) -> Dict
@@ -58,12 +58,12 @@ class Prefs:
             cls.data = dict(merge_dicts(cls.data, data))
             # cls.data = merge(dict(cls.data), data) # -> Exception: Conflict at trainingCompany
 
-        except yaml.YAMLError as err:
-            Trace.fatal(f"YAMLError '{pref_name}':\n{err}")
+        except yaml.YAMLError as e:
+            Trace.fatal(f"YAMLError '{pref_name}':\n{e}")
             return False
 
-        except OSError as err:
-            Trace.error(f"{pref_name}: {err}")
+        except OSError as e:
+            Trace.error(f"{pref_name}: {e}")
             return False
 
         return True
@@ -114,8 +114,8 @@ class Prefs:
 
         try:
             ret = json.loads(tmp)
-        except JSONDecodeError as err:
-            Trace.error(f"json error: {key_path} -> {tmp} ({err})")
+        except JSONDecodeError as e:
+            Trace.error(f"json error: {key_path} -> {tmp} ({e})")
             ret = ""
 
         return ret
@@ -127,12 +127,12 @@ def get_pref_special(pref_path: Path, pref_prexix: str, pref_name: str, key: str
         with path.open(mode="r", encoding="utf-8") as file:
             pref = yaml.safe_load(file)
 
-    except yaml.YAMLError as err:
-        Trace.fatal(f"YAMLError '{pref_name}':\n{err}")
+    except yaml.YAMLError as e:
+        Trace.fatal(f"YAMLError '{pref_name}':\n{e}")
         return ""
 
-    except OSError as err:
-        Trace.error(f"{beautify_path(str(err))}")
+    except OSError as e:
+        Trace.error(f"{beautify_path(str(e))}")
         return ""
 
     if key in pref:
@@ -146,12 +146,12 @@ def read_pref( pref_path: Path, pref_name: str ) -> Tuple[bool, Dict[Any, Any]]:
         with (pref_path / pref_name).open( mode="r", encoding="utf-8") as file:
             data = yaml.safe_load(file)
 
-    except yaml.YAMLError as err:
-        Trace.fatal(f"YAMLError '{pref_name}':\n{err}")
+    except yaml.YAMLError as e:
+        Trace.fatal(f"YAMLError '{pref_name}':\n{e}")
         return True, {}
 
-    except OSError as err:
-        Trace.error( f"{beautify_path(str(err))}" )
+    except OSError as e:
+        Trace.error( f"{beautify_path(str(e))}" )
         return True, {}
 
     return False, data

@@ -11,14 +11,17 @@ _history/*
 _trace*/*
 _old/*
 
+/temp/*
+
 .mypy_cache/*
 .type-check-result/*
 
-.timestamps.json
 .Python31?-*
 
+/.cheat-sheet.txt
 /.githooks.toml
 /.windsurfrules
+/.timestamps.json
 
 ### General
 .env

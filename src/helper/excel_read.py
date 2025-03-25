@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 17:52
+    © Jürgen Schoenemeyer, 25.02.2025 21:58
 
     src/helper/excel_read.py (calamine)
 

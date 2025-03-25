@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 12.03.2025 12:28
+    © Jürgen Schoenemeyer, 15.03.2025 20:19
 
     src/utils/decorator.py
 
@@ -291,7 +291,7 @@ def type_check(*expected_types: type) -> Callable[[Any], Any]:
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             result = func(*args, **kwargs)
 
-            for arg, expected_type in zip(args, expected_types):
+            for arg, expected_type in zip(args, expected_types, strict=False):
                 if not isinstance(arg, expected_type):
                     Trace.error( "TypeError - expected {expected_type}, but got {type}" )
 
@@ -306,7 +306,7 @@ def type_check(*expected_types: type) -> Callable[[Any], Any]:
 # BUT: arg, *kwarg not available
 
 @contextlib.contextmanager
-def duration_cm(name: str) -> Generator[None, None, None]:
+def duration_cm(name: str) -> Generator[None, None, None]:  # noqa: UP043
     start_time = time.perf_counter()
     try:
         yield

@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 12.03.2025 16:40
+    © Jürgen Schoenemeyer, 30.03.2025 15:27
 
     src/helper/analyse.py
 
@@ -57,8 +57,8 @@ def analyse_results(model_id: str, model_name: str, media_type: str, media_name:
             else:
                 Trace.fatal(f"unsupport extention {media_type}")
 
-    except OSError as error:
-        Trace.error(f"get_modification_timestamp: {error}")
+    except OSError as e:
+        Trace.error(f"get_modification_timestamp: {e}")
         return None
 
     json_tmp_path = json_path + "tmp/"
@@ -110,8 +110,8 @@ def get_video_length(path: Path | str, filename: str) -> None | float:
 
             media_duration: float = media_details["duration"]
 
-    except OSError as error:
-        Trace.error(f"{error}")
+    except OSError as e:
+        Trace.error(f"{e}")
         return None
 
     return media_duration

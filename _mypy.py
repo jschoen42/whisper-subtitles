@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 12.03.2025 16:31
+    © Jürgen Schoenemeyer, 30.03.2025 14:47
 
     _mypy.py
 
@@ -21,8 +21,8 @@
      - uv run _mypy.py src
      - uv run _mypy.py src/main.py
 
-    PUBLIC:
-     - run_mypy(src_path: Path, python_version: str) -> None
+    MAIN:
+     - check_types(src_path: Path, python_version: str) -> None
 
     PRIVAT:
      - format_singular_plural(value: int, text: str) -> str
@@ -31,12 +31,12 @@
 from __future__ import annotations
 
 import json
-import locale
 import platform
 import re
 import shutil
 import subprocess
 import sys
+import threading
 import time
 
 from argparse import ArgumentParser
@@ -44,7 +44,6 @@ from collections import Counter
 from datetime import datetime
 from pathlib import Path
 from re import Match
-from subprocess import CompletedProcess
 from typing import List
 
 BASE_PATH = Path(sys.argv[0]).parent.parent.resolve()
@@ -52,7 +51,7 @@ RESULT_FOLDER = ".type-check-result"
 
 LINEFEET = "\n"
 
-# temp.toml
+CONFIG_FILE = "_mypy.tmp.toml"
 
 CONFIG = \
 """
@@ -74,7 +73,7 @@ def format_singular_plural(value: int, text: str) -> str:
         return f"{value} {text}"
     return f"{value} {text}s"
 
-def run_mypy(src_path: Path, python_version: str) -> None:
+def check_types(src_path: Path, python_version: str) -> None:
 
     if python_version == "":
         try:
@@ -91,23 +90,39 @@ def run_mypy(src_path: Path, python_version: str) -> None:
 
     settings: List[str] = [
 
-        "--sqlite-cache",                 # default: False
-        "--namespace-packages",
+        ### strict mode enables the following flags (as of mypy 1.0)
+        #
+        #  https://mypy.readthedocs.io/en/stable/existing_code.html#getting-to-strict
+        #
+        #  --warn-unused-configs          -
+        #  --warn-redundant-casts         +
+        #  --warn-unused-ignores          -
+        #  --strict-equality              +
+        #  --strict-concatenate           -
+        #  --check-untyped-defs           -
+        #  --disallow-subclassing-any     -
+        #  --disallow-untyped-decorators  +
+        #  --disallow-any-generics        -
+        #  --disallow-untyped-calls       +
+        #  --disallow-incomplete-defs     +
+        #  --disallow-untyped-defs        +
+        #  --implicit-reexport            +
+        #  --warn-return-any              -
 
         ### Import discovery
-        "--namespace-packages",           # default: True
+        # "--no-namespace-packages",      # default: False (-> no-)
         "--explicit-package-bases",       # default: False
         # "--ignore-missing-imports",     # default: False
         # "--follow-untyped-imports",     # default: False
         # "--follow-imports",             # default: str normal (normal, silent, skip, error)
         # "--follow-imports-for-stubs",   # default: False
         # "--python-executable",          # default: str
-        # "--no-site-packages",           # default: False
-        # "--no-silence-site-packages",   # default: False
+        # "--no-site-packages",           # default: False (-> no-)
+        # "--no-silence-site-packages",   # default: False (-> no-)
 
         ### Platform configuration
         # "--python-version",             # default: str -> pyproject.toml
-        # "--platform",                   # default: str
+        # "--platform",                   # default: str -> sys.platform: 'win32', 'darwin', 'linux' ...
         # "--always-true",                # default: str constant, constant, ...
 
         ### Disallow dynamic typing
@@ -115,26 +130,25 @@ def run_mypy(src_path: Path, python_version: str) -> None:
         # "--disallow-any-expr",          # default: False
         # "--disallow-any-decorated",     # default: False
         # "--disallow-any-explicit",      # default: False
-        # "--disallow-any-generics",      # default: False
-        # "--disallow-subclassing-any",   # default: False
+        # "--disallow-any-generics",      # default: False (-> strict mode)
+        # "--disallow-subclassing-any",   # default: False (-> strict mode)
 
         ### Untyped definitions and calls
-        "--disallow-untyped-calls",       # default: False
+        "--disallow-untyped-calls",       # default: False (-> strict mode)
         # "--untyped-calls-exclude",      # default: str call, call, ...
-        "--disallow-untyped-defs",        # default: False
-        "--disallow-incomplete-defs",     # default: False
-        # "--check-untyped-defs",         # default: False
-        "--disallow-untyped-decorators",  # default: False
+        "--disallow-untyped-defs",        # default: False (-> strict mode)
+        "--disallow-incomplete-defs",     # default: False (-> strict mode)
+        # "--check-untyped-defs",         # default: False (-> strict mode)
+        "--disallow-untyped-decorators",  # default: False (-> strict mode)
 
         ###  None and Optional handling
-        # "--implicit-optional",          # default: False
-        # "--strict-optional",            # default: False
+        # "--strict-optional",            # default: False ??? (-> strict mode)
 
         ###  Configuring warnings
-        "--warn-redundant-casts",         # default: False
-        # "--warn-unused-ignores",        # default: False
+        "--warn-redundant-casts",         # default: False (-> strict mode)
+        # "--warn-unused-ignores",        # default: False (-> strict mode)
         "--warn-no-return",               # default: False
-        # "--warn-return-any",            # default: False
+        # "--warn-return-any",            # default: False (-> strict mode)
         "--warn-unreachable",             # default: False
 
         ### Suppressing errors
@@ -144,12 +158,14 @@ def run_mypy(src_path: Path, python_version: str) -> None:
         # "--allow-untyped-globals",      # default: False
         "--allow-redefinition",           # default: False
         # "--local-partial-types",        # default: False
+        "--no-implicit-reexport",         # default: True  (-> strict mode)
+        "--strict-equality",              # default: False (-> strict mode)
+        # "--strict-bytes",               # default: False -> will be enabled by default in mypy 2.0
+        "--extra-checks",                 # default: False
+        # "--strict",                     # default: False
         # "--disable-error-code",         # default: str error, error, ...
         # "--enable-error-code",          # default: str error, error, ...
-        "--extra-checks",                 # default: False
-        # "--implicit-reexport",          # default: True
-        # "--strict-concatenate",         # default: False
-        # "--strict",                     # default: False
+        # "--strict-concatenate",         # default: False (-> strict mode)
 
         ### Configuring error messages
         # "--show-error-context"          # default: False
@@ -187,26 +203,12 @@ def run_mypy(src_path: Path, python_version: str) -> None:
         ### Miscellaneous
         # "--junit-xml",                  # default: str
         # "--scripts-are-modules",        # default: False
-        # "--warn-unused-configs",        # default: False
+        # "--warn-unused-configs",        # default: False (-> strict mode)
         # "--verbosity",                  # default: 0
 
         ### Miscellaneous strictness flags
-        "--strict-equality",
         # "--allow-untyped-globals",
         # "--local-partial-types",
-
-        # strict mode enables the following flags:
-        #     --warn-unused-configs
-        #     --disallow-untyped-calls
-        #     --disallow-untyped-defs
-        #     --disallow-incomplete-defs
-        #     --check-untyped-defs
-        #     --no-implicit-optional
-        #     --warn-redundant-casts
-        #     --warn-return-any
-        #     --warn-unused-ignores
-        #     --disallow-subclassing-any
-        #     --disallow-untyped-decorators
 
         # Advanced options
         # "--show-traceback", # -> fatal error
@@ -219,9 +221,9 @@ def run_mypy(src_path: Path, python_version: str) -> None:
         print(f"Error: path '{src_path}' not found ")
         return
 
-    start = time.time()
+    start = time.perf_counter()
 
-    name = src_path.stem
+    name = src_path.name
     if name == "":
         name = "."
 
@@ -241,42 +243,67 @@ def run_mypy(src_path: Path, python_version: str) -> None:
         text += f" {setting}\n"
     text += "\n"
 
-    config = Path("tmp.toml")
+    config = Path(CONFIG_FILE)
     with config.open(mode="w", newline="\n") as config_file:
         config_file.write(configuration)
 
     try:
         mypy_path = shutil.which("mypy")
         if mypy_path is None:
-            print("Error: 'mypy' not installed -> uv add mypy --dev")
+            print("Error: 'MyPy' not installed -> uv add mypy --dev")
             sys.exit(1)
 
-        result: CompletedProcess[str] = subprocess.run(
-            [mypy_path, str(src_path), "--config-file", "tmp.toml", "--verbose", "--output=json", *settings],
+        def show_scanning(idle_event: threading.Event) -> None:
+            counter = 0
+            while not idle_event.is_set():
+                print(f"MyPy is scanning ... ({counter} sec)", end="\r", flush=True)
+                counter += 1
+                idle_event.wait(1)
+
+        idle_event = threading.Event()
+        idle_thread = threading.Thread(target=show_scanning, args=(idle_event,))
+        idle_thread.start()
+
+        # https://mypy.readthedocs.io/en/stable/command_line.html
+
+        result = subprocess.run(
+            [mypy_path, str(src_path), "--sqlite-cache", "--config-file", CONFIG_FILE, *settings, "--verbose", "--output=json"],
             capture_output=True,
             text=True,
             check=False,
+            encoding="utf-8",
+            errors="replace",
         )
-    except subprocess.CalledProcessError as err:
-        print(f"error: {err} - mypy")
+
+        idle_event.set()
+        idle_thread.join()
+
+    except subprocess.CalledProcessError as e:
+        print(f"mypy error: {e}")
         sys.exit(1)
+
     finally:
-        Path.unlink(config)
+        config.unlink()
 
-    # analyse stderr ("--verbose")
+    # returncode:
+    #   0: if no type errors
+    #   1: if there are some type errors
+    #   2: in case of a crash, bad arguments, and other non-standard conditions
 
-    # LOG:  Mypy Version: 1.14.0
-    # LOG:  Found source: BuildSource(path='src\\__init__.py', module='__main__', has_text=False,
-    #                     base_dir='G:\\Python\\Whisper\\whisper-datev-gitlab\\src', followed=False)
-    # ...
-    # LOG:  Metadata fresh for __main__: file src\__init__.py
-
-    codepage = locale.getpreferredencoding() # cp1252 ...
-    stderr = result.stderr.encode(encoding=codepage).decode(encoding="utf-8").replace("\xa0", " ")
+    returncode = result.returncode
+    stdout = result.stdout
+    stderr = result.stderr
 
     sources: List[str] = []
     version = ""
     for line in stderr.splitlines():
+
+        # LOG:  Mypy Version: 1.15.0
+        # LOG:  Found source: BuildSource(path='src\\__init__.py', module='__main__', has_text=False,
+        #                     base_dir='G:\\Python\\Whisper\\whisper-datev-gitlab\\src', followed=False)
+        # ...
+        # LOG:  Metadata fresh for __main__: file src\__init__.py
+
         if "Mypy Version:" in line:
             version = line.split("Mypy Version:")[-1].strip()
             text = text.replace("[version]", version)
@@ -341,7 +368,7 @@ def run_mypy(src_path: Path, python_version: str) -> None:
 
     fatal_error = False
     footer = ""
-    for line in result.stdout.splitlines():
+    for line in stdout.splitlines():
         if line == "":
             continue
 
@@ -410,13 +437,13 @@ def run_mypy(src_path: Path, python_version: str) -> None:
 
     text += "\n" + footer + "\n"
 
-    result_filename = f"mypy-{python_version}-'{name}'.txt"
+    result_filename = f"mypy-{python_version}-[{name}].txt"
     with (folder_path / result_filename).open(mode="w", newline="\n") as f:
         f.write(text)
 
-    duration = time.time() - start
+    duration = time.perf_counter() - start
     print(f"[MyPy {version} ({duration:.2f} sec)] {footer} -> {RESULT_FOLDER}/{result_filename}")
-    sys.exit(result.returncode)
+    sys.exit(returncode)
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="static type check with mypy")
@@ -426,7 +453,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     try:
-        run_mypy(Path(args.path), args.version)
+        check_types(Path(args.path), args.version)
     except KeyboardInterrupt:
         print(" --> KeyboardInterrupt")
-        sys.exit(1)
+        sys.exit()

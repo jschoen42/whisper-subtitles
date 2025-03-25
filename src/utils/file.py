@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 13.03.2025 23:57
+    © Jürgen Schoenemeyer, 29.03.2025 18:57
 
     src/utils/file.py
 
@@ -35,9 +35,9 @@
      - import_json(folderpath: Path | str, filename: str, show_error: bool=True) -> Any
      - import_json_timestamp( folderpath: Path | str, filename: str, show_error: bool=True ) -> Tuple[Any, float | None]
 
-     - export_text(folderpath: Path | str, filename: str, text: str, encoding: str="utf-8", newline: str="\n", timestamp: float=0.0, create_new_folder: bool=True, show_message: bool=True) -> str | None:
-     - export_json(folderpath: Path | str, filename: str, data: Dict[str, Any] | List[Any], newline: str="\n", timestamp: float=0.0, show_message: bool=True) -> str | None:
-     - export_binary_file(filepath: Path | str, filename: str, data: bytes, _timestamp: float=0, create_new_folder: bool=False) -> None
+     - export_text(folderpath: Path | str, filename: str, text: str, encoding: str="utf-8", newline: str="\n", timestamp: float=0.0, create_new_folder: bool=True, show_message: bool=True) -> bool | None:
+     - export_json(folderpath: Path | str, filename: str, data: Dict[str, Any] | List[Any], newline: str="\n", timestamp: float=0.0, show_message: bool=True) -> bool | None:
+     - export_binary_file(filepath: Path | str, filename: str, data: bytes, _timestamp: float=0, create_new_folder: bool=False) -> bool | None
      - export_file(filepath: Path|str, filename: str, text: str, in_type: str | None = None, timestamp: float=0, create_new_folder: bool=True, encoding: str ="utf-8", newline: str="\n", overwrite: bool=True) -> None | str
     #
      - get_filename_unique(dirpath: Path, filename: str) -> str
@@ -74,8 +74,8 @@ def get_modification_timestamp(filename: Path | str) -> float:
 
     try:
         ret = filename.stat().st_mtime
-    except OSError as err:
-        Trace.error(f"{err}")
+    except OSError as e:
+        Trace.error(f"{e}")
         return 0
 
     return ret
@@ -85,8 +85,8 @@ def set_modification_timestamp(filename: Path | str, timestamp: float) -> None:
 
     try:
         os.utime(filename, (timestamp, timestamp)) # atime and mtime
-    except OSError as err:
-        Trace.error(f"set_modification_timestamp: {err}")
+    except OSError as e:
+        Trace.error(f"{e}")
 
 # check
 
@@ -112,9 +112,9 @@ def check_file_exists(filepath_start: Path | str, filepath_end: Path | str) -> b
         return False
 
     try:
-        filenames: List[str] = [f.name for f in filepath.iterdir() if f.is_file()]
-    except OSError as err:
-        Trace.error(f"{err}")
+        filenames: list[str] = os.listdir(filepath)
+    except OSError as e:
+        Trace.error(f"{e}")
         return False
 
     if filename in filenames:
@@ -142,19 +142,19 @@ def listdir_match_extention(path: Path | str, extensions: List[str]) -> Tuple[Li
         Trace.error( f"folder not found '{path.as_posix()}'" )
         return files, folders
 
-    for file in path.iterdir():
-        if str(file).startswith("~"):
+    for file in os.listdir(path):
+        if file.startswith("~"):
             Trace.warning(f"skip temp file '{file}'")
             continue
 
-        if Path.is_file(path / file):
+        if (path / file).is_file():
             for extention in extensions:
-                if extention == "*" or str(file).endswith("." + extention):
-                    files.append(str(file))
+                if extention == "*" or file.endswith("." + extention):
+                    files.append(file)
                     break
 
-        elif Path.is_dir(path / file):
-            folders.append(str(file))
+        elif (path / file).is_dir():
+            folders.append(file)
 
         else:
             Trace.warning(f"skip unknown filetype '{file}'")
@@ -166,26 +166,24 @@ def list_folders(path: Path | str) -> List[str]:
 
     folders: List[str] = []
     try:
-        for file in path.iterdir():
-            if Path.is_dir(path / file):
-                folders.append(str(file))
-    except OSError as err:
-        Trace.error(f"{err}")
+        for file in os.listdir(path):
+            if (path / file).is_dir():
+                folders.append(file)
+    except OSError as e:
+        Trace.error(f"{e}")
 
     return folders
 
 def clear_folder(path: Path | str) -> None:
     path = Path(path)
 
-    for filename in path.iterdir():
-        filepath = path / filename
-
+    for filepath in path.iterdir():
         try:
             shutil.rmtree(filepath)
-        except OSError as err:
-            error = str(err).split(":")[0]
+        except OSError as e:
+            error = str(e).split(":")[0]
             try:
-                Path.unlink(filepath)
+                filepath.unlink()
             except OSError:
                 Trace.fatal( f"shutil.rmtree {error} '{get_trace_path(filepath)}'")
 
@@ -193,12 +191,12 @@ def delete_folder_tree(dest_path: Path | str, relax: bool = False) -> bool:
     dest_path = Path(dest_path)
 
     ret = False
-    if Path.exists(dest_path):
+    if dest_path.exists():
         try:
             shutil.rmtree(dest_path)
             ret = True
         except OSError as msg:
-            if relax and len(list(dest_path.iterdir())) == 0:
+            if relax and len(os.listdir(dest_path)) == 0:
                 Trace.warning( f"relaxed mode: {msg}")
             else:
                 Trace.fatal( f"shutil.rmtree: {msg}")
@@ -215,9 +213,9 @@ def create_folder( folderpath: Path | str ) -> bool:
             folderpath.mkdir(parents=True)
             Trace.update( f"makedir: {folderpath}")
 
-        except OSError as error:
-            error_msg = str(error).split(":")[0]
-            Trace.error( f"{error_msg}: {folderpath}")
+        except OSError as e:
+            msg = str(e).split(":")[0]
+            Trace.error( f"{msg}: {folderpath}")
             return False
 
         return True
@@ -225,9 +223,7 @@ def create_folder( folderpath: Path | str ) -> bool:
         return False
 
 def make_dir(path: Path | str) -> None:
-    path = Path(path)
-
-    path.mkdir(parents=True, exist_ok=True)
+    Path(path).mkdir(parents=True, exist_ok=True)
 
 def delete_file(path: Path | str, filename: str) -> bool:
     filepath = Path(path) / filename
@@ -238,8 +234,8 @@ def delete_file(path: Path | str, filename: str) -> bool:
             Trace.update(f"file '{filepath}' deleted")
             return True
 
-        except OSError as err:
-            Trace.error(f"{err}")
+        except OSError as e:
+            Trace.error(f"{e}")
 
     return False
 
@@ -250,7 +246,6 @@ def beautify_path( path: Path | str ) -> str:
 # D:\Projekte_P4\Articulate-Storyline\WebService1\_workdir\jobs\c4c3dda9-0e58-49dd-86d0-151fe2267edb\tmp\media\image\resultslideVectorText.png -> media\image\resultslideVectorText.png
 #
 def get_trace_path(filepath: Path | str) -> str:
-
     tmp_path = os.path.normpath(filepath).replace("\\", "/")
 
     if "/_workdir/" in tmp_path:
@@ -258,17 +253,15 @@ def get_trace_path(filepath: Path | str) -> str:
     else:
         trace_path = tmp_path
 
-    # Trace.info(f"trace_path: {trace_path}")
     return trace_path
-
 
 def get_files_in_folder( path: Path | str ) -> List[str]:
     path = Path(path)
-    return [str(f) for f in path.iterdir() if (Path(path) / f).is_file()]
+    return [f for f in os.listdir(path) if (path / f).is_file()]
 
 def get_folders_in_folder( path: Path | str ) -> List[str]:
     path = Path(path)
-    return [str(f) for f in path.iterdir() if (Path(path) / f).is_dir()]
+    return [f for f in os.listdir(path) if (path / f).is_dir()]
 
 def get_save_filename( path: Path | str, stem: str, suffix: str ) -> str:
     files: List[str] = get_files_in_folder( Path(path) )
@@ -284,15 +277,15 @@ def import_text( folderpath: Path | str, filename: Path | str, encoding: str="ut
 
     if filepath.is_file():
         try:
-            with filepath.open(mode="r", encoding=encoding) as file:
-                data = file.read()
+            with filepath.open(mode="r", encoding=encoding) as f:
+                data = f.read()
 
-        except OSError as error:
-            Trace.error(f"{error}")
+        except OSError as e:
+            Trace.error(f"{e}")
             return None
 
-        except UnicodeDecodeError as error:
-            Trace.error(f"{filepath}: {error}")
+        except UnicodeDecodeError as e:
+            Trace.error(f"{filepath}: {e}")
             return None
 
         return data
@@ -317,14 +310,14 @@ def import_json_timestamp( folderpath: Path | str, filename: str, show_error: bo
     else:
         return None, 0.0
 
-def export_text(folderpath: Path | str, filename: str, text: str, encoding: str="utf-8", newline: str="\n", timestamp: float=0.0, create_new_folder: bool=True, show_message: bool=True) -> str | None:
+def export_text(folderpath: Path | str, filename: str, text: str, encoding: str="utf-8", newline: str="\n", timestamp: float=0.0, create_new_folder: bool=True, show_message: bool=True) -> bool | None:
     folderpath = Path(folderpath)
     filepath   = Path(folderpath, filename)
 
     exist = False
     try:
-        with filepath.open(mode="r", encoding=encoding) as file:
-            text_old = file.read()
+        with filepath.open(mode="r", encoding=encoding) as f:
+            text_old = f.read()
             exist = True
     except OSError:
         text_old = ""
@@ -333,14 +326,14 @@ def export_text(folderpath: Path | str, filename: str, text: str, encoding: str=
         if text == text_old:
             if show_message:
                 Trace.info(f"not changed '{filepath}'")
-            return str(filename)
+            return False
 
     if create_new_folder:
         create_folder(folderpath)
 
     try:
-        with filepath.open(mode="w", encoding=encoding, newline=newline) as file:
-            file.write(text)
+        with filepath.open(mode="w", encoding=encoding, newline=newline) as f:
+            f.write(text)
 
         if timestamp != 0:
             set_modification_timestamp(filepath, timestamp)
@@ -351,30 +344,37 @@ def export_text(folderpath: Path | str, filename: str, text: str, encoding: str=
             else:
                 Trace.update(f"changed '{filepath}'")
 
-        return str(filename)
+        return True
 
-    except OSError as error:
-        error_msg = str(error).split(":")[0]
-        Trace.error(f"{error_msg} - {filepath}")
+    except OSError as e:
+        msg = str(e).split(":")[0]
+        Trace.error(f"{msg} - {filepath}")
         return None
 
-def export_json(folderpath: Path | str, filename: str, data: Dict[str, Any] | List[Any], newline: str="\n", timestamp: float=0.0, show_message: bool=True) -> str | None:
+def export_json(folderpath: Path | str, filename: str, data: Dict[str, Any] | List[Any], newline: str="\n", timestamp: float=0.0, show_message: bool=True) -> bool | None:
     text = json.dumps(data, ensure_ascii=False, indent=2)
 
     return export_text(folderpath, filename, text, encoding="utf-8", newline=newline, timestamp=timestamp, show_message=show_message)
 
-def export_binary_file(filepath: Path | str, filename: str, data: bytes, _timestamp: float=0, create_new_folder: bool=False) -> None:
+def export_binary_file(filepath: Path | str, filename: str, data: bytes, _timestamp: float=0, create_new_folder: bool=False) -> bool | None:
     filepath = Path(filepath)
 
     if create_new_folder:
-        if not Path.is_dir(filepath):
+        if not filepath.is_dir():
             filepath.mkdir(parents=True)
             Trace.update( f"makedir '{filepath}'")
 
-    with (filepath / filename).open(mode="wb") as binary_file:
-        binary_file.write(data)
+    try:
+        with (filepath / filename).open(mode="wb") as f:
+            f.write(data)
+        return True
 
-def export_file(filepath: Path | str, filename: str, text: str, in_type: str | None = None, encoding: str ="utf-8", newline: str="\n",timestamp: float=0.0, create_new_folder: bool=True, overwrite: bool=True) -> None | str:
+    except OSError as e:
+        msg = str(e).split(":")[0]
+        Trace.error(f"{msg} - {filepath / filename}")
+        return None
+
+def export_file(filepath: Path | str, filename: str, text: str, in_type: str | None = None, encoding: str ="utf-8", newline: str="\n",timestamp: float=0.0, create_new_folder: bool=True, overwrite: bool=True) -> bool | None:
     filepath = Path(filepath)
 
     trace_export_path_folder = get_trace_path(filepath)
@@ -403,20 +403,18 @@ def export_file(filepath: Path | str, filename: str, text: str, in_type: str | N
         my_filename = dest2 + copy + "." + ext
 
     try:
-        with (filepath / my_filename).open(mode="r", encoding=encoding) as file:
-            ref_text = file.read()
+        with (filepath / my_filename).open(mode="r", encoding=encoding) as f:
+            ref_text = f.read()
     except OSError:
         ref_text = ""
 
     if text == ref_text:
-        # Trace.wait( f"{my_filename}")
-
         if in_type:
             Trace.info( f"'{in_type}' not changed '{trace_export_path}'")
         else:
             Trace.info( f"not changed '{trace_export_path}'")
 
-        return my_filename
+        return False
 
     else:
         if create_new_folder:
@@ -424,35 +422,35 @@ def export_file(filepath: Path | str, filename: str, text: str, in_type: str | N
                 try:
                     filepath.mkdir(parents=True)
                     Trace.update( f"makedir: '{trace_export_path_folder}'")
-                except OSError as err:
-                    error = str(err).split(":")[0]
+                except OSError as e:
+                    error = str(e).split(":")[0]
                     Trace.error(f"{error}: '{trace_export_path_folder}'")
                     return None
 
         try:
-            with (filepath / my_filename).open(mode="w", encoding=encoding, newline=newline) as file:
-                file.write(text)
+            with (filepath / my_filename).open(mode="w", encoding=encoding, newline=newline) as f:
+                f.write(text)
 
             if timestamp != 0:
                 set_modification_timestamp(filepath / my_filename, timestamp)
 
-            if ref_text == "":
-                if in_type:
-                    Trace.update( f"'{in_type}' created '{trace_export_path}'")
-                else:
-                    Trace.update( f"created '{trace_export_path}'")
-
-            elif in_type:
-                Trace.update( f"'{in_type}' changed '{trace_export_path}'")
-            else:
-                Trace.update( f"changed '{trace_export_path}'")
-
-        except OSError as err:
-            error = str(err).split(":")[0]
+        except OSError as e:
+            error = str(e).split(":")[0]
             Trace.error(f"{error} '{trace_export_path}'")
             return None
 
-        return my_filename
+        if ref_text == "":
+            if in_type:
+                Trace.update( f"'{in_type}' created '{trace_export_path}'")
+            else:
+                Trace.update( f"created '{trace_export_path}'")
+
+        elif in_type:
+            Trace.update( f"'{in_type}' changed '{trace_export_path}'")
+        else:
+            Trace.update( f"changed '{trace_export_path}'")
+
+        return True
 
 
 # increment_filename(filename_stem: str) -> str:
@@ -481,7 +479,7 @@ def get_filename_unique(dirpath: Path, filename: str) -> str:
 
     number = 1
     append = ""
-    while Path.is_file(dirpath / (stem + append + suffix)):
+    while (dirpath / (stem + append + suffix)).is_file():
         number += 1
         append = "_[" + str(number) + "]"
 
@@ -527,8 +525,8 @@ def get_file_infos(path: Path | str, filename: str, _in_type: str) -> None | Dic
     filepath = Path(path, filename)
 
     if filepath.is_file():
-        with filepath.open(mode="rb") as file:
-            md5 = hashlib.md5(file.read()).hexdigest()  # noqa: S324
+        with filepath.open(mode="rb") as f:
+            md5 = hashlib.md5(f.read()).hexdigest()  # noqa: S324
 
         size           = filepath.stat().st_size
         timestamp      = get_modification_timestamp(filepath)
@@ -563,8 +561,8 @@ def copy_my_file(source: Path | str, dest: Path | str, _show_updated: bool) -> b
             set_modification_timestamp(dest, timestamp=new_timestamp)
             Trace.info( f"copy {dest}" )
 
-        except OSError as err:
-            Trace.error(f"{err}")
+        except OSError as e:
+            Trace.error(f"{e}")
             return False
 
     return True

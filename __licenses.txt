@@ -1,108 +1,114 @@
- Name                        Version         License                                                                        
- Cython                      3.0.11          Apache Software License                                                        
- Jinja2                      3.1.4           BSD License                                                                    
- MarkupSafe                  3.0.2           BSD License                                                                    
- PyYAML                      6.0.2           MIT License                                                                    
- Pygments                    2.18.0          BSD License                                                                    
- annotated-types             0.7.0           MIT License                                                                    
- arrow                       1.3.0           Apache Software License                                                        
- av                          12.3.0          BSD License                                                                    
- blis                        1.0.1           BSD License                                                                    
- catalogue                   2.0.10          MIT License                                                                    
- certifi                     2024.8.30       Mozilla Public License 2.0 (MPL 2.0)                                           
- charset-normalizer          3.4.0           MIT License                                                                    
- click                       8.1.7           BSD License                                                                    
- cloudpathlib                0.20.0          MIT License                                                                    
- colorama                    0.4.6           BSD License                                                                    
- coloredlogs                 15.0.1          MIT License                                                                    
- confection                  0.1.5           MIT License                                                                    
- ctranslate2                 4.5.0           MIT License                                                                    
- curated-tokenizers          0.0.9           MIT License                                                                    
- curated-transformers        0.1.1           MIT                                                                            
- cymem                       2.0.8           MIT License                                                                    
- dtw-python                  1.5.3           GNU General Public License v2 or later (GPLv2+)                                
- et_xmlfile                  2.0.0           MIT License                                                                    
- filelock                    3.16.1          The Unlicense (Unlicense)                                                      
- flatbuffers                 24.3.25         Apache Software License                                                        
- fsspec                      2024.10.0       BSD License                                                                    
- huggingface-hub             0.26.2          Apache Software License                                                        
- humanfriendly               10.0            MIT License                                                                    
- idna                        3.10            BSD License                                                                    
- langcodes                   3.4.1           MIT License                                                                    
- language_data               1.2.0           MIT License                                                                    
- llvmlite                    0.43.0          BSD                                                                            
- marisa-trie                 1.2.1           MIT License                                                                    
- markdown-it-py              3.0.0           MIT License                                                                    
- mdurl                       0.1.2           MIT License                                                                    
- more-itertools              10.5.0          MIT License                                                                    
- mpmath                      1.3.0           BSD License                                                                    
- murmurhash                  1.0.10          MIT License                                                                    
- mutagen                     1.47.0          GNU General Public License v2 or later (GPLv2+)                                
- mypy                        1.13.0          MIT License                                                                    
- mypy-extensions             1.0.0           MIT License                                                                    
- networkx                    3.4.2           BSD License                                                                    
- numba                       0.60.0          BSD License                                                                    
- numpy                       2.0.2           BSD License                                                                    
- onnxruntime                 1.20.0          MIT License                                                                    
- openai-whisper              20240930        MIT                                                                            
- openpyxl                    3.1.5           MIT License                                                                    
- openpyxl-stubs              0.1.25          MIT license                                                                    
- packaging                   24.2            Apache Software License; BSD License                                           
- preshed                     3.0.9           MIT License                                                                    
- protobuf                    5.28.3          3-Clause BSD License                                                           
- pydantic                    2.9.2           MIT License                                                                    
- pydantic_core               2.23.4          MIT License                                                                    
- pymediainfo                 6.1.0           MIT License                                                                    
- pyreadline3                 3.5.4           BSD License                                                                    
- python-dateutil             2.9.0.post0     Apache Software License; BSD License                                           
- python-dotenv               1.0.1           BSD License                                                                    
- regex                       2024.11.6       Apache Software License                                                        
- requests                    2.32.3          Apache Software License                                                        
- rich                        13.9.4          MIT License                                                                    
- scipy                       1.14.1          BSD License                                                                    
- shellingham                 1.5.4           ISC License (ISCL)                                                             
- six                         1.16.0          MIT License                                                                    
- smart-open                  7.0.5           MIT License                                                                    
- spacy                       3.8.2           MIT License                                                                    
- spacy-curated-transformers  0.3.0           MIT                                                                            
- spacy-legacy                3.0.12          MIT License                                                                    
- spacy-loggers               1.0.5           MIT                                                                            
- spylls                      0.1.7           MIT License                                                                    
- srsly                       2.4.8           MIT License                                                                    
- sympy                       1.13.3          BSD License                                                                    
- thinc                       8.3.2           MIT License                                                                    
- tiktoken                    0.8.0           MIT License                                                                    
-                                                                                                                            
-                                             Copyright (c) 2022 OpenAI, Shantanu Jain                                       
-                                                                                                                            
-                                             Permission is hereby granted, free of charge, to any person obtaining a copy   
-                                             of this software and associated documentation files (the "Software"), to deal  
-                                             in the Software without restriction, including without limitation the rights   
-                                             to use, copy, modify, merge, publish, distribute, sublicense, and/or sell      
-                                             copies of the Software, and to permit persons to whom the Software is          
-                                             furnished to do so, subject to the following conditions:                       
-                                                                                                                            
-                                             The above copyright notice and this permission notice shall be included in all 
-                                             copies or substantial portions of the Software.                                
-                                                                                                                            
-                                             THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR     
-                                             IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,       
-                                             FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE    
-                                             AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER         
-                                             LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  
-                                             OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  
-                                             SOFTWARE.                                                                      
-                                                                                                                            
- tokenizers                  0.20.3          Apache Software License                                                        
- torch                       2.4.1           BSD License                                                                    
- tqdm                        4.67.0          MIT License; Mozilla Public License 2.0 (MPL 2.0)                              
- typer                       0.13.0          MIT License                                                                    
- types-python-dateutil       2.9.0.20241003  Apache Software License                                                        
- typing_extensions           4.12.2          Python Software Foundation License                                             
- tzdata                      2024.2          Apache Software License                                                        
- urllib3                     2.2.3           MIT License                                                                    
- wasabi                      1.1.3           MIT                                                                            
- weasel                      0.4.1           MIT License                                                                    
- webvtt-py                   0.5.1           MIT License                                                                    
- whisper-timestamped         1.15.6          GPLv3                                                                          
- wrapt                       1.16.0          BSD License                                                                    
+ Name                        Version          License                                                                        
+ Cython                      3.0.12           Apache Software License                                                        
+ Jinja2                      3.1.6            BSD License                                                                    
+ MarkupSafe                  3.0.2            BSD License                                                                    
+ PyYAML                      6.0.2            MIT License                                                                    
+ Pygments                    2.19.1           BSD License                                                                    
+ RapidFuzz                   3.12.2           UNKNOWN                                                                        
+ XlsxWriter                  3.2.2            BSD License                                                                    
+ annotated-types             0.7.0            MIT License                                                                    
+ arrow                       1.3.0            Apache Software License                                                        
+ av                          14.2.0           BSD License                                                                    
+ basedpyright                1.28.3           MIT License                                                                    
+ blis                        1.2.0            BSD License                                                                    
+ catalogue                   2.0.10           MIT License                                                                    
+ certifi                     2025.1.31        Mozilla Public License 2.0 (MPL 2.0)                                           
+ charset-normalizer          3.4.1            MIT License                                                                    
+ click                       8.1.8            BSD License                                                                    
+ cloudpathlib                0.21.0           MIT License                                                                    
+ colorama                    0.4.6            BSD License                                                                    
+ coloredlogs                 15.0.1           MIT License                                                                    
+ confection                  0.1.5            MIT License                                                                    
+ ctranslate2                 4.5.0            MIT License                                                                    
+ curated-tokenizers          0.0.9            MIT License                                                                    
+ curated-transformers        0.1.1            MIT                                                                            
+ cymem                       2.0.11           MIT License                                                                    
+ dtw-python                  1.5.3            GNU General Public License v2 or later (GPLv2+)                                
+ et_xmlfile                  2.0.0            MIT License                                                                    
+ filelock                    3.18.0           The Unlicense (Unlicense)                                                      
+ flatbuffers                 25.2.10          Apache Software License                                                        
+ fsspec                      2025.3.0         BSD License                                                                    
+ huggingface-hub             0.29.3           Apache Software License                                                        
+ humanfriendly               10.0             MIT License                                                                    
+ idna                        3.10             BSD License                                                                    
+ jaro-winkler                2.0.3            GNU General Public License v3 (GPLv3)                                          
+ langcodes                   3.5.0            MIT License                                                                    
+ language_data               1.3.0            MIT License                                                                    
+ llvmlite                    0.44.0           BSD                                                                            
+ marisa-trie                 1.2.1            MIT License                                                                    
+ markdown-it-py              3.0.0            MIT License                                                                    
+ mdurl                       0.1.2            MIT License                                                                    
+ more-itertools              10.6.0           MIT License                                                                    
+ mpmath                      1.3.0            BSD License                                                                    
+ murmurhash                  1.0.12           MIT License                                                                    
+ mypy                        1.15.0           MIT License                                                                    
+ mypy-extensions             1.0.0            MIT License                                                                    
+ networkx                    3.4.2            BSD License                                                                    
+ nodejs-wheel-binaries       22.14.0          MIT License                                                                    
+ numba                       0.61.0           BSD License                                                                    
+ numpy                       2.1.3            BSD License                                                                    
+ onnxruntime                 1.21.0           MIT License                                                                    
+ openai-whisper              20240930         MIT                                                                            
+ openpyxl                    3.1.5            MIT License                                                                    
+ packaging                   24.2             Apache Software License; BSD License                                           
+ preshed                     3.0.9            MIT License                                                                    
+ protobuf                    6.30.1           3-Clause BSD License                                                           
+ pydantic                    2.10.6           MIT License                                                                    
+ pydantic_core               2.27.2           MIT License                                                                    
+ pymediainfo                 7.0.1            MIT License                                                                    
+ pyreadline3                 3.5.4            BSD License                                                                    
+ python-calamine             0.3.1            MIT License                                                                    
+ python-dateutil             2.9.0.post0      Apache Software License; BSD License                                           
+ regex                       2024.11.6        Apache Software License                                                        
+ requests                    2.32.3           Apache Software License                                                        
+ rich                        13.9.4           MIT License                                                                    
+ scipy                       1.15.2           BSD License                                                                    
+ shellingham                 1.5.4            ISC License (ISCL)                                                             
+ six                         1.17.0           MIT License                                                                    
+ smart-open                  7.1.0            MIT License                                                                    
+ spacy                       3.8.4            MIT License                                                                    
+ spacy-curated-transformers  0.3.0            MIT                                                                            
+ spacy-legacy                3.0.12           MIT License                                                                    
+ spacy-loggers               1.0.5            MIT                                                                            
+ spylls                      0.1.7            MIT License                                                                    
+ srsly                       2.5.1            MIT License                                                                    
+ sympy                       1.13.3           BSD License                                                                    
+ thinc                       8.3.4            MIT License                                                                    
+ tiktoken                    0.9.0            MIT License                                                                    
+                                                                                                                             
+                                              Copyright (c) 2022 OpenAI, Shantanu Jain                                       
+                                                                                                                             
+                                              Permission is hereby granted, free of charge, to any person obtaining a copy   
+                                              of this software and associated documentation files (the "Software"), to deal  
+                                              in the Software without restriction, including without limitation the rights   
+                                              to use, copy, modify, merge, publish, distribute, sublicense, and/or sell      
+                                              copies of the Software, and to permit persons to whom the Software is          
+                                              furnished to do so, subject to the following conditions:                       
+                                                                                                                             
+                                              The above copyright notice and this permission notice shall be included in all 
+                                              copies or substantial portions of the Software.                                
+                                                                                                                             
+                                              THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR     
+                                              IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,       
+                                              FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE    
+                                              AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER         
+                                              LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  
+                                              OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  
+                                              SOFTWARE.                                                                      
+                                                                                                                             
+ tokenizers                  0.21.1           Apache Software License                                                        
+ torch                       2.4.1            BSD License                                                                    
+ tqdm                        4.67.1           MIT License; Mozilla Public License 2.0 (MPL 2.0)                              
+ typer                       0.15.2           MIT License                                                                    
+ types-PyYAML                6.0.12.20241230  Apache Software License                                                        
+ types-openpyxl              3.1.5.20250306   Apache Software License                                                        
+ types-python-dateutil       2.9.0.20241206   Apache Software License                                                        
+ types-requests              2.32.0.20250306  Apache Software License                                                        
+ typing_extensions           4.12.2           Python Software Foundation License                                             
+ tzdata                      2025.2           Apache Software License                                                        
+ urllib3                     2.3.0            MIT License                                                                    
+ wasabi                      1.1.3            MIT                                                                            
+ weasel                      0.4.1            MIT License                                                                    
+ webvtt-py                   0.5.1            MIT License                                                                    
+ whisper-timestamped         1.15.8           GPLv3                                                                          
+ wrapt                       1.17.2           BSD License                                                                    

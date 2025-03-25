@@ -1,68 +1,66 @@
 {
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "pyproject.toml": "ruff.toml, requirements.txt, uv.lock, .git*, README.md, LICENSE, __licenses.txt, .python-version, __package_tree*, __outdated.txt, .Python31*, .windsurfrules, .timestamps.json"
+  },
+
+  "terminal.integrated.fontFamily": "Consolas Nerd Font",
+  "terminal.integrated.fontWeight": "normal",
+  "terminal.integrated.minimumContrastRatio": 7,
+
   "explorer.compactFolders": false,
+
+  "editor.autoClosingQuotes": "never",
+  "editor.autoSurround": "never",
+  "editor.fontFamily": "Consolig, Consolas, Cascadia Code NF SemiLight, Courier New, monospace",
+  "editor.fontLigatures": true,
+  "editor.fontSize": 13.5,
+  "editor.fontWeight": 400,
+  "editor.formatOnSave": false,
+  "editor.formatOnType": true,
+  "editor.indentSize": 2,
+  "editor.inlineSuggest.enabled": true,
+  "editor.insertSpaces": true,
+  "editor.lineHeight": 1.4,
+  "editor.tabSize": 2,
+
+  "[css]": {
+  },
+  "[html]": {
+  },
+  "[json]": {
+    "editor.formatOnSave": true,
+    "editor.quickSuggestions": {
+      "strings": true,
+    },
+    "editor.suggest.insertMode": "replace",
+    "editor.fontLigatures": false,
+  },
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.indentSize": 4,
+    "editor.acceptSuggestionOnEnter": "on",
+    "editor.suggest.insertMode": "insert",
+    "editor.autoClosingBrackets": "never",
+
+    "editor.suggestOnTriggerCharacters": true,
+    "editor.suggest.showWords": false,
+    "editor.parameterHints.enabled": true,
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": true,
+    },
+  },
+  "[yaml]": {
+    "editor.fontLigatures": false,
+  },
 
   "emmet.includeLanguages": {
     "jinja-html": "html"
   },
 
-  "editor.fontSize": 12,
-  "editor.fontFamily": "Cascadia Code NF, Consolas, Courier New, monospace",
-  "editor.fontWeight": 400,
-  "editor.lineHeight": 1.4,
-  "editor.fontLigatures": true,
-  "editor.insertSpaces": true,
-  "editor.formatOnSave": false,
-  "editor.autoClosingQuotes": "never",
-  "editor.autoSurround": "never",
-  "editor.inlineSuggest.enabled": true,
-
-  "files.eol": "\n",
-  "files.trimTrailingWhitespace": true,
-  "files.autoGuessEncoding": false,
-  "files.defaultEncoding": "utf8",
-
-  "terminal.integrated.minimumContrastRatio": 7,
-  "terminal.integrated.fontWeight": "normal",
-  "terminal.integrated.fontFamily": "Consolas Nerd Font",
-
-  "[html]": {
-    "editor.formatOnSave": false,
-    "editor.tabSize": 2,
-    "editor.formatOnType": true
-  },
-  "[css]": {
-    "editor.formatOnSave": false,
-    "editor.tabSize": 2,
-    "editor.formatOnType": true
-  },
-  "[json]": {
-    "editor.formatOnSave": true,
-    "editor.tabSize": 2,
-    "editor.quickSuggestions": {
-      "strings": true
-    },
-    "editor.suggest.insertMode": "replace",
-    "editor.fontLigatures": false
-  },
-  "[yaml]": {
-    "editor.tabSize": 2,
-    "editor.indentSize": 2,
-    "editor.fontLigatures": false
-  },
-  "[python]": {
-    "editor.tabSize": 4,
-    "editor.indentSize": 4,
-    "editor.formatOnType": true,
-    "editor.acceptSuggestionOnEnter": "on",
-    "editor.suggest.insertMode": "insert",
-    "editor.autoClosingBrackets": "never",
-    "editor.suggestOnTriggerCharacters": false,
-    "editor.quickSuggestions": {
-      "comments": "off",
-      "strings": "on",
-      "other": "on"
-    }
-  },
   "python.analysis.exclude": [
     "data/**",
     "result/**",
@@ -71,25 +69,138 @@
     ".mypy_cache/**",
     "**/__pycache__/**",
     "dist/**",
-    "build/**"
+    "build/**",
   ],
-  "python.analysis.diagnosticSeverityOverrides": {
-    "reportUnnecessaryTypeIgnoreComment": "none"
-  },
-  "python.analysis.typeCheckingMode": "basic",
-  "_errorLens.codeLensEnabled": true,
-  "errorLens.delay": 2000,
-  "errorLens.followCursor": "activeLine",
-  "markdownlint.config": {
-    "MD041": false
-  },
+
   "python.testing.unittestArgs": [
     "-v",
     "-s",
     ".",
     "-p",
-    "*test.py"
+    "*test.py",
   ],
-  "python.testing.pytestEnabled": false,
-  "python.testing.unittestEnabled": true
+  "python.testing.pytestEnabled": true,
+  // "python.testing.unittestEnabled": false,
+  "python.testing.cwd": "${workspaceFolder}/tests",
+
+  "files.autoGuessEncoding": false,
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+
+  "_errorLens.codeLensEnabled": true,
+  "errorLens.delay": 2000,
+  "errorLens.followCursor": "activeLine",
+
+  "markdownlint.config": {
+    "MD041": false,
+  },
+
+  "workbench.colorCustomizations": {
+    "actionBar.toggledBackground": "#dddddd",
+    "activityBarBadge.background": "#007ACC",
+    "checkbox.border": "#919191",
+    "diffEditor.unchangedRegionBackground": "#f8f8f8",
+    "editor.background": "#FFFFFF",
+    "editor.foreground": "#000000",
+    "editor.inactiveSelectionBackground": "#E5EBF180", // "#E5EBF1",
+    "editor.selectionHighlightBackground": "#ADD6FF80",
+    "editorIndentGuide.activeBackground1": "#939393",
+    "editorIndentGuide.background1": "#D3D3D3",
+    "editorSuggestWidget.background": "#F3F3F3",
+    "input.placeholderForeground": "#767676",
+    "list.activeSelectionIconForeground": "#FFF",
+    "list.focusAndSelectionOutline": "#90C2F9",
+    "list.hoverBackground": "#E8E8E8",
+    "menu.border": "#D4D4D4",
+    "notebook.cellBorderColor": "#E8E8E8",
+    "notebook.selectedCellBackground": "#c8ddf150",
+    "ports.iconRunningProcessForeground": "#369432",
+    "searchEditor.textInputBorder": "#CECECE",
+    "settings.numberInputBorder": "#CECECE",
+    "settings.textInputBorder": "#CECECE",
+    "sideBarSectionHeader.background": "#00000000",
+    "sideBarSectionHeader.border": "#61616130",
+    "sideBarTitle.foreground": "#6F6F6F",
+    "statusBarItem.errorBackground": "#c72e0f",
+    "statusBarItem.remoteBackground": "#00000040",  // "#16825D",
+    "statusBarItem.remoteForeground": "#FFF",
+    "tab.lastPinnedBorder": "#61616130",
+    "tab.selectedBackground": "#ffffffa5",
+    "tab.selectedForeground": "#333333b3",
+    "terminal.inactiveSelectionBackground": "#E5EBF1",
+    "widget.border": "#d4d4d4",
+  },
+
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": [
+         "entity.name.function.python",
+         "meta.attribute.python",
+         "meta.function-call.generic.python",
+         ],
+        "settings": {
+          "foreground": "#000000",
+          "fontStyle": "bold",
+        }
+      },
+      {
+        "scope": [
+          "variable.parameter.function-call.python",
+          "variable.parameter.function.language.python",
+        ],
+        "settings": {
+          "foreground": "#404040",
+          "fontStyle": "bold",
+        }
+      },
+      {
+        "scope": [
+          "comment",
+          "string.quoted.docstring",
+          "string.quoted.multi.python",
+          "meta.structure.dictionary.json.comments",
+        ],
+        "settings": {
+          "foreground": "#008000"
+        }
+      },
+      {
+        "scope": [
+          "meta.typehint.comment.python",
+          "comment.typehint.directive.notation.python",
+          "comment.typehint.variable.notation.python",
+        ],
+        "settings": {
+          "foreground": "#b00000"
+        }
+      },
+      {
+        "scope": [
+          "entity.name.tag.yaml",
+          "support.type.property-name.json.comments",
+      ],
+        "settings": {
+          "foreground": "#000000"
+        }
+      },
+      {
+        "scope": [
+          "string.unquoted.plain.out.yaml",
+          "string.quoted.double.json.comments",
+        ],
+        "settings": {
+          "foreground": "#0000ff",
+        }
+      },
+      {
+        "scope": [
+          "string.regexp"
+        ],
+        "settings": {
+          "foreground": "#ff00ff",
+        }
+      },
+    ]
+  },
 }

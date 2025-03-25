@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 17:52
+    © Jürgen Schoenemeyer, 25.03.2025 17:09
 
     src/final_srt_vtt.py
 
@@ -7,8 +7,6 @@
     python src/final_srt_vtt.py
 """
 from __future__ import annotations
-
-import os
 
 from helper.captions import import_caption, writefile_srt  #, writefile_vtt
 from utils.globals import BASE_PATH
@@ -35,7 +33,7 @@ def main() -> None:
         sum_words = 0
 
         ut = 0
-        for file in os.listdir(video_path):
+        for file in video_path.iterdirs():
             if file.split(".")[-1] == "srt":
                 captions_info = import_caption( video_path, file )
                 if captions_info is None:

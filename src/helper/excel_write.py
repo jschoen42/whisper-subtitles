@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 17:52
+    © Jürgen Schoenemeyer, 14.03.2025 00:25
 
     src/helper/excel_write.py (xlsxwriter)
 
@@ -176,7 +176,7 @@ def export_text_to_speech_excel(data: List[SubtitleColumnFormat], pathname: Path
     count = 0
 
     for i in range(len(data)):
-        subtitle_info = cast(ColumnSubtitleInfo, data[i])
+        subtitle_info = cast("ColumnSubtitleInfo", data[i])
 
         start = seconds_to_timecode_excel(subtitle_info["start"])
         end = seconds_to_timecode_excel(subtitle_info["end"])

@@ -1,15 +1,16 @@
-import numpy as np
+from typing import Literal
 
+import numpy as np
 
 class FeatureExtractor:
     def __init__(
         self,
-        feature_size=80,
-        sampling_rate=16000,
-        hop_length=160,
-        chunk_length=30,
-        n_fft=400,
-    ):
+        feature_size: int = 80,
+        sampling_rate: int = 16000,
+        hop_length: int = 160,
+        chunk_length: int = 30,
+        n_fft: int = 400,
+    ) -> None:
         self.n_fft = n_fft
         self.hop_length = hop_length
         self.chunk_length = chunk_length
@@ -22,7 +23,7 @@ class FeatureExtractor:
         ).astype("float32")
 
     @staticmethod
-    def get_mel_filters(sr, n_fft, n_mels=128):
+    def get_mel_filters(sr: int, n_fft: int, n_mels: int = 128) -> np.ndarray:
         # Initialize the weights
         n_mels = int(n_mels)
 
@@ -63,20 +64,20 @@ class FeatureExtractor:
         weights *= np.expand_dims(enorm, axis=1)
 
         return weights
-
     @staticmethod
     def stft(
         input_array: np.ndarray,
         n_fft: int,
-        hop_length: int = None,
-        win_length: int = None,
-        window: np.ndarray = None,
+        hop_length: int | None = None,
+        win_length: int | None = None,
+        window: np.ndarray | None = None,
         center: bool = True,
-        mode: str = "reflect",
+        mode: Literal["reflect", "constant", "edge", "linear_ramp", "maximum",
+                     "mean", "median", "minimum", "symmetric", "wrap", "empty"] = "reflect",
         normalized: bool = False,
-        onesided: bool = None,
-        return_complex: bool = None,
-    ):
+        onesided: bool | None = None,
+        return_complex: bool | None = None,
+    ) -> np.ndarray:
         # Default initialization for hop_length and win_length
         hop_length = hop_length if hop_length is not None else n_fft // 4
         win_length = win_length if win_length is not None else n_fft
@@ -148,8 +149,11 @@ class FeatureExtractor:
         # Handle padding of the window if necessary
         if win_length < n_fft:
             left = (n_fft - win_length) // 2
-            window_ = np.zeros(n_fft, dtype=window.dtype)
-            window_[left : left + win_length] = window
+            if window is not None:  # Type check für window.dtype
+                window_ = np.zeros(n_fft, dtype=window.dtype)
+                window_[left : left + win_length] = window
+            else:
+                window_ = None
         else:
             window_ = window
 
@@ -174,6 +178,7 @@ class FeatureExtractor:
         complex_fft = input_is_complex
         onesided = onesided if onesided is not None else not complex_fft
 
+        norm: Literal["backward", "ortho", "forward"] | None
         if normalized:
             norm = "ortho"
         else:
@@ -195,7 +200,7 @@ class FeatureExtractor:
 
         return output if return_complex else np.real(output)
 
-    def __call__(self, waveform: np.ndarray, padding=160, chunk_length=None):
+    def __call__(self, waveform: np.ndarray, padding: int = 160, chunk_length: int | None = None) -> np.ndarray:
         """
         Compute the log-Mel spectrogram of the provided audio.
         """

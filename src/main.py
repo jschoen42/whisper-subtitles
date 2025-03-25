@@ -1,10 +1,10 @@
 """
-    © Jürgen Schoenemeyer, 14.03.2025 00:13
+    © Jürgen Schoenemeyer, 30.03.2025 15:27
 
     src/main.py
 
     .venv/Scripts/activate
-    python src/main.py
+    uv run src/main.py
 """
 from __future__ import annotations
 
@@ -33,6 +33,11 @@ from utils.util import CacheJSON
 PROJECTS: str = "projects.yaml"  # "projects.yaml", "projects_all.yaml"
 
 data_path = BASE_PATH / "../data"
+
+""""
+  ("01", "tiny")
+# ("01", "tiny")
+"""
 
 # ("01", "tiny")
 # ("02", "base")

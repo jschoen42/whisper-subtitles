@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 12.03.2025 16:31
+    © Jürgen Schoenemeyer, 30.03.2025 14:52
 
     _basedpyright.py
 
@@ -31,7 +31,6 @@
 from __future__ import annotations
 
 import json
-import locale
 import platform
 import shutil
 import subprocess
@@ -50,12 +49,14 @@ RESULT_FOLDER = ".type-check-result"
 
 LINEFEET = "\n"
 
+CONFIG_FILE = "_basedpyright.tmp.json"
+
 def format_singular_plural(value: int, text: str) -> str:
     if value == 1:
         return f"{value} {text}"
     return f"{value} {text}s"
 
-def run_basedpyright(src_path: Path, python_version: str) -> None:
+def check_types(src_path: Path, python_version: str) -> None:
 
     if python_version == "":
         try:
@@ -113,7 +114,7 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
         print(f"Error: path '{src_path}' not found")
         return
 
-    start = time.time()
+    start = time.perf_counter()
 
     folder_path = BASE_PATH / RESULT_FOLDER
     if not folder_path.exists():
@@ -133,7 +134,7 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
     for key, value in settings.items():
         text += f" - {key}: {value}\n"
 
-    config = Path("tmp.json")
+    config = Path(CONFIG_FILE)
     with config.open(mode="w", newline="\n") as config_file:
         json.dump(settings, config_file, indent=2)
 
@@ -143,25 +144,40 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
             print("Error: 'basedpyright' not installed -> uv add basedpyright --dev")
             sys.exit(1)
 
+        # https://github.com/DetachHead/basedpyright/blob/main/docs/configuration/command-line.md
+
         result: CompletedProcess[str] = subprocess.run(
             [basedpyright_path, src_path, "--project", config, "--outputjson"],
             capture_output=True,
             text=True,
-            check=False,
+            check=False, # important
+            encoding="utf-8",
+            errors="replace",
         )
-    except subprocess.CalledProcessError as err:
-        print(f"error: {err} - basedpyright")
+
+    except subprocess.CalledProcessError as e:
+        print(f"BasedPyRight error: {e}")
         sys.exit(1)
+
     finally:
-        Path.unlink(config)
+        config.unlink()
 
-    if result.stderr != "":
-        print(f"errorcode: {result.returncode}")
-        print(result.stderr)
-        sys.exit(result.returncode)
+    # returncode:
+    #   0: No errors reported
+    #   1: One or more errors reported
+    #   2: Fatal error occurred with no errors or warnings reported
+    #   3: Config file could not be read or parsed
+    #   4: Illegal command-line parameters specified
 
-    codepage = locale.getpreferredencoding() # cp1252 ...
-    stdout = result.stdout.encode(encoding=codepage).decode(encoding="utf-8").replace("\xa0", " ")
+    returncode = result.returncode
+    stdout = result.stdout
+    stderr = result.stderr.strip()
+
+    if stderr != "":
+        print(f"exit code: {returncode} - {stderr}")
+        sys.exit(returncode)
+
+    stdout = stdout.replace("\xa0", " ") # non breaking space
     data = json.loads(stdout)
 
     # {
@@ -182,7 +198,7 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
     #           "character": 40
     #         }
     #       },
-    #       "rule": "reportAssignmentType"
+    #       "rule": "reportAssignmentType" -> severity: only for file / error / warning, not for information
     #     }
     #   ],
     #   "summary": {
@@ -207,8 +223,8 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
     error_types: Counter[str] = Counter()
     for diagnostic in diagnostics:
 
-        file        = Path(diagnostic["file"]).as_posix()
-        severity    = diagnostic["severity"]
+        file = Path(diagnostic["file"]).as_posix()
+        severity = diagnostic["severity"]
         if severity == "information":
             error_type = ""
         else:
@@ -254,13 +270,13 @@ def run_basedpyright(src_path: Path, python_version: str) -> None:
 
     text += footer + "\n"
 
-    result_filename = f"BasedPyRight-{python_version}-'{name}'.txt"
+    result_filename = f"BasedPyRight-{python_version}-[{name}].txt"
     with (folder_path / result_filename).open(mode="w", newline="\n") as f:
         f.write(text)
 
-    duration = time.time() - start
+    duration = time.perf_counter() - start
     print(f"[BasedPyRight {version} ({duration:.2f} sec)] {footer} -> {RESULT_FOLDER}/{result_filename}")
-    sys.exit(result.returncode)
+    sys.exit(returncode)
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="static type check with BasedPyRight")
@@ -270,7 +286,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     try:
-        run_basedpyright(Path(args.path), args.version)
+        check_types(Path(args.path), args.version)
     except KeyboardInterrupt:
         print(" --> KeyboardInterrupt")
-        sys.exit(1)
+        sys.exit()

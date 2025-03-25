@@ -3,8 +3,7 @@ import string
 from functools import cached_property
 from typing import List, Optional, Tuple
 
-import tokenizers
-
+import tokenizers  # type: ignore # mypy
 
 class Tokenizer:
     """Simple wrapper around a tokenizers.Tokenizer."""
@@ -91,7 +90,7 @@ class Tokenizer:
         return self.tokenizer.decode(text_tokens)
 
     def decode_with_timestamps(self, tokens: List[int]) -> str:
-        outputs = [[]]
+        outputs: List = [[]]
 
         for token in tokens:
             if token >= self.timestamp_begin:
@@ -106,7 +105,7 @@ class Tokenizer:
         )
 
     @cached_property
-    def non_speech_tokens(self) -> Tuple[int]:
+    def non_speech_tokens(self) -> Tuple[int, ...]:
         """
         Returns the list of tokens to suppress in order to avoid any speaker tags or non-speech
         annotations, to prevent sampling texts that are not actually spoken in the audio, e.g.
@@ -188,8 +187,8 @@ class Tokenizer:
         self, tokens: List[int]
     ) -> Tuple[List[str], List[List[int]]]:
         subwords, subword_tokens_list = self.split_tokens_on_unicode(tokens)
-        words = []
-        word_tokens = []
+        words: List[str] = []
+        word_tokens: List[List[int]] = []
 
         for subword, subword_tokens in zip(subwords, subword_tokens_list):
             special = subword_tokens[0] >= self.eot

@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 14.03.2025 00:13
+    © Jürgen Schoenemeyer, 25.03.2025 17:09
 
     src/audio.py
 
@@ -46,10 +46,10 @@ def main() -> None:
         dest = data_path / project / "03_audio"
 
         starttime = time.time()
-        for filename in source.iterdir():
-            if Path(filename).suffix == SOURCE_TYPE:
+        for filepath in source.iterdir():
+            if Path(filepath).suffix == SOURCE_TYPE:
                 if media_type == "wav":
-                    convert_to_wav( source, Path(dest, "wav"), filename, SAMPLING, CHANNELS, Prefs.get("ffmpeg")["path"] )
+                    convert_to_wav( source, Path(dest, "wav"), filepath.name, SAMPLING, CHANNELS, Prefs.get("ffmpeg")["path"] )
 
         duration = time.time() - starttime
         Trace.info(f"{project} converted: {duration:.2f} sec" )

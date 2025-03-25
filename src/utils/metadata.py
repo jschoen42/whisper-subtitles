@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 13.03.2025 23:57
+    © Jürgen Schoenemeyer, 29.03.2025 18:57
 
     src/utils/metadata.py
 
@@ -104,12 +104,12 @@ def get_media_info(filepath: str | BytesIO) -> Dict[str, int | float] | None:
         if track is None:
             return None
 
-    except FileNotFoundError as error:
-        Trace.error(f"FileNotFoundError '{error}'")
+    except FileNotFoundError as e:
+        Trace.error(f"FileNotFoundError '{e}'")
         return None
 
-    except (AttributeError, ValueError) as error:
-         Trace.error(f"MediaInfo: {error}")
+    except (AttributeError, ValueError) as e:
+         Trace.error(f"MediaInfo: {e}")
          return None
 
     audio_track = track
@@ -127,12 +127,12 @@ def get_media_trackinfo(filepath: str | BytesIO) -> Track | None:
     try:
         media_info = MediaInfo.parse(filepath)
 
-    except FileNotFoundError as error:
-        Trace.error(f"FileNotFoundError '{error}'")
+    except FileNotFoundError as e:
+        Trace.error(f"FileNotFoundError '{e}'")
         return None
 
-    except (AttributeError, ValueError) as error:
-         Trace.error(f"MediaInfo: {error}")
+    except (AttributeError, ValueError) as e:
+         Trace.error(f"MediaInfo: {e}")
          return None
 
     for track in media_info.tracks:
@@ -147,12 +147,12 @@ def get_audio_duration(filepath: str | BytesIO) -> float:
 
     try:
         media_info = MediaInfo.parse(filepath)
-    except FileNotFoundError as error:
-        Trace.error(f"FileNotFoundError '{error}'")
+    except FileNotFoundError as e:
+        Trace.error(f"FileNotFoundError '{e}'")
         return -1
 
-    except (AttributeError, ValueError) as error:
-         Trace.error(f"MediaInfo: {error}")
+    except (AttributeError, ValueError) as e:
+         Trace.error(f"MediaInfo: {e}")
          return -1
 
     for track in media_info.tracks:
@@ -193,12 +193,12 @@ def get_video_metadata(filepath: str | BytesIO) -> None | Dict[str, Any]:
     try:
         media_info = MediaInfo.parse(filepath)
 
-    except FileNotFoundError as error:
-        Trace.error(f"FileNotFoundError '{error}'")
+    except FileNotFoundError as e:
+        Trace.error(f"FileNotFoundError '{e}'")
         return None
 
-    except (AttributeError, ValueError) as error:
-         Trace.error(f"MediaInfo: {error}")
+    except (AttributeError, ValueError) as e:
+         Trace.error(f"MediaInfo: {e}")
          return None
 
     for track in media_info.tracks:
@@ -261,12 +261,12 @@ def get_audio_metadata(filepath: str | BytesIO) -> None | Dict[str, Any]:
     try:
         media_info = MediaInfo.parse(filepath)
 
-    except FileNotFoundError as error:
-        Trace.error(f"FileNotFoundError '{error}'")
+    except FileNotFoundError as e:
+        Trace.error(f"FileNotFoundError '{e}'")
         return None
 
-    except (AttributeError, ValueError) as error:
-         Trace.error(f"MediaInfo: {error}")
+    except (AttributeError, ValueError) as e:
+         Trace.error(f"MediaInfo: {e}")
          return None
 
     for track in media_info.tracks:

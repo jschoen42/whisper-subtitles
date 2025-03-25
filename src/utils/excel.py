@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 15:26
+    © Jürgen Schoenemeyer, 29.03.2025 18:57
 
     src/utils/excel.py
 
@@ -68,8 +68,8 @@ def read_excel_file(folderpath: Path | str, filename: str) -> Tuple[Workbook | N
 
     try:
         workbook: Workbook = load_workbook(filename = filepath)
-    except OSError as err:
-        Trace.error(f"{err}")
+    except OSError as e:
+        Trace.error(f"{e}")
         return None, 0
 
     return workbook, get_modification_timestamp(filepath)
@@ -82,8 +82,8 @@ def read_excel_worksheet(folderpath: Path | str, filename: str, sheet_name: str)
 
     try:
         workbook: Workbook = load_workbook(filename = filepath)
-    except OSError as err:
-        Trace.error(f"{err}")
+    except OSError as e:
+        Trace.error(f"{e}")
         return None, 0.0
 
     try:
@@ -92,8 +92,8 @@ def read_excel_worksheet(folderpath: Path | str, filename: str, sheet_name: str)
     except AssertionError:
         Trace.error(f"'{sheet_name}' is not a Worksheet")
         return None, 0.0
-    except KeyError as err:
-        Trace.error(f"KeyError: {err}")
+    except KeyError as e:
+        Trace.error(f"KeyError: {e}")
         return None, 0.0
 
     check_hidden_rows_columns(sheet)
@@ -106,8 +106,8 @@ def get_excel_worksheet(workbook: Workbook, sheet_name: str) -> Worksheet | None
     except AssertionError:
         Trace.error(f"'{sheet_name}' is not a Worksheet")
         return None
-    except KeyError as err:
-        Trace.error(f"{err}")
+    except KeyError as e:
+        Trace.error(f"{e}")
         return None
 
     check_hidden_rows_columns(sheet)
