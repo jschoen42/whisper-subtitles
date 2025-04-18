@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 15:26
+    © Jürgen Schoenemeyer, 03.04.2025 20:50
 
     src/utils/format.py
 
@@ -8,7 +8,7 @@
 
      - convert_date_time(time_string: str) -> int
 
-     - format_bytes( size: int, unit: str ) -> str
+     - format_bytes(size: int, unit: str) -> str
      - format_bytes_v2(size: int) -> str
 
      - convert_duration(duration: int) -> str
@@ -52,7 +52,7 @@ def convert_to_seconds(timestring: str) -> float:
     return 60 * int(tmp[0]) + int(tmp[1]) + float("." + tmp[2])
 
 """
-def format_bytes( size: int, reference: str ) -> str:
+def format_bytes(size: int, reference: str) -> str:
     # https://stackoverflow.com/questions/12523586/python-format-size-application-converting-b-to-kb-mb-gb-tb#answer-77815988
 
     next_prefix = {"B":"KB", "KB":"MB", "MB":"GB", "GB":"TB", "TB":"PB", "b":"Kb", "Kb":"Mb", "Mb":"Gb", "Gb":"Tb", "Tb":"Pb"}
@@ -60,7 +60,7 @@ def format_bytes( size: int, reference: str ) -> str:
     return format_size(size, reference)
 """
 
-def format_bytes( size: int, unit: str ) -> str:
+def format_bytes(size: int, unit: str) -> str:
     next_unit: Dict[str, str] = {
         "B":"KB", "KB":"MB", "MB":"GB", "GB":"TB", "TB":"PB",
         "b":"Kb", "Kb":"Mb", "Mb":"Gb", "Gb":"Tb", "Tb":"Pb",

@@ -1,10 +1,10 @@
 """
-    © Jürgen Schoenemeyer, 01.03.2025 15:26
+    © Jürgen Schoenemeyer, 03.04.2025 20:50
 
     src/utils/util.py
 
     PUBLIC:
-     - format_subtitle( start_time: float, end_time: float, text: str, color=True ) -> str
+     - format_subtitle(start_time: float, end_time: float, text: str, color=True) -> str
      - format_timestamp(seconds: float, always_include_hours: bool=False, decimal_marker: str=".", fps: float = 30) -> str
 
     class CacheJSON:
@@ -27,7 +27,7 @@ from utils.file import create_folder, export_json, import_json
 from utils.trace import Color, Trace
 
 # PUBLIC
-def format_subtitle( start_time: float, end_time: float, text: str, color: bool=True ) -> str:
+def format_subtitle(start_time: float, end_time: float, text: str, color: bool=True) -> str:
     start = format_timestamp(start_time)
     end   = format_timestamp(end_time)
 

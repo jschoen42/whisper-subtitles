@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 30.03.2025 14:52
+    © Jürgen Schoenemeyer, 30.03.2025 15:54
 
     _basedpyright.py
 
@@ -171,14 +171,13 @@ def check_types(src_path: Path, python_version: str) -> None:
 
     returncode = result.returncode
     stdout = result.stdout
-    stderr = result.stderr.strip()
+    stderr = result.stderr
 
     if stderr != "":
         print(f"exit code: {returncode} - {stderr}")
         sys.exit(returncode)
 
-    stdout = stdout.replace("\xa0", " ") # non breaking space
-    data = json.loads(stdout)
+    data = json.loads(stdout.replace("\xa0", " ")) # non breaking space
 
     # {
     #   "version": "1.1.394",

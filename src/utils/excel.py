@@ -1,13 +1,13 @@
 """
-    © Jürgen Schoenemeyer, 29.03.2025 18:57
+    © Jürgen Schoenemeyer, 03.04.2025 20:50
 
     src/utils/excel.py
 
     PUBLIC:
      - check_excel_file_exists(filepath: Path | str) -> bool
 
-     - read_excel_file(folderpath: Path | str, filename: str) -> None | Tuple[Workbook, float]
-     - read_excel_worksheet(folderpath: str, filename: str, sheet_name: str) -> Tuple[Worksheet | None, float]
+     - read_excel_file(folderpath: Path | str, filename: Path | str) -> None | Tuple[Workbook, float]
+     - read_excel_worksheet(folderpath: str, filename: Path | str, sheet_name: str) -> Tuple[Worksheet | None, float]
      - get_excel_worksheet(workbook: Workbook, sheet_name: str) -> Worksheet | None
 
      - get_cell_text(in_cell: Cell | MergedCell) -> str:
@@ -18,7 +18,7 @@
      - check_double_quotes(wb_name: str, cell_text: str, line_number: int, function_name: str) -> Tuple[bool, str]
 
      - excel_date(date: datetime, time_zone_offset: tzoffset) -> float
-     - convert_datetime( time_string: str ) -> int
+     - convert_datetime(time_string: str) -> int
      - seconds_to_timecode_excel(x: float) -> str
 """
 from __future__ import annotations
@@ -61,7 +61,9 @@ def check_excel_file_exists(filepath: Path | str) -> bool:
         return check_file_exists(folderpath, filename)
 
 def read_excel_file(folderpath: Path | str, filename: str) -> Tuple[Workbook | None, float]:
-    filepath = Path(folderpath) / filename
+    filepath   = Path(folderpath) / filename
+    folderpath = filepath.parent
+    filename   = filepath.name
 
     if check_excel_file_exists(filepath) is False:
         return None, 0
@@ -74,8 +76,10 @@ def read_excel_file(folderpath: Path | str, filename: str) -> Tuple[Workbook | N
 
     return workbook, get_modification_timestamp(filepath)
 
-def read_excel_worksheet(folderpath: Path | str, filename: str, sheet_name: str) -> Tuple[Worksheet | None, float]:
-    filepath = Path(folderpath) / filename
+def read_excel_worksheet(folderpath: Path | str, filename: Path | str, sheet_name: str) -> Tuple[Worksheet | None, float]:
+    filepath   = Path(folderpath) / filename
+    folderpath = filepath.parent
+    filename   = filepath.name
 
     if check_excel_file_exists(filepath) is False:
         return None, 0.0
@@ -119,11 +123,11 @@ def check_hidden_rows_columns(sheet: Any) -> None:
     for key, value in sheet.column_dimensions.items():
         if value.hidden is True:
             if key != "A":
-                Trace.warning( f"hidden column: {key}")
+                Trace.warning(f"hidden column: {key}")
 
     for row_num, row_dimension in sheet.row_dimensions.items():
         if row_dimension.hidden is True:
-            Trace.warning( f"hidden row: {row_num}")
+            Trace.warning(f"hidden row: {row_num}")
 
 ######################################################################################
 # get_cell_value with converting
@@ -216,7 +220,7 @@ def convert_datetime(time_string: str) -> int:
 
     my_timestamp = int(datetime.timestamp(my_time_string))
 
-    # Trace.debug( f"{time_string} -> {my_time_string} => epoch: {my_timestamp}" )
+    # Trace.debug(f"{time_string} -> {my_time_string} => epoch: {my_timestamp}")
     return my_timestamp
 
 def seconds_to_timecode_excel(x: float) -> str:

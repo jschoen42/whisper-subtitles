@@ -1,11 +1,11 @@
 """
-    © Jürgen Schoenemeyer, 29.03.2025 18:57
+    © Jürgen Schoenemeyer, 03.04.2025 20:50
 
     src/utils/prefs.py
 
     PUBLIC:
     static class Prefs:
-      - Prefs.init(pref_path = None, pref_prefix = None ) -> None
+      - Prefs.init(pref_path = None, pref_prefix = None) -> None
       - Prefs.load(pref_name: str) -> bool
       - Prefs.get(key_path: str) -> Any
 
@@ -33,7 +33,7 @@ class Prefs:
     data: ClassVar[Dict[Any, Any]] = {}
 
     @classmethod
-    def init(cls, pref_path: Path | str | None = None, pref_prefix: str | None = None ) -> None:
+    def init(cls, pref_path: Path | str | None = None, pref_prefix: str | None = None) -> None:
         if pref_path is not None:
             cls.pref_path = BASE_PATH / pref_path
         if pref_prefix is not None:
@@ -52,7 +52,7 @@ class Prefs:
             Trace.error(f"pref not found '{cls.pref_path}\\{pref_name}'")
             return False
         try:
-            with (cls.pref_path / pref_name).open( mode="r", encoding="utf-8") as file:
+            with (cls.pref_path / pref_name).open(mode="r", encoding="utf-8") as file:
                 data = yaml.safe_load(file)
 
             cls.data = dict(merge_dicts(cls.data, data))
@@ -141,9 +141,9 @@ def get_pref_special(pref_path: Path, pref_prexix: str, pref_name: str, key: str
         Trace.error(f"unknown pref: {pref_name} / {key}")
         return ""
 
-def read_pref( pref_path: Path, pref_name: str ) -> Tuple[bool, Dict[Any, Any]]:
+def read_pref(pref_path: Path, pref_name: str) -> Tuple[bool, Dict[Any, Any]]:
     try:
-        with (pref_path / pref_name).open( mode="r", encoding="utf-8") as file:
+        with (pref_path / pref_name).open(mode="r", encoding="utf-8") as file:
             data = yaml.safe_load(file)
 
     except yaml.YAMLError as e:
@@ -151,13 +151,13 @@ def read_pref( pref_path: Path, pref_name: str ) -> Tuple[bool, Dict[Any, Any]]:
         return True, {}
 
     except OSError as e:
-        Trace.error( f"{beautify_path(str(e))}" )
+        Trace.error(f"{beautify_path(str(e))}")
         return True, {}
 
     return False, data
 
-def beautify_path( path: Path | str ) -> str:
-    return str( path ).replace("\\\\", "/")
+def beautify_path(path: Path | str) -> str:
+    return str(path).replace("\\\\", "/")
 
 # https://stackoverflow.com/questions/7204805/deep-merge-dictionaries-of-dictionaries-in-python?page=1&tab=scoredesc#answer-7205672
 

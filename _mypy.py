@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 30.03.2025 14:47
+    © Jürgen Schoenemeyer, 31.03.2025 23:52
 
     _mypy.py
 
@@ -275,14 +275,13 @@ def check_types(src_path: Path, python_version: str) -> None:
             errors="replace",
         )
 
-        idle_event.set()
-        idle_thread.join()
-
     except subprocess.CalledProcessError as e:
         print(f"mypy error: {e}")
         sys.exit(1)
 
     finally:
+        idle_event.set()
+        idle_thread.join()
         config.unlink()
 
     # returncode:

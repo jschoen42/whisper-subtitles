@@ -1,5 +1,5 @@
 """
-    © Jürgen Schoenemeyer, 30.03.2025 15:26
+    © Jürgen Schoenemeyer, 31.03.2025 23:52
 
     _pyright.py
 
@@ -36,6 +36,7 @@ import platform
 import shutil
 import subprocess
 import sys
+import threading
 import time
 
 from argparse import ArgumentParser
@@ -144,28 +145,35 @@ def check_types(src_path: Path, python_version: str) -> None:
         json.dump(settings, config_file, indent=2)
 
     try:
+        def show_scanning(idle_event: threading.Event) -> None:
+            counter = 0
+            while not idle_event.is_set():
+                print(f"PyRight is scanning ... ({counter} sec)", end="\r", flush=True)
+                counter += 1
+                idle_event.wait(1)
+
+        idle_event = threading.Event()
+        idle_thread = threading.Thread(target=show_scanning, args=(idle_event,))
+        idle_thread.start()
+
         # https://github.com/microsoft/pyright/blob/main/docs/command-line.md
 
-        process = subprocess.Popen(
+        result = subprocess.run(
             [npx_path, "pyright", src_path, "--project", config, "--outputjson"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             text=True,
+            check=False, # important
             encoding="utf-8",
             errors="replace",
         )
 
-        counter = 0
-        while process.poll() is None:
-            print(f"PyRight is scanning ... ({counter} sec)", end="\r", flush=True)
-            time.sleep(1)
-            counter += 1
-
-    except subprocess.CalledProcessError as e:
-        print(f"PyRight error: {e}")
+    except subprocess.CalledProcessError as err:
+        print(f"PyRight error: {err}")
         sys.exit(1)
 
     finally:
+        idle_event.set()
+        idle_thread.join()
         config.unlink()
 
     # returncode:
@@ -175,8 +183,9 @@ def check_types(src_path: Path, python_version: str) -> None:
     #   3: Config file could not be read or parsed
     #   4: Illegal command-line parameters specified
 
-    returncode = process.returncode
-    stdout, stderr = process.communicate()
+    returncode = result.returncode
+    stdout = result.stdout
+    stderr = result.stderr
 
     if stderr != "":
         print(f"returncode: {returncode} - {stderr.strip()}")
